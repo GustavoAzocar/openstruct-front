@@ -116,7 +116,8 @@ export function Home() {
           ))}
         </div>
         <p className="catalog-note">
-          <Sparkles size={15} /> Um ecossistema em construção. Começamos pelo ConsoloStruct.
+          <Sparkles size={15} /> Um ecossistema em construção. Conheça o ConsoloStruct e o
+          MolaStruct.
         </p>
       </section>
       <section className="consolo-spotlight">
@@ -147,6 +148,26 @@ export function Home() {
             </div>
           </div>
         </div>
+      </section>
+      <section className="mola-discovery container" aria-labelledby="mola-discovery-title">
+        <img
+          src="/assets/molastruct-gaia.webp"
+          alt="Figura da Terra sustentando uma mola e uma fundação, ícone do MolaStruct"
+          width="112"
+          height="112"
+          loading="lazy"
+        />
+        <div>
+          <span className="eyebrow">MOLASTRUCT / FUNDAÇÕES</span>
+          <h2 id="mola-discovery-title">Da fundação ao modelo estrutural.</h2>
+          <p>
+            Geometria, sondagem e características do solo como ponto de partida para estimar a
+            rigidez do apoio.
+          </p>
+        </div>
+        <Link className="text-link" to="/apps/molastruct">
+          Conheça o MolaStruct <ArrowUpRight size={17} />
+        </Link>
       </section>
       <section className="section container principles-section" id="principios">
         <div className="section-kicker">
@@ -247,9 +268,10 @@ export function Home() {
               Por qual aplicativo posso começar?<span>+</span>
             </summary>
             <p>
-              O ConsoloStruct é o primeiro aplicativo apresentado. Você já pode explorar uma prévia
-              visual e acompanhar seu desenvolvimento.{' '}
-              <Link to="/apps/consolostruct">Conhecer o ConsoloStruct.</Link>
+              Comece pelas páginas do ConsoloStruct e do MolaStruct. Conheça as propostas, explore
+              as representações visuais e acompanhe o desenvolvimento.{' '}
+              <Link to="/apps/consolostruct">Conhecer o ConsoloStruct.</Link>{' '}
+              <Link to="/apps/molastruct">Conhecer o MolaStruct.</Link>
             </p>
           </details>
           <details>

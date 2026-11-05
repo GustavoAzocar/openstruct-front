@@ -1,0 +1,558 @@
+/* MolaStruct: extensão da identidade aprovada do ecossistema. */
+.app-art.cobalt {
+  background: var(--brand);
+  color: #f4f1e9;
+}
+.launch-app-list {
+  margin-top: 20px;
+}
+.launch-app-list .launch-app {
+  display: grid;
+  grid-template-columns: 65px minmax(0, 1fr) auto;
+  gap: 14px;
+  margin-top: 0;
+}
+.launch-app-list .launch-app + .launch-app {
+  border-top: 0;
+}
+.launch-app-info {
+  min-width: 0;
+}
+.launch-app-info > span {
+  line-height: 1.6;
+}
+.launch-app-link {
+  min-height: 38px;
+  padding: 9px 11px;
+  font-size: 11px;
+  gap: 7px;
+}
+.mola-discovery {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) auto;
+  gap: 30px;
+  align-items: center;
+  margin-top: 54px;
+  padding: 28px 30px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.mola-discovery > img {
+  width: 104px;
+  height: 104px;
+  border-radius: 13px;
+  object-fit: cover;
+}
+.mola-discovery .eyebrow {
+  font-size: 9px;
+  margin-bottom: 12px;
+}
+.mola-discovery h2 {
+  font-size: 26px;
+}
+.mola-discovery p {
+  max-width: 620px;
+  font-size: 13px;
+  line-height: 1.85;
+  margin-top: 11px;
+}
+.mola-discovery > .text-link {
+  white-space: nowrap;
+  font-size: 12px;
+}
+.mola-overview {
+  scroll-margin-top: 110px;
+}
+.foundation-preview {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.foundation-preview-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  padding: 24px 28px;
+  border-bottom: 1px solid var(--line);
+}
+.foundation-preview-top .eyebrow {
+  font-size: 9px;
+  margin-bottom: 8px;
+}
+.foundation-preview-top h3 {
+  font-size: 22px;
+}
+.foundation-preview-body {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+}
+.foundation-options {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 28px 22px;
+  border-right: 1px solid var(--line);
+}
+.foundation-options .panel-title {
+  font-size: 10px;
+  margin-bottom: 14px;
+}
+.foundation-type-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.foundation-type-buttons > button {
+  padding: 11px 13px;
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  text-align: left;
+  font-size: 12px;
+  min-height: 42px;
+}
+.foundation-type-buttons > button[aria-pressed='true'] {
+  color: #f4f1e9;
+  background: var(--brand);
+  border-color: var(--brand);
+}
+.foundation-type-buttons > button:hover:not([aria-pressed='true']) {
+  background: var(--surface-2);
+}
+.pile-count {
+  margin-top: 24px;
+}
+.pile-count > div {
+  display: flex;
+  gap: 7px;
+}
+.pile-count button {
+  display: grid;
+  place-items: center;
+  min-width: 40px;
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  background: none;
+  font:
+    12px 'IBM Plex Mono',
+    monospace;
+}
+.pile-count button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+}
+.foundation-option-note {
+  margin-top: 28px;
+}
+.foundation-option-note strong {
+  font-size: 13px;
+  font-weight: 500;
+}
+.foundation-option-note p {
+  margin-top: 9px;
+  font-size: 12px;
+  line-height: 1.85;
+}
+.foundation-options > small {
+  margin-top: auto;
+  padding-top: 26px;
+  color: var(--muted);
+  font:
+    9px/1.8 'IBM Plex Mono',
+    monospace;
+}
+.foundation-canvas {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 420px;
+  background: var(--paper);
+}
+.foundation-drawing {
+  display: block;
+  width: 100%;
+  max-width: 780px;
+  max-height: 530px;
+  color: var(--model-stroke);
+}
+.foundation-soil path:first-child {
+  fill: var(--surface-2);
+  stroke: var(--model-stroke);
+  stroke-width: 1;
+}
+.foundation-soil path:nth-child(2) {
+  fill: var(--steel);
+  fill-opacity: 0.28;
+  stroke: var(--model-stroke);
+  stroke-width: 1;
+}
+.foundation-soil path:nth-child(n + 3) {
+  stroke: var(--model-stroke);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.foundation-spring {
+  stroke: var(--accent);
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.foundation-pile path:first-child {
+  fill: var(--concrete-front);
+  stroke: var(--model-stroke);
+  stroke-width: 1.2;
+}
+.foundation-pile .pile-center {
+  stroke: var(--model-rebar);
+  stroke-width: 1;
+  fill: none;
+}
+.foundation-callouts {
+  fill: var(--muted);
+  font:
+    9px 'IBM Plex Mono',
+    monospace;
+}
+.foundation-callouts path {
+  stroke: var(--model-stroke);
+  stroke-width: 1;
+  fill: none;
+}
+.foundation-drawing-note {
+  fill: var(--muted);
+  font:
+    8px 'IBM Plex Mono',
+    monospace;
+}
+.mola-inputs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 36px;
+}
+.mola-inputs article {
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+}
+.mola-inputs article > span {
+  display: block;
+  color: var(--accent);
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  margin-bottom: 22px;
+}
+.mola-inputs h3 {
+  font-size: 22px;
+}
+.mola-inputs p {
+  margin-top: 13px;
+  font-size: 14px;
+  line-height: 1.85;
+}
+.mola-foundations {
+  background: var(--surface-2);
+  padding-block: 28px 60px;
+}
+.mola-foundation-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 70px;
+}
+.mola-foundation-grid article + article {
+  padding-left: 55px;
+  border-left: 1px solid var(--line);
+}
+.mola-foundation-grid .pill {
+  color: var(--accent);
+}
+.mola-foundation-grid h2 {
+  margin-top: 25px;
+  font-size: 38px;
+  line-height: 1.2;
+}
+.mola-foundation-grid p {
+  max-width: 510px;
+  margin-top: 20px;
+  font-size: 14px;
+  line-height: 1.9;
+}
+.mola-foundation-grid ul {
+  margin-top: 23px;
+  padding-left: 19px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.mola-foundation-grid li + li {
+  margin-top: 7px;
+}
+.pile-number-strip {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+}
+.pile-number-strip > span {
+  display: grid;
+  place-items: center;
+  height: 45px;
+  width: 45px;
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font:
+    16px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+  background: var(--paper);
+}
+.mola-methods {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 42px 45px;
+}
+.mola-methods > h2 {
+  font-size: 38px;
+}
+.mola-method-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 46px;
+  margin-top: 38px;
+}
+.mola-method-groups article {
+  border-top: 1px solid var(--line);
+  padding-top: 20px;
+}
+.mola-method-groups .eyebrow {
+  font-size: 9px;
+  margin-bottom: 14px;
+}
+.mola-method-groups h3 {
+  font-size: 21px;
+  line-height: 1.5;
+}
+.mola-method-groups p {
+  margin-top: 15px;
+  font-size: 13px;
+  line-height: 1.9;
+}
+.mola-reference-note {
+  margin-top: 26px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 11px;
+  line-height: 1.8;
+}
+.mola-community {
+  background: var(--brand);
+  color: #f4f1e9;
+}
+.mola-community .eyebrow {
+  color: #f4f1e9b3;
+}
+.mola-community p {
+  color: #f4f1e9cc;
+}
+.mola-community .button {
+  background: #f4f1e9;
+  color: #18212f;
+  border-color: #f4f1e9;
+}
+@media (max-width: 980px) {
+  .mola-discovery {
+    grid-template-columns: 90px minmax(0, 1fr);
+    gap: 22px;
+    padding: 25px;
+  }
+  .mola-discovery > img {
+    grid-row: span 2;
+    width: 90px;
+    height: 90px;
+  }
+  .mola-discovery > .text-link {
+    grid-column: 2;
+    margin-top: -8px;
+  }
+  .mola-discovery h2 {
+    font-size: 25px;
+  }
+  .foundation-preview-body {
+    grid-template-columns: 220px minmax(0, 1fr);
+  }
+  .foundation-options {
+    padding: 22px 18px;
+  }
+  .foundation-preview-top h3 {
+    font-size: 20px;
+  }
+  .foundation-preview-top > .preview-label {
+    max-width: 100px;
+    text-align: right;
+  }
+  .foundation-canvas {
+    min-height: 380px;
+  }
+  .mola-inputs {
+    gap: 25px;
+  }
+  .mola-inputs h3 {
+    font-size: 20px;
+  }
+  .mola-inputs p {
+    font-size: 13px;
+  }
+  .mola-foundation-grid {
+    gap: 35px;
+  }
+  .mola-foundation-grid article + article {
+    padding-left: 30px;
+  }
+  .mola-foundation-grid h2 {
+    font-size: 31px;
+  }
+  .mola-methods {
+    padding: 35px;
+  }
+  .mola-method-groups {
+    gap: 30px;
+  }
+}
+@media (max-width: 700px) {
+  .mola-discovery {
+    grid-template-columns: 76px minmax(0, 1fr);
+    padding: 22px 20px;
+    gap: 18px;
+    margin-top: 35px;
+  }
+  .mola-discovery > img {
+    width: 76px;
+    height: 76px;
+  }
+  .mola-discovery .eyebrow {
+    font-size: 8px;
+  }
+  .mola-discovery h2 {
+    font-size: 22px;
+  }
+  .mola-discovery p {
+    font-size: 12px;
+  }
+  .mola-discovery > .text-link {
+    white-space: normal;
+    font-size: 11px;
+  }
+  .foundation-preview-top {
+    padding: 20px;
+    align-items: flex-start;
+  }
+  .foundation-preview-top h3 {
+    font-size: 20px;
+    line-height: 1.4;
+  }
+  .foundation-preview-top > .preview-label {
+    display: none;
+  }
+  .foundation-preview-body {
+    grid-template-columns: 1fr;
+  }
+  .foundation-options {
+    order: 2;
+    border-right: 0;
+    border-top: 1px solid var(--line);
+    padding: 20px;
+  }
+  .foundation-type-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .foundation-type-buttons > button {
+    text-align: center;
+    min-height: 44px;
+  }
+  .foundation-canvas {
+    min-height: 270px;
+  }
+  .foundation-option-note {
+    margin-top: 20px;
+  }
+  .foundation-options > small {
+    padding-top: 20px;
+    font-size: 10px;
+  }
+  .pile-count button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .foundation-preview .preview-statusbar {
+    flex-wrap: wrap;
+    font-size: 8px;
+    padding: 10px 16px;
+  }
+  .mola-inputs {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  .mola-inputs article > span {
+    margin-bottom: 18px;
+  }
+  .mola-inputs h3 {
+    font-size: 23px;
+  }
+  .mola-inputs p {
+    font-size: 14px;
+  }
+  .mola-foundation-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .mola-foundation-grid article + article {
+    border-left: 0;
+    border-top: 1px solid var(--line);
+    padding: 30px 0 0;
+  }
+  .mola-foundation-grid h2 {
+    font-size: 32px;
+  }
+  .mola-methods {
+    padding: 28px 23px;
+  }
+  .mola-methods > h2 {
+    font-size: 30px;
+  }
+  .mola-method-groups {
+    grid-template-columns: 1fr;
+    gap: 27px;
+    margin-top: 28px;
+  }
+  .mola-method-groups h3 {
+    font-size: 22px;
+  }
+}
+@media (max-width: 500px) {
+  .launch-app-list .launch-app {
+    grid-template-columns: 65px minmax(0, 1fr);
+  }
+  .launch-app-link {
+    grid-column: 2;
+    justify-self: start;
+    min-height: 42px;
+  }
+  .mola-discovery {
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 14px;
+  }
+  .mola-discovery > img {
+    width: 64px;
+    height: 64px;
+    align-self: start;
+  }
+  .mola-discovery h2 {
+    font-size: 20px;
+  }
+}

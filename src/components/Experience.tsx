@@ -2,7 +2,7 @@ import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink } from 'lucide-react';
-import { site } from '../lib/config';
+import { apps, site } from '../lib/config';
 
 type ExperienceState = { launch: () => void; community: () => void };
 const ExperienceContext = createContext<ExperienceState | null>(null);
@@ -61,34 +61,44 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
               ponto de partida.
             </h2>
             <p>Escolha uma ferramenta e explore o que estamos construindo.</p>
-            <div className="launch-app">
-              <img src="/assets/consolostruct-atlas.webp" alt="" width="76" height="76" />
-              <div>
-                <strong>ConsoloStruct</strong>
-                <span>Concreto armado · Em desenvolvimento</span>
-              </div>
+            <div className="launch-app-list">
+              {apps
+                .filter((app) => app.route)
+                .map((app) => (
+                  <div className="launch-app" key={app.id}>
+                    <img src={app.image} alt="" width="76" height="76" />
+                    <div className="launch-app-info">
+                      <strong>{app.name}</strong>
+                      <span>
+                        {app.category} · {app.status}
+                      </span>
+                    </div>
+                    {app.externalUrl ? (
+                      <a
+                        href={app.externalUrl}
+                        className="button button-primary launch-app-link"
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={close}
+                        aria-label={`Abrir ${app.name}`}
+                      >
+                        Abrir <ExternalLink size={15} />
+                      </a>
+                    ) : (
+                      <Link
+                        to={`${app.route}${app.previewAnchor || ''}`}
+                        className="button button-primary launch-app-link"
+                        onClick={close}
+                        aria-label={`Explorar ${app.name}`}
+                      >
+                        Explorar <ArrowRight size={15} />
+                      </Link>
+                    )}
+                  </div>
+                ))}
             </div>
-            {site.appUrl ? (
-              <a
-                href={site.appUrl}
-                className="button button-primary"
-                target="_blank"
-                rel="noreferrer"
-                onClick={close}
-              >
-                Abrir ConsoloStruct <ExternalLink size={17} />
-              </a>
-            ) : (
-              <Link
-                to="/apps/consolostruct#demonstracao"
-                className="button button-primary"
-                onClick={close}
-              >
-                Explorar a prévia interativa <ArrowRight size={17} />
-              </Link>
-            )}
             <small>
-              A prévia apresenta a experiência visual. O aplicativo está em desenvolvimento.
+              Conheça as propostas e as prévias visuais. Os aplicativos estão em desenvolvimento.
             </small>
           </>
         ) : (

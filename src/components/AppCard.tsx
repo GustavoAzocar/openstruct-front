@@ -4,14 +4,14 @@ import type { AppEntry } from '../lib/config';
 import { AppGlyph } from './Brand';
 
 export function AppCard({ app, featured = false }: { app: AppEntry; featured?: boolean }) {
-  const available = app.id === 'consolostruct';
+  const available = Boolean(app.route);
   return (
     <article className={`app-card ${featured ? 'app-card-featured' : ''}`}>
       <div className={`app-art ${app.color}`}>
-        {available ? (
+        {app.image ? (
           <img
-            src="/assets/consolostruct-atlas.webp"
-            alt="Atlas em gravura sustentando uma peça de pedra, ilustração do ConsoloStruct"
+            src={app.image}
+            alt={app.imageAlt || app.name}
             width="512"
             height="512"
             loading="lazy"
@@ -19,19 +19,9 @@ export function AppCard({ app, featured = false }: { app: AppEntry; featured?: b
         ) : (
           <AppGlyph kind={app.symbol} />
         )}
-        <span className="art-index">
-          {available
-            ? '01'
-            : app.id === 'vigasstruct'
-              ? '02'
-              : app.id === 'pilarstruct'
-                ? '03'
-                : app.id === 'sapatastruct'
-                  ? '04'
-                  : '05'}
-        </span>
-        {available && (
-          <Link className="art-action" to="/apps/consolostruct" aria-label="Conhecer ConsoloStruct">
+        <span className="art-index">{app.number}</span>
+        {app.route && (
+          <Link className="art-action" to={app.route} aria-label={`Conhecer ${app.name}`}>
             <ArrowUpRight />
           </Link>
         )}
@@ -44,10 +34,10 @@ export function AppCard({ app, featured = false }: { app: AppEntry; featured?: b
             {app.status}
           </span>
         </div>
-        <h3>{available ? <Link to="/apps/consolostruct">{app.name}</Link> : app.name}</h3>
+        <h3>{app.route ? <Link to={app.route}>{app.name}</Link> : app.name}</h3>
         <p>{app.description}</p>
-        {available ? (
-          <Link className="text-link" to="/apps/consolostruct">
+        {app.route ? (
+          <Link className="text-link" to={app.route}>
             Explorar o aplicativo <ArrowRight size={16} />
           </Link>
         ) : (

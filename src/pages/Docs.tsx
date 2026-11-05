@@ -8,9 +8,9 @@ const articles = [
     id: 'primeiros-passos',
     n: '01',
     title: 'Primeiros passos',
-    body: 'Comece pelo catálogo de aplicativos. O ConsoloStruct é o primeiro projeto apresentado no ecossistema. Sua página reúne uma prévia visual, os recursos em desenvolvimento e formas de acompanhar o projeto.',
-    action: 'Conheça o ConsoloStruct',
-    to: '/apps/consolostruct',
+    body: 'Comece pelo catálogo de aplicativos. ConsoloStruct e MolaStruct possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.',
+    action: 'Explore os aplicativos',
+    to: '/apps',
   },
   {
     id: 'previa',
@@ -37,8 +37,16 @@ const articles = [
     to: '/apps/consolostruct#demonstracao',
   },
   {
-    id: 'contribuir',
+    id: 'molastruct',
     n: '05',
+    title: 'MolaStruct: fundação + solo',
+    body: 'O MolaStruct está sendo desenvolvido para auxiliar na estimativa da rigidez à translação e à rotação do conjunto fundação + solo. O escopo inicial reúne geometria da fundação, perfil de sondagem e características do solo, contemplando sapatas e blocos com 1, 2, 3 ou 4 estacas. A página apresenta os métodos previstos e um esquema conceitual que não executa cálculos.',
+    action: 'Conheça o MolaStruct',
+    to: '/apps/molastruct',
+  },
+  {
+    id: 'contribuir',
+    n: '06',
     title: 'Como contribuir',
     body: 'Descreva o contexto da sua ideia ou problema, o comportamento esperado e, quando possível, um exemplo que ajude a reproduzir a situação. Sugestões sobre clareza, documentação, acessibilidade e fluxo de trabalho também são contribuições importantes.',
     action: 'Veja as formas de participar',
@@ -69,8 +77,8 @@ export function Docs() {
           começar.
         </h1>
         <p>
-          Uma introdução ao ecossistema, à prévia do ConsoloStruct e aos princípios que orientam o
-          projeto.
+          Uma introdução ao ecossistema, ao ConsoloStruct, ao MolaStruct e aos princípios que
+          orientam o projeto.
         </p>
         <label className="search-box">
           <Search size={18} />

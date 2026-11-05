@@ -1,6 +1,6 @@
 # OpenStruct
 
-Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. Esta primeira versão apresenta o projeto, o catálogo e a página do ConsoloStruct.
+Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct e do MolaStruct.
 
 ## Desenvolvimento
 
@@ -25,11 +25,12 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/`                   | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ            |
 | `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento |
 | `/apps/consolostruct` | Página do aplicativo, prévia interativa, recursos em desenvolvimento e acesso     |
+| `/apps/molastruct`    | Página do MolaStruct, esquema de fundações, escopo inicial e métodos previstos    |
 | `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação             |
 | `/community`          | Formas de contribuir e acompanhar o projeto                                       |
 | Outros endereços      | Página 404 com navegação de retorno                                               |
 
-Apenas o ConsoloStruct possui página de produto nesta versão. Os demais nomes no catálogo representam o planejamento do ecossistema.
+ConsoloStruct e MolaStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
 
 ## Links e integrações futuras
 
@@ -39,16 +40,27 @@ Copie `.env.example` para `.env.local` e preencha os endereços que estiverem di
 VITE_CONSOLOSTRUCT_URL=https://seu-aplicativo.example
 VITE_CONSOLOSTRUCT_REPOSITORY=https://github.com/seu-usuario/seu-repositorio
 VITE_CONSOLOSTRUCT_DOWNLOAD_URL=https://seu-download.example
+VITE_MOLASTRUCT_URL=https://seu-molastruct.example
+VITE_MOLASTRUCT_REPOSITORY=https://github.com/seu-usuario/seu-molastruct
+VITE_MOLASTRUCT_DOWNLOAD_URL=https://seu-download-molastruct.example
 VITE_DISCORD_URL=https://discord.gg/seu-convite
 ```
 
-Os valores são incorporados durante o build. Sem esses endereços, o botão “Abrir aplicativos” abre uma central com acesso à prévia. O Discord exibe um aviso de preparação e oferece o GitHub como alternativa. Nenhum convite ou endereço de aplicativo é inventado.
+Os valores são incorporados durante o build. Sem esses endereços, o botão “Abrir aplicativos” abre uma central com acesso às páginas e às prévias dos dois aplicativos. O Discord exibe um aviso de preparação e oferece o GitHub como alternativa. Nenhum convite ou endereço de aplicativo é inventado.
 
 Os outros links e os dados do catálogo ficam em `src/lib/config.ts`.
 
 ## Prévia do ConsoloStruct
 
 A demonstração é uma representação esquemática em SVG. Permite alternar entre modelo, armadura e detalhe, ajustar a projeção de 25 a 60 cm, separar camadas e restaurar o exemplo. **Não executa cálculo, dimensionamento, verificação normativa ou geração de desenho para obra.** Os recursos de cálculo descritos na página são identificados como objetivos de um aplicativo em desenvolvimento.
+
+## MolaStruct
+
+A página do MolaStruct apresenta o escopo inicial informado para estimativa da rigidez à translação e à rotação do conjunto fundação + solo. Reúne geometria, perfil de sondagem e características do solo, com sapatas e blocos de 1 a 4 estacas.
+
+Mindlin, Steinbrenner, molas de Winkler e Teoria da Elasticidade são apresentados no contexto de deformabilidade e rigidez. Aoki–Velloso aparece no contexto da capacidade de carga das estacas; Terzaghi, Vesic e correlações com SPT, nas estimativas de ruptura em sapatas. A NBR 6122:1996 é identificada como referência histórica da descrição inicial, sem alegação de conformidade normativa atual.
+
+O componente `FoundationPreview` permite alternar entre sapata e bloco, com 1, 2, 3 ou 4 estacas. **É um esquema conceitual de apresentação, sem cálculo de rigidez, recalque ou capacidade de carga.** Os detalhes técnicos e a integração com o aplicativo serão acrescentados posteriormente.
 
 ## Identidade visual
 
@@ -61,7 +73,7 @@ A demonstração é uma representação esquemática em SVG. Permite alternar en
 | Grafite       | `#18212F` | Texto e tema escuro      |
 | Marfim        | `#F4F1E9` | Fundo principal          |
 
-Tipografia: Sora para marca e títulos, Inter para interface e leitura, IBM Plex Mono para informações técnicas. O monograma O tem uma versão vetorial em `public/assets/openstruct-mark.svg`. A ilustração original de Atlas foi criada para este projeto com geração de imagem.
+Tipografia: Sora para marca e títulos, Inter para interface e leitura, IBM Plex Mono para informações técnicas. O monograma O tem uma versão vetorial em `public/assets/openstruct-mark.svg`. As ilustrações originais de Atlas (ConsoloStruct) e da Terra sustentando uma mola e uma fundação (MolaStruct) foram criadas para este projeto com geração de imagem. O ícone do MolaStruct está em `public/assets/molastruct-gaia.webp`.
 
 As fontes WOFF2 são subconjuntos para idiomas latinos. Seus avisos SIL Open Font License estão em `public/fonts/`. A geometria do monograma está em `src/components/Brand.tsx`; o desenho esquemático em `src/components/CorbelModel.tsx`.
 
@@ -86,7 +98,7 @@ src/
   pages/       # Páginas e navegação
   styles.css   # Identidade, temas e layouts responsivos
 public/
-  assets/      # Ilustração do ConsoloStruct e monograma
+  assets/      # Ilustrações dos aplicativos e monograma
   fonts/       # Fontes locais e licenças
 ```
 

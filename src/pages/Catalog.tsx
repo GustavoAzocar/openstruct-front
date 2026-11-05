@@ -31,8 +31,8 @@ export function Catalog() {
           cada nova possibilidade.
         </h1>
         <p>
-          Aplicativos especializados, uma linguagem em comum. Conheça o primeiro projeto e o que
-          está no nosso horizonte.
+          Aplicativos especializados, uma linguagem em comum. Conheça os projetos em desenvolvimento
+          e o que está no nosso horizonte.
         </p>
       </section>
       <div className="catalog-controls">

@@ -7,6 +7,9 @@ export const site = {
   appUrl: import.meta.env.VITE_CONSOLOSTRUCT_URL || '',
   appRepository: import.meta.env.VITE_CONSOLOSTRUCT_REPOSITORY || '',
   downloadUrl: import.meta.env.VITE_CONSOLOSTRUCT_DOWNLOAD_URL || '',
+  molaAppUrl: import.meta.env.VITE_MOLASTRUCT_URL || '',
+  molaAppRepository: import.meta.env.VITE_MOLASTRUCT_REPOSITORY || '',
+  molaDownloadUrl: import.meta.env.VITE_MOLASTRUCT_DOWNLOAD_URL || '',
 };
 
 export type AppEntry = {
@@ -17,6 +20,12 @@ export type AppEntry = {
   status: 'Em desenvolvimento' | 'Em planejamento';
   color: string;
   symbol: string;
+  number: string;
+  route?: string;
+  previewAnchor?: string;
+  image?: string;
+  imageAlt?: string;
+  externalUrl?: string;
 };
 
 export const apps: AppEntry[] = [
@@ -28,6 +37,29 @@ export const apps: AppEntry[] = [
     status: 'Em desenvolvimento',
     color: 'orange',
     symbol: 'corbel',
+    number: '01',
+    route: '/apps/consolostruct',
+    previewAnchor: '#demonstracao',
+    image: '/assets/consolostruct-atlas.webp',
+    imageAlt: 'Atlas em gravura sustentando uma peça de pedra, ilustração do ConsoloStruct',
+    externalUrl: site.appUrl,
+  },
+  {
+    id: 'molastruct',
+    name: 'MolaStruct',
+    category: 'Fundações',
+    description:
+      'Do solo ao modelo estrutural. Uma ferramenta para estimar a rigidez do conjunto fundação + solo.',
+    status: 'Em desenvolvimento',
+    color: 'cobalt',
+    symbol: 'footing',
+    number: '02',
+    route: '/apps/molastruct',
+    previewAnchor: '#visao-geral',
+    image: '/assets/molastruct-gaia.webp',
+    imageAlt:
+      'Figura da Terra em gravura sustentando uma mola e uma base de fundação sobre fundo cobalto',
+    externalUrl: site.molaAppUrl,
   },
   {
     id: 'vigasstruct',
@@ -37,6 +69,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'blue',
     symbol: 'beam',
+    number: '03',
   },
   {
     id: 'pilarstruct',
@@ -46,6 +79,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'steel',
     symbol: 'column',
+    number: '04',
   },
   {
     id: 'sapatastruct',
@@ -55,6 +89,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'amber',
     symbol: 'footing',
+    number: '05',
   },
   {
     id: '3dstruct',
@@ -64,5 +99,6 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'ink',
     symbol: 'frame',
+    number: '06',
   },
 ];
