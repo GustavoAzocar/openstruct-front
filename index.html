@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#F4F1E9" />
+    <meta
+      name="description"
+      content="Ferramentas abertas para engenharia estrutural. Conheça o OpenStruct e acompanhe o desenvolvimento do ConsoloStruct."
+    />
+    <meta property="og:title" content="OpenStruct — Engenharia aberta." />
+    <meta
+      property="og:description"
+      content="Um ecossistema de ferramentas abertas para calcular, compreender e detalhar estruturas."
+    />
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" href="/fonts/sora-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <title>OpenStruct — Engenharia aberta.</title>
+    <script>
+      try {
+        const saved = localStorage.getItem('openstruct-theme-v1');
+        document.documentElement.dataset.theme =
+          saved === 'dark' || saved === 'light' ? saved : 'light';
+      } catch {
+        document.documentElement.dataset.theme = 'light';
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
