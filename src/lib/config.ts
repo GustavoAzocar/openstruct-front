@@ -1,15 +1,20 @@
-/** Endereços futuros ficam aqui; deixe vazios para manter a experiência de prévia. */
+/** Endereços oficiais e integrações opcionais do ecossistema. */
 export const site = {
   name: 'OpenStruct',
   repository: 'https://github.com/ricardocorsini/openstruct-front',
   organization: 'https://github.com/ricardocorsini',
   discord: import.meta.env.VITE_DISCORD_URL || '',
   appUrl: import.meta.env.VITE_CONSOLOSTRUCT_URL || '',
-  appRepository: import.meta.env.VITE_CONSOLOSTRUCT_REPOSITORY || '',
+  appRepository:
+    import.meta.env.VITE_CONSOLOSTRUCT_REPOSITORY ||
+    'https://github.com/ricardocorsini/consolo-struct',
   downloadUrl: import.meta.env.VITE_CONSOLOSTRUCT_DOWNLOAD_URL || '',
   molaAppUrl: import.meta.env.VITE_MOLASTRUCT_URL || '',
-  molaAppRepository: import.meta.env.VITE_MOLASTRUCT_REPOSITORY || '',
-  molaDownloadUrl: import.meta.env.VITE_MOLASTRUCT_DOWNLOAD_URL || '',
+  molaAppRepository:
+    import.meta.env.VITE_MOLASTRUCT_REPOSITORY || 'https://github.com/ricardocorsini/mola-struct',
+  molaDownloadUrl:
+    import.meta.env.VITE_MOLASTRUCT_DOWNLOAD_URL ||
+    'https://github.com/ricardocorsini/mola-struct/releases/latest',
 };
 
 export type AppEntry = {
@@ -17,7 +22,7 @@ export type AppEntry = {
   name: string;
   category: string;
   description: string;
-  status: 'Em desenvolvimento' | 'Em planejamento';
+  status: 'Em desenvolvimento' | 'Em planejamento' | 'Disponível para desktop';
   color: string;
   symbol: string;
   number: string;
@@ -50,7 +55,7 @@ export const apps: AppEntry[] = [
     category: 'Fundações',
     description:
       'Do solo ao modelo estrutural. Uma ferramenta para estimar a rigidez do conjunto fundação + solo.',
-    status: 'Em desenvolvimento',
+    status: 'Disponível para desktop',
     color: 'cobalt',
     symbol: 'footing',
     number: '02',

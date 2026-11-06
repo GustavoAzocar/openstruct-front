@@ -390,7 +390,7 @@ body {
   padding: 10px 13px;
   font-size: 12px;
 }
-.mobile-launch,
+.main-nav > a.mobile-launch,
 .menu-toggle {
   display: none;
 }
@@ -2041,9 +2041,12 @@ body {
     font-size: 14px;
     justify-content: space-between;
   }
-  .mobile-launch {
+  .main-nav > a.mobile-launch {
     display: flex;
     margin-top: 12px;
+    color: #f4f1e9;
+    justify-content: center;
+    padding: 13px 19px;
   }
   .menu-toggle {
     display: grid;

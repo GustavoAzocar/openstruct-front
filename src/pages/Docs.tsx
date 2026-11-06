@@ -5,8 +5,16 @@ import { site } from '../lib/config';
 
 const articles = [
   {
-    id: 'primeiros-passos',
+    id: 'launcher',
     n: '01',
+    title: 'Struct Launcher: instalação e atualizações',
+    body: 'Baixe o launcher para Windows ou Linux x86_64. No Windows, execute o instalador; no Linux, permita a execução do AppImage e abra o arquivo. A biblioteca apresenta os aplicativos disponíveis para instalar e avisa sobre novas versões. Você escolhe quando atualizar.',
+    action: 'Baixar e conhecer o launcher',
+    to: '/launcher',
+  },
+  {
+    id: 'primeiros-passos',
+    n: '02',
     title: 'Primeiros passos',
     body: 'Comece pelo catálogo de aplicativos. ConsoloStruct e MolaStruct possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.',
     action: 'Explore os aplicativos',
@@ -14,7 +22,7 @@ const articles = [
   },
   {
     id: 'previa',
-    n: '02',
+    n: '03',
     title: 'Explore a prévia visual',
     body: 'Na demonstração do ConsoloStruct, alterne entre Modelo, Armaduras e Detalhe. Ajuste a projeção do consolo e separe as camadas para entender a organização da peça. Esta demonstração altera apenas o desenho: não realiza cálculo, dimensionamento ou verificação estrutural.',
     action: 'Abrir a demonstração',
@@ -22,7 +30,7 @@ const articles = [
   },
   {
     id: 'principios',
-    n: '03',
+    n: '04',
     title: 'Princípios do ecossistema',
     body: 'O OpenStruct propõe ferramentas transparentes, com métodos, hipóteses, unidades e limites de aplicação apresentados junto aos resultados. Documentação, exemplos de referência e revisão fazem parte do desenvolvimento, assim como a interface e o código.',
     action: 'Participe da construção',
@@ -30,7 +38,7 @@ const articles = [
   },
   {
     id: 'unidades',
-    n: '04',
+    n: '05',
     title: 'Unidades e representação',
     body: 'A prévia do ConsoloStruct apresenta dimensões em centímetros. O modelo é uma representação esquemática, sem escala de impressão. O aplicativo definitivo terá sua própria documentação técnica, com convenções, modelos de cálculo e exemplos de uso.',
     action: 'Explore a prévia',
@@ -38,7 +46,7 @@ const articles = [
   },
   {
     id: 'molastruct',
-    n: '05',
+    n: '06',
     title: 'MolaStruct: fundação + solo',
     body: 'O MolaStruct está sendo desenvolvido para auxiliar na estimativa da rigidez à translação e à rotação do conjunto fundação + solo. O escopo inicial reúne geometria da fundação, perfil de sondagem e características do solo, contemplando sapatas e blocos com 1, 2, 3 ou 4 estacas. A página apresenta os métodos previstos e um esquema conceitual que não executa cálculos.',
     action: 'Conheça o MolaStruct',
@@ -46,7 +54,7 @@ const articles = [
   },
   {
     id: 'contribuir',
-    n: '06',
+    n: '07',
     title: 'Como contribuir',
     body: 'Descreva o contexto da sua ideia ou problema, o comportamento esperado e, quando possível, um exemplo que ajude a reproduzir a situação. Sugestões sobre clareza, documentação, acessibilidade e fluxo de trabalho também são contribuições importantes.',
     action: 'Veja as formas de participar',

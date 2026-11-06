@@ -51,7 +51,7 @@ const features = [
 ];
 
 export function Consolo() {
-  const { community, launch } = useExperience();
+  const { launch } = useExperience();
   return (
     <>
       <section className="product-hero container">
@@ -205,19 +205,20 @@ export function Consolo() {
           </article>
           <article className="access-secondary">
             <Download size={27} strokeWidth={1.5} />
-            <h3>Novas formas de usar.</h3>
+            <h3>Um lugar para seus aplicativos.</h3>
             <p>
-              As opções de instalação e distribuição serão apresentadas conforme o aplicativo
-              evoluir.
+              O Struct Launcher reúne os aplicativos OpenStruct para Windows e Linux. O
+              ConsoloStruct aparecerá na biblioteca para instalar quando sua primeira versão for
+              publicada.
             </p>
             {site.downloadUrl ? (
               <a href={site.downloadUrl} className="text-link" target="_blank" rel="noreferrer">
                 Baixar aplicativo <ArrowUpRight size={16} />
               </a>
             ) : (
-              <button className="text-link" onClick={community}>
-                Acompanhe as novidades <ArrowRight size={16} />
-              </button>
+              <Link className="text-link" to="/launcher">
+                Conhecer o Struct Launcher <ArrowRight size={16} />
+              </Link>
             )}
             <div className="source-note">
               <GitFork size={18} />

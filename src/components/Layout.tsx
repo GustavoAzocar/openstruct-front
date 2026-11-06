@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { ArrowUpRight, GitFork, Menu, Moon, Sun, X, ArrowRight } from 'lucide-react';
+import { ArrowUpRight, GitFork, Menu, Moon, Sun, X, ArrowRight, Download } from 'lucide-react';
 import { Brand, Mark } from './Brand';
 import { useExperience } from './Experience';
 import { site } from '../lib/config';
@@ -26,11 +26,13 @@ export function Layout() {
             ? 'MolaStruct'
             : location.pathname === '/apps'
               ? 'Aplicativos'
-              : location.pathname === '/docs'
-                ? 'Documentação'
-                : location.pathname === '/community'
-                  ? 'Comunidade'
-                  : 'Página não encontrada';
+              : location.pathname === '/launcher'
+                ? 'Struct Launcher'
+                : location.pathname === '/docs'
+                  ? 'Documentação'
+                  : location.pathname === '/community'
+                    ? 'Comunidade'
+                    : 'Página não encontrada';
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -76,15 +78,9 @@ export function Layout() {
             <a href={site.repository} target="_blank" rel="noreferrer" onClick={close}>
               GitHub <ArrowUpRight size={13} />
             </a>
-            <button
-              className="button button-primary mobile-launch"
-              onClick={() => {
-                close();
-                launch();
-              }}
-            >
-              Abrir aplicativos <ArrowUpRight size={15} />
-            </button>
+            <Link to="/launcher" className="button button-primary mobile-launch" onClick={close}>
+              Baixar Launcher <Download size={15} />
+            </Link>
           </nav>
           <div className="header-actions">
             <button
@@ -94,9 +90,9 @@ export function Layout() {
             >
               {dark ? <Sun size={19} /> : <Moon size={19} />}
             </button>
-            <button className="button button-primary desktop-launch" onClick={launch}>
-              Abrir aplicativos <ArrowUpRight size={16} />
-            </button>
+            <Link to="/launcher" className="button button-primary desktop-launch">
+              Baixar Launcher <Download size={16} />
+            </Link>
             <button
               className="icon-button menu-toggle"
               aria-controls="main-navigation"
@@ -133,6 +129,7 @@ export function Layout() {
               <Link to="/apps">Todos os aplicativos</Link>
               <Link to="/apps/consolostruct">ConsoloStruct</Link>
               <Link to="/apps/molastruct">MolaStruct</Link>
+              <Link to="/launcher">Baixar o Struct Launcher</Link>
               <button onClick={launch}>
                 Abrir aplicativos <ArrowUpRight size={13} />
               </button>

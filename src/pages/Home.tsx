@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
@@ -8,6 +7,7 @@ import {
   GitFork,
   MoveUpRight,
   Sparkles,
+  Download,
 } from 'lucide-react';
 import { Mark } from '../components/Brand';
 import { AppCard } from '../components/AppCard';
@@ -38,12 +38,12 @@ export function Home() {
             compreender e detalhar estruturas.
           </p>
           <div className="hero-actions">
-            <Link className="button button-primary" to="/apps">
-              Explore os aplicativos <ArrowUpRight size={18} />
+            <Link className="button button-primary" to="/launcher">
+              Baixar o launcher <Download size={18} />
             </Link>
-            <a className="button button-plain" href="#principios">
-              Conheça a ideia <ArrowDown size={16} />
-            </a>
+            <Link className="button button-plain" to="/apps">
+              Explore os aplicativos <ArrowUpRight size={16} />
+            </Link>
           </div>
           <div className="hero-meta">
             <span>
@@ -169,6 +169,20 @@ export function Home() {
           Conheça o MolaStruct <ArrowUpRight size={17} />
         </Link>
       </section>
+      <section className="container home-launcher" aria-labelledby="home-launcher-title">
+        <Mark />
+        <div>
+          <span className="eyebrow">STRUCT LAUNCHER / WINDOWS + LINUX</span>
+          <h2 id="home-launcher-title">Seu ecossistema, no seu computador.</h2>
+          <p>
+            Instale os aplicativos disponíveis, organize sua biblioteca e acompanhe as novas versões
+            em um só lugar.
+          </p>
+        </div>
+        <Link className="button button-primary" to="/launcher">
+          Conheça e baixe <Download size={17} />
+        </Link>
+      </section>
       <section className="section container principles-section" id="principios">
         <div className="section-kicker">
           <span>03 / O QUE NOS MOVE</span>
@@ -279,8 +293,9 @@ export function Home() {
               Preciso instalar alguma coisa?<span>+</span>
             </summary>
             <p>
-              Para explorar este site e a prévia interativa, basta o navegador. As formas de
-              distribuição do aplicativo serão informadas quando estiverem disponíveis.
+              Para explorar o site e as prévias, basta o navegador. Para instalar os aplicativos no
+              computador, conheça o <Link to="/launcher">Struct Launcher para Windows e Linux</Link>
+              .
             </p>
           </details>
           <details>

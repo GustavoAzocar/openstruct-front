@@ -69,7 +69,7 @@ export function Mola() {
             <h1>MolaStruct</h1>
           </div>
           <span className="status status-active">
-            <i /> Em desenvolvimento
+            <i /> Disponível para desktop
           </span>
         </div>
         <div className="product-intro">
@@ -273,25 +273,30 @@ export function Mola() {
               para novas possibilidades.
             </h2>
             <p>
-              A página apresenta a proposta inicial. Acompanhe a evolução e compartilhe quais
-              informações fariam diferença no seu fluxo de projeto.
+              O MolaStruct já tem sua primeira versão desktop publicada. Use o Struct Launcher para
+              instalar o aplicativo e acompanhar as próximas versões.
             </p>
-            <a
-              className="button button-primary"
-              href={site.molaAppUrl || site.molaAppRepository || site.repository}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {site.molaAppUrl ? 'Abrir MolaStruct' : 'Acompanhar o desenvolvimento'}{' '}
-              <ArrowUpRight size={17} />
-            </a>
+            {site.molaAppUrl ? (
+              <a
+                className="button button-primary"
+                href={site.molaAppUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Abrir MolaStruct <ArrowUpRight size={17} />
+              </a>
+            ) : (
+              <Link className="button button-primary" to="/launcher">
+                Instalar pelo launcher <Download size={17} />
+              </Link>
+            )}
           </article>
           <article className="access-secondary">
             <Download size={27} strokeWidth={1.5} />
-            <h3>Os próximos passos.</h3>
+            <h3>Também disponível diretamente.</h3>
             <p>
-              Exemplos de aplicação, documentação técnica e opções de distribuição serão
-              acrescentados conforme o sistema evoluir.
+              Prefere instalar somente o MolaStruct? Os instaladores de cada versão e a documentação
+              estão disponíveis no repositório do aplicativo.
             </p>
             {site.molaDownloadUrl ? (
               <a className="text-link" href={site.molaDownloadUrl} target="_blank" rel="noreferrer">

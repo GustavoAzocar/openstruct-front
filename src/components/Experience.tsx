@@ -1,7 +1,7 @@
 import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink } from 'lucide-react';
+import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink, Download } from 'lucide-react';
 import { apps, site } from '../lib/config';
 
 type ExperienceState = { launch: () => void; community: () => void };
@@ -61,6 +61,16 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
               ponto de partida.
             </h2>
             <p>Escolha uma ferramenta e explore o que estamos construindo.</p>
+            <div className="launcher-dialog-promo">
+              <Download size={21} />
+              <div>
+                <strong>Struct Launcher</strong>
+                <p>Instale os aplicativos no Windows e Linux.</p>
+              </div>
+              <Link className="text-link" to="/launcher" onClick={close}>
+                Conheça e baixe <ArrowRight size={15} />
+              </Link>
+            </div>
             <div className="launch-app-list">
               {apps
                 .filter((app) => app.route)
@@ -97,9 +107,7 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
                   </div>
                 ))}
             </div>
-            <small>
-              Conheça as propostas e as prévias visuais. Os aplicativos estão em desenvolvimento.
-            </small>
+            <small>A disponibilidade de cada aplicativo acompanha suas versões publicadas.</small>
           </>
         ) : (
           <>

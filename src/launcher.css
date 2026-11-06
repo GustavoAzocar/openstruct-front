@@ -1,0 +1,531 @@
+.launcher-hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 64px;
+  padding-block: 90px 96px;
+}
+.launcher-product-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: Sora, sans-serif;
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.04em;
+  margin-bottom: 30px;
+}
+.launcher-product-name .brand-mark {
+  width: 32px;
+  height: 32px;
+  color: var(--accent);
+}
+.launcher-hero h1 {
+  font-size: clamp(3rem, 5.8vw, 5.3rem);
+  letter-spacing: -0.065em;
+  line-height: 1.07;
+}
+.launcher-hero-copy > p {
+  max-width: 490px;
+  font-size: 17px;
+  color: var(--muted);
+  margin-block: 25px 29px;
+}
+.launcher-hero .button-row {
+  align-items: center;
+  gap: 24px;
+}
+.launcher-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 22px;
+  margin-top: 24px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.launcher-hero-meta span::before {
+  content: '+';
+  color: var(--accent);
+  margin-right: 7px;
+}
+.launcher-library-preview {
+  position: relative;
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 18px 60px #18212f0a;
+  transform: rotate(-1.3deg);
+}
+.launcher-preview-bar {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 19px 22px;
+  border-bottom: 1px solid var(--line);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.03em;
+}
+.launcher-preview-bar > span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.launcher-preview-bar .brand-mark {
+  width: 20px;
+  height: 20px;
+  color: var(--accent);
+}
+.launcher-preview-bar > span:last-child {
+  color: var(--muted);
+  font-size: 8px;
+}
+.launcher-preview-body {
+  position: relative;
+  z-index: 1;
+  padding: 34px 27px 0;
+}
+.launcher-preview-body .eyebrow {
+  font-size: 8px;
+  margin-bottom: 15px;
+}
+.launcher-preview-body h2 {
+  font-size: clamp(1.6rem, 2.7vw, 2.3rem);
+  letter-spacing: -0.055em;
+}
+.launcher-preview-apps {
+  display: grid;
+  gap: 10px;
+  margin-top: 29px;
+}
+.launcher-preview-app {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 15px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.launcher-preview-app img {
+  width: 54px;
+  height: 54px;
+  border-radius: 12px;
+}
+.launcher-preview-app > div {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 120px;
+}
+.launcher-preview-app strong {
+  font-family: Sora, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.035em;
+}
+.launcher-preview-app div span {
+  font-size: 10px;
+  color: var(--muted);
+}
+.launcher-preview-status {
+  font-size: 8px;
+  color: var(--muted);
+  background: var(--surface);
+  padding: 5px 7px;
+  border-radius: 4px;
+}
+.launcher-preview-bottom {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding-block: 22px;
+  color: var(--muted);
+  font-size: 9px;
+}
+.launcher-preview-bottom > svg:last-child {
+  margin-left: auto;
+}
+.launcher-preview-accent {
+  position: absolute;
+  width: 280px;
+  height: 280px;
+  top: 5px;
+  right: -50px;
+  color: var(--accent);
+  opacity: 0.035;
+  transform: rotate(20deg);
+}
+.launcher-preview-accent .brand-mark {
+  width: 100%;
+  height: 100%;
+}
+.launcher-feature-strip {
+  border-block: 1px solid var(--line);
+  background: var(--surface);
+}
+.launcher-feature-strip .container {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+  padding-block: 24px;
+}
+.launcher-feature-strip span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.launcher-feature-strip svg {
+  color: var(--accent);
+}
+.launcher-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+.launcher-steps article {
+  border-top: 1px solid var(--line);
+  padding-top: 25px;
+}
+.launcher-steps article > span {
+  font:
+    12px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+}
+.launcher-steps h3 {
+  margin-top: 28px;
+  font-size: 20px;
+}
+.launcher-steps p {
+  font-size: 14px;
+  color: var(--muted);
+  max-width: 340px;
+}
+.launcher-download-section {
+  background: var(--surface-2);
+  border-block: 1px solid var(--line);
+  padding-block: 76px;
+}
+.launcher-downloads {
+  scroll-margin-top: 110px;
+}
+.launcher-download-heading {
+  text-align: center;
+}
+.launcher-download-heading .eyebrow {
+  color: var(--muted);
+}
+.launcher-download-heading h2 {
+  font-size: clamp(2rem, 4vw, 3.1rem);
+}
+.launcher-download-heading p {
+  color: var(--muted);
+  font-size: 14px;
+}
+.launcher-release-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 44px;
+  font-size: 12px;
+  text-align: center;
+  color: var(--muted);
+  margin: 20px auto;
+  max-width: 640px;
+}
+.release-dot {
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+.launcher-system-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 760px;
+  margin-inline: auto;
+}
+.launcher-system {
+  padding: 30px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.launcher-system.is-recommended {
+  border-color: var(--accent);
+}
+.launcher-system-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  height: 32px;
+  margin-bottom: 26px;
+}
+.launcher-system-top > span {
+  color: var(--accent);
+  font:
+    9px 'IBM Plex Mono',
+    monospace;
+}
+.launcher-system h3 {
+  font-size: 24px;
+}
+.launcher-system p {
+  color: var(--muted);
+  font-size: 12px;
+  margin-block: 9px 24px;
+}
+.launcher-system .button {
+  width: 100%;
+}
+.launcher-system .button:disabled {
+  color: var(--muted);
+  opacity: 0.75;
+  border-color: var(--line);
+  background: var(--paper);
+}
+.launcher-download-links {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 30px;
+  margin-top: 28px;
+}
+.launcher-download-links .text-link {
+  font-size: 12px;
+}
+.launcher-download-note {
+  display: block;
+  text-align: center;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 25px;
+}
+.launcher-install {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 90px;
+}
+.launcher-install > div > p {
+  max-width: 430px;
+  color: var(--muted);
+  font-size: 14px;
+  margin-block: 25px;
+}
+.launcher-install-guides {
+  display: grid;
+  gap: 25px;
+}
+.launcher-install-guides article {
+  border: 1px solid var(--line);
+  padding: 27px;
+  border-radius: 6px;
+}
+.launcher-install-guides .eyebrow {
+  margin-bottom: 14px;
+  font-size: 10px;
+}
+.launcher-install-guides h3 {
+  font-size: 19px;
+}
+.launcher-install-guides p {
+  color: var(--muted);
+  font-size: 13px;
+  margin-bottom: 0;
+}
+.launcher-faq {
+  padding-top: 0;
+}
+.launcher-dialog-promo {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 19px;
+  margin: 25px 0;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface-2);
+}
+.launcher-dialog-promo > svg {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+.launcher-dialog-promo > div {
+  flex: 1;
+}
+.launcher-dialog-promo strong {
+  display: block;
+  font-size: 15px;
+}
+.launcher-dialog-promo p {
+  font-size: 12px;
+  margin: 3px 0 0;
+}
+.launcher-dialog-promo .text-link {
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.home-launcher {
+  margin-block: 80px;
+  padding: 46px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 30px;
+  background: var(--surface);
+}
+.home-launcher > .brand-mark {
+  width: 74px;
+  height: 74px;
+  color: var(--accent);
+}
+.home-launcher > div {
+  flex: 1;
+  min-width: 220px;
+}
+.home-launcher .eyebrow {
+  margin-bottom: 10px;
+  font-size: 10px;
+}
+.home-launcher h2 {
+  font-size: clamp(1.7rem, 3vw, 2.4rem);
+}
+.home-launcher p {
+  color: var(--muted);
+  font-size: 13px;
+  max-width: 590px;
+  margin-bottom: 0;
+}
+@media (max-width: 1100px) {
+  .launcher-hero {
+    gap: 34px;
+  }
+  .launcher-preview-bar > span:last-child {
+    display: none;
+  }
+  .launcher-preview-app {
+    gap: 9px;
+    padding: 12px;
+  }
+  .launcher-install {
+    gap: 44px;
+  }
+}
+@media (max-width: 800px) {
+  .launcher-hero {
+    grid-template-columns: 1fr;
+    padding-block: 52px 64px;
+    gap: 50px;
+  }
+  .launcher-hero h1 {
+    font-size: clamp(3rem, 9vw, 4.8rem);
+  }
+  .launcher-library-preview {
+    width: min(560px, 100%);
+    margin-inline: auto;
+  }
+  .launcher-preview-bar > span:last-child {
+    display: initial;
+  }
+  .launcher-feature-strip .container {
+    gap: 16px 26px;
+  }
+  .launcher-steps {
+    gap: 22px;
+  }
+  .launcher-steps h3 {
+    font-size: 18px;
+  }
+  .launcher-install {
+    grid-template-columns: 1fr;
+    gap: 35px;
+  }
+  .launcher-download-section {
+    padding-block: 55px;
+  }
+  .home-launcher {
+    margin-block: 50px;
+    padding: 28px;
+    gap: 22px;
+  }
+}
+@media (max-width: 560px) {
+  .launcher-hero-copy > p {
+    font-size: 15px;
+  }
+  .launcher-hero .button-row {
+    gap: 20px;
+  }
+  .launcher-hero-meta {
+    font-size: 10px;
+  }
+  .launcher-preview-body {
+    padding-inline: 18px;
+  }
+  .launcher-preview-bar {
+    padding-inline: 18px;
+  }
+  .launcher-preview-bar > span:last-child {
+    display: none;
+  }
+  .launcher-preview-app img {
+    width: 44px;
+    height: 44px;
+  }
+  .launcher-preview-app strong {
+    font-size: 13px;
+  }
+  .launcher-preview-status {
+    margin-left: 53px;
+  }
+  .launcher-steps,
+  .launcher-system-grid {
+    grid-template-columns: 1fr;
+  }
+  .launcher-steps {
+    gap: 30px;
+  }
+  .launcher-steps h3 {
+    margin-top: 16px;
+  }
+  .launcher-system {
+    padding: 25px;
+  }
+  .launcher-install-guides article {
+    padding: 22px;
+  }
+  .launcher-dialog-promo {
+    flex-wrap: wrap;
+    padding: 16px;
+  }
+  .launcher-dialog-promo .text-link {
+    margin-left: 37px;
+  }
+  .home-launcher > .brand-mark {
+    width: 50px;
+    height: 50px;
+  }
+  .home-launcher > div {
+    min-width: 0;
+    flex-basis: calc(100% - 75px);
+  }
+  .home-launcher > .button {
+    width: 100%;
+  }
+}

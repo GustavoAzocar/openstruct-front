@@ -26,13 +26,51 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento |
 | `/apps/consolostruct` | Página do aplicativo, prévia interativa, recursos em desenvolvimento e acesso     |
 | `/apps/molastruct`    | Página do MolaStruct, esquema de fundações, escopo inicial e métodos previstos    |
+| `/launcher`           | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação     |
 | `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação             |
 | `/community`          | Formas de contribuir e acompanhar o projeto                                       |
 | Outros endereços      | Página 404 com navegação de retorno                                               |
 
 ConsoloStruct e MolaStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
 
-## Links e integrações futuras
+## Struct Launcher e downloads
+
+A página `/launcher` consulta o feed público de atualização do próprio launcher:
+
+```text
+https://raw.githubusercontent.com/ricardocorsini/openstruct-catalog/main/launcher/latest.json
+```
+
+Quando o fluxo de publicação e a sincronização do hub terminam, a página oferece os dois
+instaladores reais da versão estável: Windows x86_64 (.exe/NSIS) e Linux x86_64 (AppImage).
+Os links não ficam fixos na versão 0.2.0. Uma nova versão do feed atualiza a página na próxima
+consulta, sem outro deploy do site. O botão de verificação permite consultar novamente.
+
+Antes da primeira publicação, o feed responde 404 e a página informa que os instaladores
+estão em preparação. Falhas de rede ou metadados inválidos mostram um estado de erro com
+opção de repetir e link para os lançamentos. Nenhum botão inicia um download inexistente.
+
+O leitor aceita somente URLs HTTPS com os nomes canônicos, produto, repositório, versão e
+formatos esperados. Exige os dois pacotes e a presença das assinaturas no feed. A validação
+criptográfica dos instaladores e atualizações é feita pelo launcher; o site não apresenta a
+validação de formato do feed como uma verificação criptográfica.
+
+Os downloads não exigem login GitHub. A sugestão de sistema é apenas visual: os dois formatos
+ficam visíveis, inclusive no celular. macOS/ARM não são anunciados como alvos nativos.
+
+O MolaStruct já tem release desktop; o ConsoloStruct aguarda sua primeira publicação.
+Os endereços e o leitor estão em `src/lib/launcher.ts`. Execute `npm test` para verificar
+seleção de arquivos, publicações incompletas, origens inválidas e estados de rede.
+
+A conferência visual incluiu navegação pela home e central de aplicativos, nova consulta ao
+feed, temas claro/escuro e layout com largura de 454 px sem rolagem horizontal. O feed real
+ainda não foi publicado: a primeira tentativa de release parou na ausência de
+`OPENSTRUCT_DISTRIBUTION_TOKEN` no repositório privado do launcher. Depois de cadastrar
+esse Secret, reexecute os jobs que falharam em Publish release; não mova a tag `v0.2.0`.
+
+![Página do Struct Launcher](docs/launcher-page.png)
+
+## Links e integrações opcionais
 
 Copie `.env.example` para `.env.local` e preencha os endereços que estiverem disponíveis:
 
@@ -46,7 +84,11 @@ VITE_MOLASTRUCT_DOWNLOAD_URL=https://seu-download-molastruct.example
 VITE_DISCORD_URL=https://discord.gg/seu-convite
 ```
 
-Os valores são incorporados durante o build. Sem esses endereços, o botão “Abrir aplicativos” abre uma central com acesso às páginas e às prévias dos dois aplicativos. O Discord exibe um aviso de preparação e oferece o GitHub como alternativa. Nenhum convite ou endereço de aplicativo é inventado.
+Os valores são incorporados durante o build. O botão “Baixar Launcher” abre a página de
+downloads; a central “Abrir aplicativos” continua disponível no rodapé com acesso às páginas
+e prévias. Os repositórios de ConsoloStruct e MolaStruct e os lançamentos do MolaStruct já têm
+endereços oficiais por padrão. O Discord exibe um aviso de preparação e oferece o GitHub como
+alternativa enquanto o convite não for configurado.
 
 Os outros links e os dados do catálogo ficam em `src/lib/config.ts`.
 
