@@ -63,10 +63,10 @@ Os endereços e o leitor estão em `src/lib/launcher.ts`. Execute `npm test` par
 seleção de arquivos, publicações incompletas, origens inválidas e estados de rede.
 
 A conferência visual incluiu navegação pela home e central de aplicativos, nova consulta ao
-feed, temas claro/escuro e layout com largura de 454 px sem rolagem horizontal. O feed real
-ainda não foi publicado: a primeira tentativa de release parou na ausência de
-`OPENSTRUCT_DISTRIBUTION_TOKEN` no repositório privado do launcher. Depois de cadastrar
-esse Secret, reexecute os jobs que falharam em Publish release; não mova a tag `v0.2.0`.
+feed, temas claro/escuro e layout com largura de 454 px sem rolagem horizontal. O feed oficial
+já oferece a primeira versão pública do launcher, 0.2.1, com pacotes assinados no hub. O leitor
+real retornou `ready` e a página pública exibiu os dois downloads com as URLs corretas. Novas
+releases estáveis entram pelo mesmo feed, sem editar os links do frontend.
 
 ![Página do Struct Launcher](docs/launcher-page.png)
 
