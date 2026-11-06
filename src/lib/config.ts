@@ -9,6 +9,11 @@ export const site = {
     import.meta.env.VITE_CONSOLOSTRUCT_REPOSITORY ||
     'https://github.com/ricardocorsini/consolo-struct',
   downloadUrl: import.meta.env.VITE_CONSOLOSTRUCT_DOWNLOAD_URL || '',
+  armRepository: 'https://github.com/ricardocorsini/armadura-struct',
+  armReleaseUrl:
+    'https://github.com/ricardocorsini/openstruct-catalog/releases/tag/armadurastruct-v0.1.1',
+  armReleaseAssets:
+    'https://github.com/ricardocorsini/openstruct-catalog/releases/download/armadurastruct-v0.1.1',
   molaAppUrl: import.meta.env.VITE_MOLASTRUCT_URL || '',
   molaAppRepository:
     import.meta.env.VITE_MOLASTRUCT_REPOSITORY || 'https://github.com/ricardocorsini/mola-struct',
@@ -67,6 +72,21 @@ export const apps: AppEntry[] = [
     externalUrl: site.molaAppUrl,
   },
   {
+    id: 'armadurastruct',
+    name: 'ArmaduraStruct',
+    category: 'Detalhamento',
+    description:
+      'Da fôrma ao aço. Um ambiente CAD para desenhar armaduras e gerar o quadro de aço.',
+    status: 'Disponível para desktop',
+    color: 'amber',
+    symbol: 'frame',
+    number: '03',
+    route: '/apps/armadurastruct',
+    previewAnchor: '#editor',
+    image: '/assets/armadurastruct-hephaestus.webp',
+    imageAlt: 'Hefesto em gravura trabalhando uma armadura de aço sobre fundo âmbar',
+  },
+  {
     id: 'vigasstruct',
     name: 'VigasStruct',
     category: 'Concreto armado',
@@ -74,7 +94,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'blue',
     symbol: 'beam',
-    number: '03',
+    number: '04',
   },
   {
     id: 'pilarstruct',
@@ -84,7 +104,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'steel',
     symbol: 'column',
-    number: '04',
+    number: '05',
   },
   {
     id: 'sapatastruct',
@@ -94,7 +114,7 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'amber',
     symbol: 'footing',
-    number: '05',
+    number: '06',
   },
   {
     id: '3dstruct',
@@ -104,6 +124,6 @@ export const apps: AppEntry[] = [
     status: 'Em planejamento',
     color: 'ink',
     symbol: 'frame',
-    number: '06',
+    number: '07',
   },
 ];

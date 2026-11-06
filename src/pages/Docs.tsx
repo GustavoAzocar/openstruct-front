@@ -16,7 +16,7 @@ const articles = [
     id: 'primeiros-passos',
     n: '02',
     title: 'Primeiros passos',
-    body: 'Comece pelo catálogo de aplicativos. ConsoloStruct e MolaStruct possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.',
+    body: 'Comece pelo catálogo de aplicativos. ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.',
     action: 'Explore os aplicativos',
     to: '/apps',
   },
@@ -53,8 +53,16 @@ const articles = [
     to: '/apps/molastruct',
   },
   {
-    id: 'contribuir',
+    id: 'armadurastruct',
     n: '07',
+    title: 'ArmaduraStruct: desenho e quadro de aço',
+    body: 'Importe DXF ou DWG como máscara, confira as unidades e desenhe barras e estribos com as ferramentas CAD. Vistas rebatidas e quantitativos permanecem vinculados às posições. Salve o projeto editável e exporte DXF, PDF ou CSV. A primeira versão trabalha com comprimentos geométricos, sem dimensionamento ou verificações normativas.',
+    action: 'Conheça o ArmaduraStruct e seu guia',
+    to: '/apps/armadurastruct',
+  },
+  {
+    id: 'contribuir',
+    n: '08',
     title: 'Como contribuir',
     body: 'Descreva o contexto da sua ideia ou problema, o comportamento esperado e, quando possível, um exemplo que ajude a reproduzir a situação. Sugestões sobre clareza, documentação, acessibilidade e fluxo de trabalho também são contribuições importantes.',
     action: 'Veja as formas de participar',
@@ -85,8 +93,8 @@ export function Docs() {
           começar.
         </h1>
         <p>
-          Uma introdução ao ecossistema, ao ConsoloStruct, ao MolaStruct e aos princípios que
-          orientam o projeto.
+          Uma introdução ao ecossistema, ao ConsoloStruct, ao MolaStruct, ao ArmaduraStruct e aos
+          princípios que orientam o projeto.
         </p>
         <label className="search-box">
           <Search size={18} />

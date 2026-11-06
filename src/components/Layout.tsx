@@ -24,15 +24,17 @@ export function Layout() {
           ? 'ConsoloStruct'
           : location.pathname.startsWith('/apps/molastruct')
             ? 'MolaStruct'
-            : location.pathname === '/apps'
-              ? 'Aplicativos'
-              : location.pathname === '/launcher'
-                ? 'Struct Launcher'
-                : location.pathname === '/docs'
-                  ? 'Documentação'
-                  : location.pathname === '/community'
-                    ? 'Comunidade'
-                    : 'Página não encontrada';
+            : location.pathname.startsWith('/apps/armadurastruct')
+              ? 'ArmaduraStruct'
+              : location.pathname === '/apps'
+                ? 'Aplicativos'
+                : location.pathname === '/launcher'
+                  ? 'Struct Launcher'
+                  : location.pathname === '/docs'
+                    ? 'Documentação'
+                    : location.pathname === '/community'
+                      ? 'Comunidade'
+                      : 'Página não encontrada';
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -129,6 +131,7 @@ export function Layout() {
               <Link to="/apps">Todos os aplicativos</Link>
               <Link to="/apps/consolostruct">ConsoloStruct</Link>
               <Link to="/apps/molastruct">MolaStruct</Link>
+              <Link to="/apps/armadurastruct">ArmaduraStruct</Link>
               <Link to="/launcher">Baixar o Struct Launcher</Link>
               <button onClick={launch}>
                 Abrir aplicativos <ArrowUpRight size={13} />

@@ -116,8 +116,8 @@ export function Home() {
           ))}
         </div>
         <p className="catalog-note">
-          <Sparkles size={15} /> Um ecossistema em construção. Conheça o ConsoloStruct e o
-          MolaStruct.
+          <Sparkles size={15} /> Um ecossistema em construção. Conheça o ConsoloStruct, o MolaStruct
+          e o ArmaduraStruct.
         </p>
       </section>
       <section className="consolo-spotlight">
@@ -282,10 +282,11 @@ export function Home() {
               Por qual aplicativo posso começar?<span>+</span>
             </summary>
             <p>
-              Comece pelas páginas do ConsoloStruct e do MolaStruct. Conheça as propostas, explore
-              as representações visuais e acompanhe o desenvolvimento.{' '}
+              Comece pelas páginas do ConsoloStruct, do MolaStruct e do ArmaduraStruct. Conheça as
+              propostas, explore as representações visuais e acompanhe o desenvolvimento.{' '}
               <Link to="/apps/consolostruct">Conhecer o ConsoloStruct.</Link>{' '}
-              <Link to="/apps/molastruct">Conhecer o MolaStruct.</Link>
+              <Link to="/apps/molastruct">Conhecer o MolaStruct.</Link>{' '}
+              <Link to="/apps/armadurastruct">Conhecer o ArmaduraStruct.</Link>
             </p>
           </details>
           <details>

@@ -3,7 +3,7 @@ import { Search, ArrowUpRight } from 'lucide-react';
 import { AppCard } from '../components/AppCard';
 import { apps, site } from '../lib/config';
 
-const categories = ['Todos', 'Concreto armado', 'Fundações', 'Visualização'];
+const categories = ['Todos', 'Concreto armado', 'Fundações', 'Visualização', 'Detalhamento'];
 export function Catalog() {
   const [category, setCategory] = useState('Todos');
   const [query, setQuery] = useState('');

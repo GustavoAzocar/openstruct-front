@@ -72,7 +72,9 @@ export function Launcher() {
                       <span>{app.category}</span>
                     </div>
                     <span className="launcher-preview-status">
-                      {app.id === 'molastruct' ? 'Disponível' : 'Em desenvolvimento'}
+                      {app.status === 'Disponível para desktop'
+                        ? 'Disponível'
+                        : 'Em desenvolvimento'}
                     </span>
                   </div>
                 ))}
@@ -156,8 +158,9 @@ export function Launcher() {
             ponto de partida.
           </h2>
           <p>
-            Depois de abrir o launcher, use a biblioteca para instalar os aplicativos. O MolaStruct
-            já tem sua primeira versão publicada; o ConsoloStruct está em preparação.
+            Depois de abrir o launcher, use a biblioteca para instalar os aplicativos. MolaStruct e
+            ArmaduraStruct estão disponíveis para Windows e Linux; o ConsoloStruct está em
+            preparação.
           </p>
           <Link className="text-link" to="/apps">
             Conheça os aplicativos <ArrowRight size={16} />

@@ -1,0 +1,282 @@
+.arm-hero {
+  display: grid;
+  grid-template-columns: 1.06fr 1fr;
+  gap: 72px;
+  align-items: center;
+  padding-top: 60px;
+  padding-bottom: 72px;
+}
+.arm-product-name {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-top: 40px;
+  font-family: 'Sora', sans-serif;
+}
+.arm-product-name img {
+  border-radius: 13px;
+}
+.arm-product-name strong {
+  font-size: 20px;
+  letter-spacing: -0.6px;
+}
+.arm-product-name > span {
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  background: #f4c95d40;
+  border: 1px solid #d1af61;
+  border-radius: 20px;
+  padding: 5px 9px;
+}
+.arm-hero h1 {
+  font-size: clamp(64px, 6vw, 94px);
+  line-height: 1.04;
+  letter-spacing: -5px;
+  margin: 28px 0;
+}
+.arm-hero p {
+  max-width: 490px;
+  font-size: 18px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 0 0 30px;
+}
+.arm-hero-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 25px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.arm-identity-art {
+  margin: 0;
+  border-radius: 26px;
+  overflow: hidden;
+  background: #f4c95d;
+  transform: rotate(2deg);
+  box-shadow: 0 25px 60px #18212f12;
+}
+.arm-identity-art > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}
+.arm-identity-art figcaption {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  color: #18212f;
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  letter-spacing: 1px;
+}
+.arm-feature-strip {
+  background: #18212f;
+  color: #f4f1e9;
+}
+.arm-feature-strip > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 22px;
+  padding-top: 23px;
+  padding-bottom: 23px;
+}
+.arm-feature-strip span {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.arm-feature-strip svg {
+  color: #f4c95d;
+}
+.arm-editor-preview {
+  margin: 42px 0 0;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #18212f25;
+  box-shadow: 0 20px 60px #18212f15;
+  background: #111a2b;
+}
+.arm-editor-preview > img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.arm-editor-preview figcaption {
+  display: flex;
+  justify-content: space-between;
+  padding: 17px 23px;
+  color: #c5cee2;
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  letter-spacing: 0.6px;
+}
+.arm-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  margin-top: 62px;
+}
+.arm-feature-grid svg {
+  color: var(--accent);
+}
+.arm-feature-grid h3 {
+  font-size: 21px;
+  margin: 20px 0 12px;
+}
+.arm-feature-grid p,
+.arm-workflow p,
+.arm-downloads p {
+  color: var(--muted);
+  line-height: 1.8;
+}
+.arm-workflow {
+  background: var(--surface-2);
+  border-block: 1px solid var(--line);
+}
+.arm-workflow-inner {
+  display: grid;
+  grid-template-columns: 0.8fr 1fr;
+  gap: 100px;
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+.arm-workflow h2,
+.arm-downloads h2 {
+  font-size: clamp(34px, 4vw, 51px);
+  line-height: 1.15;
+  letter-spacing: -2px;
+  margin: 20px 0;
+}
+.arm-workflow ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.arm-workflow li {
+  display: flex;
+  gap: 25px;
+  padding: 23px 0;
+  border-bottom: 1px solid var(--line);
+}
+.arm-workflow li:first-child {
+  padding-top: 0;
+}
+.arm-workflow li > span {
+  font:
+    12px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+  padding-top: 5px;
+}
+.arm-workflow h3 {
+  font-size: 19px;
+  margin: 0 0 10px;
+}
+.arm-workflow li p {
+  margin: 0;
+  font-size: 14px;
+}
+.arm-downloads {
+  display: grid;
+  grid-template-columns: 1fr 0.85fr;
+  gap: 100px;
+  align-items: center;
+}
+.arm-downloads p {
+  max-width: 460px;
+  margin-bottom: 25px;
+}
+.arm-download-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 36px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface);
+}
+.arm-download-card .eyebrow {
+  margin-bottom: 8px;
+}
+.arm-download-card .button {
+  justify-content: flex-start;
+}
+.arm-download-card .button > span {
+  margin-left: auto;
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  opacity: 0.7;
+}
+.arm-download-card .text-link {
+  font-size: 12px;
+  margin-top: 6px;
+}
+.arm-faq {
+  padding-top: 30px;
+}
+@media (max-width: 1000px) {
+  .arm-hero {
+    gap: 40px;
+  }
+  .arm-hero h1 {
+    font-size: 70px;
+  }
+  .arm-workflow-inner,
+  .arm-downloads {
+    gap: 50px;
+  }
+  .arm-hero .button-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+@media (max-width: 700px) {
+  .arm-hero {
+    grid-template-columns: 1fr;
+    padding-top: 30px;
+    gap: 40px;
+  }
+  .arm-hero h1 {
+    font-size: 68px;
+    letter-spacing: -4px;
+  }
+  .arm-identity-art {
+    max-width: 460px;
+    margin: 0 auto;
+    transform: none;
+  }
+  .arm-feature-strip > div {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .arm-feature-grid {
+    grid-template-columns: 1fr;
+    gap: 25px;
+    margin-top: 38px;
+  }
+  .arm-feature-grid h3 {
+    margin-top: 12px;
+  }
+  .arm-workflow-inner,
+  .arm-downloads {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .arm-download-card {
+    padding: 25px;
+  }
+  .arm-editor-preview figcaption {
+    font-size: 8px;
+    padding: 14px;
+  }
+}
