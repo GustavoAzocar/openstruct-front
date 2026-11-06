@@ -1,4 +1,5 @@
 /** Endereços oficiais e integrações opcionais do ecossistema. */
+const armVersion = '0.2.0';
 export const site = {
   name: 'OpenStruct',
   repository: 'https://github.com/ricardocorsini/openstruct-front',
@@ -9,11 +10,10 @@ export const site = {
     import.meta.env.VITE_CONSOLOSTRUCT_REPOSITORY ||
     'https://github.com/ricardocorsini/consolo-struct',
   downloadUrl: import.meta.env.VITE_CONSOLOSTRUCT_DOWNLOAD_URL || '',
+  armVersion,
   armRepository: 'https://github.com/ricardocorsini/armadura-struct',
-  armReleaseUrl:
-    'https://github.com/ricardocorsini/openstruct-catalog/releases/tag/armadurastruct-v0.1.1',
-  armReleaseAssets:
-    'https://github.com/ricardocorsini/openstruct-catalog/releases/download/armadurastruct-v0.1.1',
+  armReleaseUrl: `https://github.com/ricardocorsini/openstruct-catalog/releases/tag/armadurastruct-v${armVersion}`,
+  armReleaseAssets: `https://github.com/ricardocorsini/openstruct-catalog/releases/download/armadurastruct-v${armVersion}`,
   molaAppUrl: import.meta.env.VITE_MOLASTRUCT_URL || '',
   molaAppRepository:
     import.meta.env.VITE_MOLASTRUCT_REPOSITORY || 'https://github.com/ricardocorsini/mola-struct',

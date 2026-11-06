@@ -9,6 +9,9 @@ import {
   ListChecks,
   MousePointer2,
   PenTool,
+  Ruler,
+  Scissors,
+  PanelRight,
   SquareDashed,
 } from 'lucide-react';
 import { site } from '../lib/config';
@@ -17,7 +20,7 @@ const features = [
   {
     Icon: PenTool,
     title: 'Desenhe o aço.',
-    text: 'Barras livres, estribos retangulares, distribuição por espaçamento e armaduras acompanhando a fôrma com cobrimento.',
+    text: 'Barras livres, estribos retangulares, repetição de estribos e faixas por espaçamento e armaduras acompanhando a fôrma com cobrimento.',
   },
   {
     Icon: Layers,
@@ -28,6 +31,21 @@ const features = [
     Icon: ListChecks,
     title: 'Mantenha tudo vinculado.',
     text: 'Posições, diâmetros, quantidades e comprimentos alimentam o quadro de aço. Vistas rebatidas continuam ligadas à barra original.',
+  },
+  {
+    Icon: PanelRight,
+    title: 'Mais espaço para o CAD.',
+    text: 'Faixa compacta e um painel lateral com abas Projeto e Propriedades. Recolha os comandos ou ative o modo Foco no CAD.',
+  },
+  {
+    Icon: Ruler,
+    title: 'Detalhes que acompanham a posição.',
+    text: 'Cotas ortogonais e alinhadas, chamadas e cortes gráficos com identificação vinculada às barras. Tudo segue para o DXF e o PDF.',
+  },
+  {
+    Icon: Scissors,
+    title: 'Edite e confira.',
+    text: 'Converta polilinhas, divida barras com traspasse informado e una geometrias compatíveis. Bloqueie, atualize e renumere a relação de aço.',
   },
 ];
 
@@ -42,7 +60,7 @@ export function Armadura() {
           <div className="arm-product-name">
             <img src="/assets/armadurastruct-hephaestus.webp" alt="" width="56" height="56" />
             <strong>ArmaduraStruct</strong>
-            <span>v0.1.1</span>
+            <span>v{site.armVersion}</span>
           </div>
           <h1>
             Da fôrma
@@ -105,8 +123,8 @@ export function Armadura() {
             seu lugar.
           </h2>
           <p>
-            Ferramentas de armadura na faixa de comandos, desenho ao centro e propriedades sempre à
-            mão. Uma experiência familiar para quem projeta.
+            Ferramentas de armadura em uma faixa compacta, um único painel com abas e mais área
+            livre para desenhar. Cotas, chamadas e quantitativos fazem parte do mesmo ambiente.
           </p>
         </div>
         <figure className="arm-editor-preview">
@@ -119,7 +137,7 @@ export function Armadura() {
           />
           <figcaption>
             <span>CAPTURA DO APLICATIVO · EXEMPLO DE DETALHAMENTO</span>
-            <span>v0.1.1</span>
+            <span>v{site.armVersion}</span>
           </figcaption>
         </figure>
         <div className="arm-feature-grid">
@@ -155,7 +173,7 @@ export function Armadura() {
               ],
               [
                 'Leve o projeto adiante.',
-                'Salve o projeto editável e exporte o desenho em DXF, as pranchas em PDF e o quadro de aço em CSV.',
+                'Salve o projeto editável e exporte DXF, PDF A3 com escala selecionada e quadro de aço em CSV. Projetos antigos da série 0.1 são migrados ao abrir.',
               ],
             ].map(([title, text], i) => (
               <li key={title}>
@@ -171,7 +189,7 @@ export function Armadura() {
       </section>
       <section className="section container arm-downloads" id="downloads">
         <div>
-          <span className="eyebrow">03 / PRIMEIRA VERSÃO</span>
+          <span className="eyebrow">03 / VERSÃO ATUAL</span>
           <h2>
             Pronto para
             <br />
@@ -186,16 +204,16 @@ export function Armadura() {
           </Link>
         </div>
         <div className="arm-download-card">
-          <span className="eyebrow">ARMADURASTRUCT 0.1.1 · X86_64</span>
+          <span className="eyebrow">ARMADURASTRUCT {site.armVersion} · X86_64</span>
           <a
             className="button button-ink"
-            href={`${site.armReleaseAssets}/armadurastruct-0.1.1-windows-x86_64.exe`}
+            href={`${site.armReleaseAssets}/armadurastruct-${site.armVersion}-windows-x86_64.exe`}
           >
             <Download size={18} /> Windows <span>.exe</span>
           </a>
           <a
             className="button button-outline"
-            href={`${site.armReleaseAssets}/armadurastruct-0.1.1-linux-x86_64.AppImage`}
+            href={`${site.armReleaseAssets}/armadurastruct-${site.armVersion}-linux-x86_64.AppImage`}
           >
             <Download size={18} /> Linux <span>.AppImage</span>
           </a>
@@ -220,12 +238,13 @@ export function Armadura() {
         <div className="faq-list">
           <details>
             <summary>
-              O que faz esta primeira versão?<span>+</span>
+              O que faz esta versão?<span>+</span>
             </summary>
             <p>
               Desenha e organiza armaduras em 2D, calcula comprimentos geométricos e quantitativos e
-              gera saídas vinculadas. O dimensionamento, as verificações normativas, as ancoragens e
-              os ajustes de fabricação permanecem sob definição do projetista.
+              gera saídas vinculadas. O traspasse é informado pelo projetista e contabilizado nas
+              duas peças; não é dimensionado automaticamente. As verificações normativas, as
+              ancoragens e os ajustes de fabricação permanecem sob definição do projetista.
             </p>
           </details>
           <details>
