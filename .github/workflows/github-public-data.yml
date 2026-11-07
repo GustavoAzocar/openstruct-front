@@ -1,0 +1,77 @@
+name: Public GitHub data
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '23 * * * *'
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/github-public-data.yml'
+      - 'scripts/*github*.mjs'
+      - 'src/lib/github-snapshot.ts'
+permissions:
+  contents: read
+concurrency:
+  group: public-github-data
+  cancel-in-progress: false
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+      - name: Restore previous public snapshot
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: github-data
+          path: previous
+          persist-credentials: false
+      - uses: actions/cache@v4
+        with:
+          path: .cache/github
+          key: public-github-etag-v1-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: |
+            public-github-etag-v1-
+      - name: Collect authorized public repositories
+        run: npm run sync:github
+        env:
+          GH_READ_TOKEN: ${{ github.token }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: public-github-snapshot
+          path: out/snapshot.json
+          if-no-files-found: error
+          retention-days: 1
+  publish:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - uses: actions/download-artifact@v4
+        with:
+          name: public-github-snapshot
+          path: out
+      - name: Validate and publish static JSON only
+        run: node --experimental-strip-types scripts/publish-github-snapshot.mjs
+        env:
+          GH_WRITE_TOKEN: ${{ github.token }}

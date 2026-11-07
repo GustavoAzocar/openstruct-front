@@ -1,0 +1,164 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { collectGithub } from '../scripts/github-collector.mjs';
+import {
+  GITHUB_REPOSITORIES, emptyGithubSnapshot, validateGithubSnapshot,
+} from '../src/lib/github-snapshot.ts';
+const at = Date.parse('2026-11-07T16:00:00Z');
+const now = () => at;
+function response(body, status = 200, headers = {}) {
+  return new Response(status === 304 ? null : JSON.stringify(body), {
+    status, headers: { 'content-type': 'application/json', ...headers },
+  });
+}
+function metadata(repository, extra = {}) {
+  return { private: false, visibility: 'public', full_name: repository,
+    html_url: 'https://github.com/' + repository, name: repository.split('/')[1],
+    default_branch: 'master', description: 'Contato publico@example.com',
+    stargazers_count: 2, forks_count: 1, open_issues_count: 3, ...extra };
+}
+function issue(repository, number = 1, extra = {}) {
+  return { number, title: 'Teste publico@example.com', html_url: 'https://github.com/' + repository + '/issues/' + number,
+    updated_at: '2026-11-07T15:00:00Z', body: 'not exported', user: { email: 'never@example.com' }, ...extra };
+}
+function fixture(overrides = () => null) {
+  return async (url, options) => {
+    const custom = overrides(url, options);
+    if (custom) return custom;
+    const match = new URL(url).pathname.match(/^\/repos\/([^/]+\/[^/]+)(?:\/(.*))?$/);
+    assert.ok(match);
+    const [, repository, endpoint] = match;
+    assert.ok(GITHUB_REPOSITORIES.includes(repository));
+    if (!endpoint) return response(metadata(repository));
+    if (endpoint === 'issues') return response([issue(repository)]);
+    return response([]);
+  };
+}
+
+test('exports only selected public fields, redacts emails and rejects unknown contract keys', async () => {
+  const { snapshot, requests } = await collectGithub({ fetchImpl: fixture(), now });
+  assert.equal(requests, 25);
+  assert.equal(snapshot.repositories.length, 5);
+  assert.ok(snapshot.repositories.every((entry) => entry.status === 'ready'));
+  const json = JSON.stringify(snapshot);
+  assert.ok(!json.includes('@') && !json.includes('not exported') && !json.includes('token'));
+  assert.equal(validateGithubSnapshot(snapshot), snapshot);
+  assert.throws(() => validateGithubSnapshot({ ...snapshot, token: 'secret' }));
+  const duplicate = structuredClone(snapshot);
+  duplicate.repositories[1] = duplicate.repositories[0];
+  assert.throws(() => validateGithubSnapshot(duplicate));
+});
+
+test('private or no longer confirmed repository never exports previous data or requests its lists', async () => {
+  const first = await collectGithub({ fetchImpl: fixture(), now });
+  const target = GITHUB_REPOSITORIES[0];
+  const seen = [];
+  const second = await collectGithub({ previous: first.snapshot, cache: first.cache, now,
+    fetchImpl: fixture((url) => {
+      seen.push(url);
+      if (url === 'https://api.github.com/repos/' + target)
+        return response(metadata(target, { private: true, visibility: 'private' }));
+    }) });
+  const entry = second.snapshot.repositories[0];
+  assert.equal(entry.visibility, 'unknown');
+  assert.equal(entry.summary, null);
+  assert.equal(entry.lastSuccessAt, null);
+  assert.ok(Object.values(entry.lists).every((list) => !list.items.length));
+  assert.ok(!seen.some((url) => url.startsWith('https://api.github.com/repos/' + target + '/')));
+  assert.ok(!Object.keys(second.cache).some((url) => url.includes(target + '/')));
+  assert.equal(second.snapshot.repositories[1].status, 'ready');
+});
+
+test('follows Link pagination, filters PRs out of issues and declares a bounded slice', async () => {
+  const result = await collectGithub({ now, fetchImpl: fixture((url) => {
+    if (!url.includes('/issues?')) return null;
+    const u = new URL(url);
+    const repository = u.pathname.split('/').slice(2, 4).join('/');
+    const page = Number(u.searchParams.get('page'));
+    const next = new URL(url);
+    next.searchParams.set('page', String(page + 1));
+    return response([issue(repository, page), issue(repository, 90, { pull_request: {} })], 200,
+      { link: '<' + next.href + '>; rel="next"', etag: '"page-' + page + '"' });
+  }) });
+  assert.equal(result.requests, 30);
+  assert.deepEqual(result.snapshot.repositories[0].lists.issues.items.map((item) => item.id), ['1', '2']);
+  assert.equal(result.snapshot.repositories[0].lists.issues.truncated, true);
+});
+
+test('304 reuses sanitized page and pagination, with a fresh visibility check every cycle', async () => {
+  const first = await collectGithub({ now, fetchImpl: fixture((url) =>
+    url.includes('/issues?') ? response([issue(url.split('/repos/')[1].split('/issues')[0])], 200,
+      { etag: '"same"' }) : null) });
+  let metadataCalls = 0;
+  const second = await collectGithub({ previous: first.snapshot, cache: first.cache, now: () => at + 1000,
+    fetchImpl: fixture((url, options) => {
+      if (!url.includes('?')) {
+        metadataCalls++;
+        assert.equal(options.headers['If-None-Match'], undefined);
+      }
+      if (url.includes('/issues?')) {
+        assert.equal(options.headers['If-None-Match'], '"same"');
+        return response(null, 304);
+      }
+    }) });
+  assert.equal(metadataCalls, 5);
+  assert.equal(second.snapshot.repositories[0].lists.issues.items.length, 1);
+  assert.equal(second.snapshot.repositories[0].lists.issues.state, 'fresh');
+  assert.equal(second.snapshot.repositories[0].lists.issues.checkedAt, new Date(at + 1000).toISOString());
+});
+
+test('partial failure retains last valid list only after fresh public confirmation', async () => {
+  const first = await collectGithub({ now, fetchImpl: fixture() });
+  const target = GITHUB_REPOSITORIES[0];
+  const second = await collectGithub({ previous: first.snapshot, now: () => at + 1000,
+    fetchImpl: fixture((url) => url.startsWith('https://api.github.com/repos/' + target + '/issues?')
+      ? response({}, 500) : null) });
+  assert.equal(second.snapshot.repositories[0].status, 'partial');
+  assert.equal(second.snapshot.repositories[0].lists.issues.state, 'stale');
+  assert.deepEqual(second.snapshot.repositories[0].lists.issues.items, first.snapshot.repositories[0].lists.issues.items);
+  assert.equal(second.snapshot.repositories[0].lastSuccessAt, first.snapshot.repositories[0].lastSuccessAt);
+  assert.equal(second.snapshot.repositories[1].status, 'ready');
+});
+
+test('403 and 429 stop requests and honor Retry-After/reset across runs without sleeping', async () => {
+  for (const status of [403, 429]) {
+    let calls = 0;
+    const result = await collectGithub({ now, fetchImpl: async () => {
+      calls++;
+      return response({}, status, { 'retry-after': '3600', 'x-ratelimit-remaining': '0',
+        'x-ratelimit-reset': String((at + 1800000) / 1000) });
+    } });
+    assert.equal(calls, 1);
+    assert.equal(result.snapshot.retryAt, new Date(at + 3600000).toISOString());
+    assert.ok(result.snapshot.repositories.every((entry) => entry.summary === null));
+    const skipped = await collectGithub({ previous: result.snapshot, now,
+      fetchImpl: async () => { throw new Error('must not call'); } });
+    assert.equal(skipped.requests, 0);
+    assert.equal(skipped.snapshot, result.snapshot);
+  }
+});
+
+test('timeout, invalid source and malformed response are isolated, without leaking raw errors', async () => {
+  const target = GITHUB_REPOSITORIES[0];
+  const result = await collectGithub({ now, timeoutMs: 1, fetchImpl: fixture((url, options) => {
+    if (url === 'https://api.github.com/repos/' + target)
+      return new Promise((_, reject) => options.signal.addEventListener('abort', () => reject(new Error('secret'))));
+    if (url.includes(GITHUB_REPOSITORIES[1] + '/issues?'))
+      return response([issue(GITHUB_REPOSITORIES[1], 1, { html_url: 'https://evil.example/secret' })]);
+    return null;
+  }) });
+  assert.equal(result.snapshot.repositories[0].summary, null);
+  assert.equal(result.snapshot.repositories[1].lists.issues.state, 'unavailable');
+  assert.equal(result.snapshot.repositories[2].status, 'ready');
+  assert.ok(!JSON.stringify(result.snapshot).includes('secret'));
+});
+
+test('rejects unauthorized repositories and any data on unconfirmed visibility', () => {
+  const snapshot = emptyGithubSnapshot();
+  snapshot.repositories[0].repository = 'ricardocorsini/launcher-struct';
+  assert.throws(() => validateGithubSnapshot(snapshot));
+  const unknown = emptyGithubSnapshot();
+  unknown.repositories[0].lists.issues = { state: 'fresh', checkedAt: new Date(at).toISOString(),
+    truncated: false, items: [issue(GITHUB_REPOSITORIES[0])] };
+  assert.throws(() => validateGithubSnapshot(unknown));
+});

@@ -297,3 +297,12 @@ A seleção em `/apps` é persistida na URL: busca sem acentos, categoria,
 disponibilidade, plataforma e horizonte futuro. Copiar link compartilha os filtros;
 o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma.
 [Contrato e comportamento dos filtros](docs/FILTROS-CATALOGO.md).
+
+## Dados públicos do GitHub
+
+A página de comunidade lê um snapshot público de atividade, sem token no navegador.
+A coleta por Actions confirma a visibilidade dos cinco repositórios autorizados, normaliza os dados,
+usa ETag e limites de paginação, e publica somente JSON validado na branch `github-data`.
+Leitura e escrita usam jobs com permissões separadas. O catálogo assinado de downloads permanece independente.
+
+Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md).
