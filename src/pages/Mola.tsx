@@ -1,3 +1,4 @@
+import { CaptureGallery } from '../components/CaptureGallery';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -183,6 +184,9 @@ export function Mola() {
       <div className="container">
         <ProductAvailability app={app} />
       </div>
+      <section className="container" aria-label="Capturas do MolaStruct">
+        <CaptureGallery label="Capturas do MolaStruct" captures={[]} />
+      </section>
       <section className="container mola-overview" id="visao-geral">
         <FoundationPreview />
         <div className="demo-caption">

@@ -1,0 +1,156 @@
+.capture-gallery {
+  min-width: 0;
+}
+.capture-thumbnails {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.capture-thumbnails button {
+  width: 160px;
+  padding: 8px;
+  text-align: left;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+}
+.capture-thumbnails img {
+  width: 100%;
+  height: 95px;
+  object-fit: contain;
+  background: white;
+}
+.capture-thumbnails span {
+  display: block;
+  font-size: 11px;
+  margin-top: 8px;
+}
+.capture-figure {
+  margin: 0 0 28px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--surface);
+}
+.capture-open {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: white;
+  cursor: zoom-in;
+}
+.capture-figure img,
+.capture-dialog > img {
+  display: block;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+.capture-figure figcaption {
+  padding: 22px;
+}
+.capture-figure h3 {
+  font-size: 19px;
+}
+.capture-figure p,
+.capture-dialog p {
+  font-size: 13px;
+  line-height: 1.85;
+  margin-block: 12px;
+}
+.capture-meta,
+.capture-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+}
+.capture-meta {
+  font-size: 12px;
+}
+.capture-meta span {
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+}
+.capture-gallery a {
+  color: var(--accent);
+}
+.capture-gallery button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+.capture-meta button,
+.capture-controls button,
+.capture-dialog header button {
+  padding: 10px 14px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  color: var(--ink);
+  background: var(--surface);
+  cursor: pointer;
+  min-height: 44px;
+}
+.capture-dialog {
+  width: min(1280px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  margin: auto;
+  padding: 22px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--ink);
+}
+.capture-dialog::backdrop {
+  background: #101827cc;
+}
+.capture-dialog header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.capture-dialog h2 {
+  font-size: 22px;
+}
+.capture-controls {
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+.capture-controls button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.capture-unavailable,
+.capture-empty {
+  padding: 24px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+@media (max-width: 700px) {
+  .capture-dialog {
+    padding: 14px;
+  }
+  .capture-dialog header {
+    align-items: flex-start;
+  }
+  .capture-dialog h2 {
+    font-size: 18px;
+  }
+  .capture-thumbnails button {
+    width: calc(50% - 6px);
+  }
+}
+.capture-dialog header {
+  position: sticky;
+  top: -22px;
+  background: var(--surface);
+  z-index: 1;
+  padding-block: 8px;
+}

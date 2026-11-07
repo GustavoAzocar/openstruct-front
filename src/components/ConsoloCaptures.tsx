@@ -1,4 +1,5 @@
-import { ArrowUpRight, Expand } from 'lucide-react';
+import { CaptureGallery } from './CaptureGallery';
+import { ArrowUpRight } from 'lucide-react';
 import { consoloMedia as media } from '../lib/consolo-media';
 
 export function ConsoloCaptures({ scopeVersion }: { scopeVersion?: string }) {
@@ -21,54 +22,19 @@ export function ConsoloCaptures({ scopeVersion }: { scopeVersion?: string }) {
           em uso.
         </h2>
         <p>
-          Um exemplo público, das entradas ao quadro de aço. Abra cada imagem em tamanho original
-          para ampliar e conferir os detalhes. São capturas da interface do aplicativo, executada no
-          navegador a partir da tag {media.source.tag}.
+          Um exemplo público, das entradas ao quadro de aço. Amplie cada imagem na galeria ou em
+          tamanho original para ampliar e conferir os detalhes. São capturas da interface do
+          aplicativo, executada no navegador a partir da tag {media.source.tag}.
         </p>
       </div>
-      <div className="consolo-capture-grid">
-        {media.captures.map((capture, index) => (
-          <figure
-            key={capture.id}
-            id={capture.id}
-            className="consolo-capture"
-            data-stage={capture.stage}
-          >
-            <a
-              className="consolo-capture-image"
-              href={capture.src}
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Ampliar ${capture.title.replace(/\.$/, '')} (abre em nova aba)`}
-            >
-              <img
-                src={capture.src}
-                alt={capture.alt}
-                width={capture.width}
-                height={capture.height}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-            <figcaption>
-              <div className="consolo-capture-title">
-                <span>0{index + 1}</span>
-                <h3>{capture.title}</h3>
-              </div>
-              <p>{capture.caption}</p>
-              <div className="consolo-capture-footer">
-                <span>
-                  CAPTURA REAL · v{media.version} · {media.project.piece}
-                </span>
-                <a href={capture.src} target="_blank" rel="noreferrer">
-                  Ampliar imagem <Expand size={14} aria-hidden="true" />
-                  <span className="sr-only">: {capture.title} Abre em nova aba.</span>
-                </a>
-              </div>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      <CaptureGallery
+        label="Capturas do ConsoloStruct"
+        captures={media.captures.map((capture) => ({
+          ...capture,
+          version: media.version,
+          sourceUrl: media.source.url,
+        }))}
+      />
       <div className="consolo-capture-provenance">
         <p>
           Projeto de estudo, com dados fictícios. A vista 3D é esquemática e as saídas exigem

@@ -1,3 +1,4 @@
+import { CaptureGallery } from '../components/CaptureGallery';
 import { Link } from 'react-router-dom';
 import {
   ArrowDown,
@@ -147,19 +148,19 @@ export function Armadura() {
             livre para desenhar. Cotas, chamadas e quantitativos fazem parte do mesmo ambiente.
           </p>
         </div>
-        <figure className="arm-editor-preview">
-          <img
-            src={armaduraScreenshot.src}
-            alt={armaduraScreenshot.alt}
-            width={armaduraScreenshot.width}
-            height={armaduraScreenshot.height}
-            loading="lazy"
-          />
-          <figcaption>
-            <span>CAPTURA REAL DO APLICATIVO · EXEMPLO DE DETALHAMENTO</span>
-            <span>v{armaduraScreenshot.version}</span>
-          </figcaption>
-        </figure>
+        <CaptureGallery
+          label="Capturas do ArmaduraStruct"
+          captures={[
+            {
+              ...armaduraScreenshot,
+              id: 'armadura-editor',
+              title: 'Editor de armaduras.',
+              caption:
+                'Captura real da versão 0.2.0: barras longitudinais, estribo N3, cotas e propriedades do exemplo V01.',
+              sourceUrl: armaduraScreenshot.source.url,
+            },
+          ]}
+        />
         <div className="arm-feature-grid">
           {features.map(({ Icon, title, text }) => (
             <article key={title}>
