@@ -256,8 +256,7 @@ export function IssuesList({
       <details className="issue-coverage">
         <summary>
           Cobertura e datas do recorte · {view.knownCollections} de {view.coverage.length}{' '}
-          {view.coverage.length === 1 ? 'lista' : 'listas'}
-          por estado com dados
+          {view.coverage.length === 1 ? 'lista' : 'listas'} por estado com dados
         </summary>
         <ul>
           {view.coverage.map((entry) => (

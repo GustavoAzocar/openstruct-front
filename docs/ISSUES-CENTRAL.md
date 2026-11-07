@@ -50,3 +50,5 @@ Fonte: [GitHub — API de issues e distinção de PRs](https://docs.github.com/e
 Resultado desta execução: 85 testes aprovados e build concluído. No navegador, as fixtures locais confirmaram a passagem à segunda página com dez itens, foco no título, filtros combinados, uma entrada de histórico por edição da busca e restauração após recarregar a URL. A conferência de título de 200 caracteres e label de 100 caracteres em 337 px manteve leitura e ausência de rolagem horizontal; os dois temas foram conferidos. O feed real também foi conferido, sem preencher listas vazias com exemplos.
 
 O leitor revalida o JSON HTTP com `cache: no-cache`, preservando a única promessa por janela de cinco minutos. Isso evita somar um cache antigo do navegador à troca de contrato; a consulta continua sendo ao JSON estático, sem token e sem chamadas REST por visitante.
+
+A primeira publicação v3 foi verificada em produção: coleta em 07/11/2026 às 15:29 (America/Fortaleza), cinco repositórios confirmados, dez listas por estado atuais, todas vazias. A ausência foi mantida como dado real. CI, coletor e deploy foram aprovados.
