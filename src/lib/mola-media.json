@@ -1,0 +1,52 @@
+{
+  "appId": "molastruct",
+  "documentationTag": "v0.5.1",
+  "sourceCommit": "5d22f0626f8feb709a8b3b8301babd9985667d01",
+  "reviewedAt": "2026-11-07",
+  "license": {
+    "spdx": "MIT",
+    "url": "https://github.com/ricardocorsini/mola-struct/blob/5d22f0626f8feb709a8b3b8301babd9985667d01/LICENSE",
+    "notice": "/assets/molastruct/v0.5.1/LICENSE.txt"
+  },
+  "captures": [
+    {
+      "id": "mola-captura-1",
+      "src": "/assets/molastruct/v0.5.1/interface-3d.jpg",
+      "alt": "Geometria, solo e modelo 3D. Interface real do MolaStruct: O exemplo fictício Edifício Horizonte mostra F02, um bloco sobre quatro estacas, camadas de solo e SP-01 no navegador. Registro histórico das docs: a tela identifica v0.1 e motor 0.1.0; não é uma captura nova da 0.5.1.",
+      "title": "Geometria, solo e modelo 3D.",
+      "caption": "O exemplo fictício Edifício Horizonte mostra F02, um bloco sobre quatro estacas, camadas de solo e SP-01 no navegador. Registro histórico das docs: a tela identifica v0.1 e motor 0.1.0; não é uma captura nova da 0.5.1.",
+      "version": "0.1 (registro histórico)",
+      "width": 1363,
+      "height": 936,
+      "sourceUrl": "https://github.com/ricardocorsini/mola-struct/blob/5d22f0626f8feb709a8b3b8301babd9985667d01/docs/assets/interface-3d.jpg",
+      "bytes": 126452,
+      "sha256": "bc0104b7126c0fb122d35515af0ff0794bb046fd8e21018ba1adc1f5a6356413"
+    },
+    {
+      "id": "mola-captura-2",
+      "src": "/assets/molastruct/v0.5.1/metodos.png",
+      "alt": "Métodos e parâmetros explícitos. Interface real do MolaStruct: No exemplo público Comparação de metodologias, M3 usa Mindlin/Aoki–Lopes/Steinbrenner na vertical e Winkler na lateral/torção. A imagem mostra a seleção e os coeficientes calculados, com parâmetros intermediários. Tela histórica v0.2, motor 0.2.0.",
+      "title": "Métodos e parâmetros explícitos.",
+      "caption": "No exemplo público Comparação de metodologias, M3 usa Mindlin/Aoki–Lopes/Steinbrenner na vertical e Winkler na lateral/torção. A imagem mostra a seleção e os coeficientes calculados, com parâmetros intermediários. Tela histórica v0.2, motor 0.2.0.",
+      "version": "0.2 (registro histórico)",
+      "width": 1600,
+      "height": 1000,
+      "sourceUrl": "https://github.com/ricardocorsini/mola-struct/blob/5d22f0626f8feb709a8b3b8301babd9985667d01/docs/assets/metodos.png",
+      "bytes": 177335,
+      "sha256": "a5f8a8e43cfe0434cc8305c3c2f96afcdf5ba90250f58c4d5c405706b40a9a9d"
+    },
+    {
+      "id": "mola-captura-3",
+      "src": "/assets/molastruct/v0.5.1/ligacao-rotulada.png",
+      "alt": "Resultados e condições de ligação. Interface real do MolaStruct: No caso documentado Referência 16 m, a ligação rotulada em X/Y deixa uma rotação livre. A tela separa coeficientes, deslocamentos, parâmetros intermediários e esforços nas estacas. Rótulos v0.5 e motor 0.5.0. O exemplo e sua comparação externa não validam parâmetros geotécnicos nem comprovam equivalência integral com outro software.",
+      "title": "Resultados e condições de ligação.",
+      "caption": "No caso documentado Referência 16 m, a ligação rotulada em X/Y deixa uma rotação livre. A tela separa coeficientes, deslocamentos, parâmetros intermediários e esforços nas estacas. Rótulos v0.5 e motor 0.5.0. O exemplo e sua comparação externa não validam parâmetros geotécnicos nem comprovam equivalência integral com outro software.",
+      "version": "0.5 (rótulo da interface)",
+      "width": 1720,
+      "height": 1340,
+      "sourceUrl": "https://github.com/ricardocorsini/mola-struct/blob/5d22f0626f8feb709a8b3b8301babd9985667d01/docs/assets/ligacao-rotulada.png",
+      "bytes": 208040,
+      "sha256": "e8337e0d20fdf0fbbf6dd06a203f8fae2c12fea980d90eb0289fcae00066b356"
+    }
+  ]
+}

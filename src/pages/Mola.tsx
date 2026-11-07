@@ -1,3 +1,4 @@
+import molaMedia from '../lib/mola-media.json';
 import { CaptureGallery } from '../components/CaptureGallery';
 import { Link } from 'react-router-dom';
 import {
@@ -184,8 +185,32 @@ export function Mola() {
       <div className="container">
         <ProductAvailability app={app} />
       </div>
-      <section className="container" aria-label="Capturas do MolaStruct">
-        <CaptureGallery label="Capturas do MolaStruct" captures={[]} />
+      <section className="section container" id="capturas" aria-labelledby="mola-capturas-title">
+        <div className="section-kicker">
+          <span>MOLASTRUCT / INTERFACE REAL</span>
+          <span>FONTES DA TAG {molaMedia.documentationTag}</span>
+        </div>
+        <div className="section-heading">
+          <h2 id="mola-capturas-title">
+            Do modelo
+            <br />
+            aos resultados.
+          </h2>
+          <p>
+            Capturas oficiais preservadas na documentação da 0.5.1. Os rótulos antigos das telas são
+            identificados individualmente: não representam uma nova captura do instalador. Amplie
+            para ler os parâmetros e as unidades.
+          </p>
+        </div>
+        <CaptureGallery label="Capturas do MolaStruct" captures={molaMedia.captures} />
+        <p className="mola-reference-note">
+          Resultados de exemplos para estudo e conferência. Não constituem validação geotécnica,
+          aprovação normativa integral ou equivalência com outro software. A versão disponível para
+          instalar é consultada separadamente no catálogo.
+        </p>
+        <a className="text-link" href={molaMedia.license.notice} target="_blank" rel="noreferrer">
+          Origem das imagens: docs oficiais · licença MIT
+        </a>
       </section>
       <section className="container mola-overview" id="visao-geral">
         <FoundationPreview />

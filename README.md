@@ -283,3 +283,10 @@ O tema é persistido no navegador, com preferência clara na primeira visita. A 
 Abra uma issue descrevendo o contexto, o comportamento esperado e, quando possível, passos para reproduzir. Para mudanças de código, execute `npm run build` antes de abrir uma pull request. O workflow de CI repete o build em pushes e pull requests.
 
 Licença MIT. As fontes mantêm suas próprias licenças OFL.
+
+### Capturas do MolaStruct
+
+A página reutiliza a galeria acessível da OSF-10 com três imagens oficiais das
+docs da tag 0.5.1. As telas preservam rótulos históricos v0.1/v0.2/v0.5, indicados
+individualmente, sem fingir que foram capturadas na versão do instalador.
+[Origem, licença e limites das capturas](docs/MOLASTRUCT-CAPTURAS.md).
