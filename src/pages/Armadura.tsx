@@ -4,6 +4,8 @@ import {
   ArrowRight,
   ArrowUpRight,
   Download,
+  FileInput,
+  FileOutput,
   FileStack,
   Layers,
   ListChecks,
@@ -13,11 +15,17 @@ import {
   Scissors,
   PanelRight,
   SquareDashed,
+  Save,
 } from 'lucide-react';
 import { getCurrentApp } from '../lib/apps';
 
 const app = getCurrentApp('armadurastruct');
 const release = app.distribution;
+const sources = {
+  guide: app.documentation.url,
+  license: app.license.url,
+  development: app.repository.url + '/blob/' + app.code.ref + '/CHANGELOG.md',
+};
 
 const features = [
   {
@@ -84,7 +92,9 @@ export function Armadura() {
           </div>
           <div className="arm-hero-meta">
             <span>Windows + Linux</span>
-            <span>Código aberto · {app.license.spdx}</span>
+            <a href={sources.license} target="_blank" rel="noreferrer">
+              Licença do aplicativo · {app.license.spdx}
+            </a>
             <span>Arquivos locais</span>
           </div>
         </div>
@@ -139,7 +149,7 @@ export function Armadura() {
             loading="lazy"
           />
           <figcaption>
-            <span>CAPTURA DO APLICATIVO · EXEMPLO DE DETALHAMENTO</span>
+            <span>CAPTURA REAL DA VERSÃO DISTRIBUÍDA · EXEMPLO DE DETALHAMENTO</span>
             {release && <span>v{release.version}</span>}
           </figcaption>
         </figure>
@@ -149,6 +159,14 @@ export function Armadura() {
               <Icon size={25} strokeWidth={1.6} />
               <h3>{title}</h3>
               <p>{text}</p>
+              <a
+                className="text-link arm-source-link"
+                href={sources.guide}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Conferir no guia da 0.2 <ArrowUpRight size={14} />
+              </a>
             </article>
           ))}
         </div>
@@ -158,11 +176,11 @@ export function Armadura() {
           <div>
             <span className="eyebrow">02 / UM FLUXO CONTÍNUO</span>
             <h2>
-              Abra. Detalhe.
+              Importe. Detalhe.
               <br />
-              Compartilhe.
+              Confira. Exporte.
             </h2>
-            <p>A geometria, as posições e o quantitativo fazem parte do mesmo projeto.</p>
+            <p>Máscara, armaduras e quantitativos permanecem no mesmo projeto editável.</p>
           </div>
           <ol>
             {[
@@ -175,8 +193,12 @@ export function Armadura() {
                 'Use snap e modo ortogonal. Crie barras e estribos, edite diâmetros, copie, rotacione, espelhe e organize as posições.',
               ],
               [
+                'Confira os quantitativos.',
+                'Revise posições, quantidades, comprimentos geométricos e pesos teóricos. Se bloquear a relação de aço, atualize-a antes de exportar.',
+              ],
+              [
                 'Leve o projeto adiante.',
-                'Salve o projeto editável e exporte DXF, PDF A3 com escala selecionada e quadro de aço em CSV. Projetos antigos da série 0.1 são migrados ao abrir.',
+                'Salve o projeto editável no formato armadurastruct/2. Exporte DXF, PDF A3 com escala selecionada e quadro de aço em CSV.',
               ],
             ].map(([title, text], i) => (
               <li key={title}>
@@ -190,9 +212,98 @@ export function Armadura() {
           </ol>
         </div>
       </section>
+      <section className="section container arm-files" id="arquivos">
+        <div className="section-kicker">
+          <span>03 / ENTRADAS E SAÍDAS</span>
+          <span>FORMATO ARMADURASTRUCT/2</span>
+        </div>
+        <div className="section-heading">
+          <h2>
+            Referência para entrar.
+            <br />
+            Projeto para continuar.
+          </h2>
+          <p>
+            DXF e DWG entram como máscaras. O arquivo editável conserva o modelo do aplicativo; DXF,
+            PDF e CSV são entregas sem todos os vínculos paramétricos do projeto.
+          </p>
+        </div>
+        <div className="arm-files-grid">
+          <article>
+            <FileInput size={25} strokeWidth={1.6} />
+            <span className="eyebrow">ENTRADAS / MÁSCARAS</span>
+            <h3>DXF ASCII e DWG.</h3>
+            <p>
+              Importe como referência 2D, confira o relatório de entidades e meça uma distância
+              conhecida. Quando não houver unidade declarada, o aplicativo assume 1 unidade = 1 mm e
+              avisa; escala, posição, rotação, camadas e opacidade podem ser ajustadas.
+            </p>
+            <p className="arm-file-limit">
+              DWG depende da versão e das entidades reconhecidas pelo LibreDWG. Xrefs, objetos
+              proxy, hachuras, splines, sólidos 3D, estilos e layouts não têm reprodução integral.
+            </p>
+          </article>
+          <article>
+            <Save size={25} strokeWidth={1.6} />
+            <span className="eyebrow">FONTE EDITÁVEL</span>
+            <h3>.armstruct.json · armadurastruct/2.</h3>
+            <p>
+              Preserva barras, anotações, relação de aço e máscaras normalizadas. Os bytes originais
+              do CAD não são incorporados. Projetos da série 0.1 são migrados ao abrir; aplicativos
+              antigos não abrem o formato 2.
+            </p>
+            <p className="arm-file-limit">
+              Guarde o JSON junto das entregas. Ele é o arquivo para continuar editando o projeto.
+            </p>
+          </article>
+          <article>
+            <FileOutput size={25} strokeWidth={1.6} />
+            <span className="eyebrow">SAÍDAS / ENTREGA</span>
+            <h3>DXF · PDF A3 · CSV.</h3>
+            <p>
+              O DXF usa entidades CAD simples e curvas discretizadas; não há exportação DWG. O PDF
+              usa escala selecionada ou ajuste à folha, com quadro nas páginas seguintes. O CSV leva
+              o quadro de aço para conferência e continuidade do processo.
+            </p>
+            <p className="arm-file-limit">
+              Imprima o PDF em 100%. DXF e PDF não conservam os vínculos próprios do projeto JSON.
+            </p>
+          </article>
+        </div>
+        <div className="arm-files-note">
+          <strong>Unidades e responsabilidade.</strong>
+          <p>
+            Coordenadas e geometria são trabalhadas em mm; cotas gráficas aparecem em cm e
+            comprimentos do quadro em m. O traspasse é informado manualmente e somado às duas peças.
+            Dimensionamento, ancoragem, cobrimento, dobras mínimas, perdas e verificações normativas
+            continuam sob responsabilidade do projetista.
+          </p>
+          <a className="text-link" href={sources.guide} target="_blank" rel="noreferrer">
+            Convenções e compatibilidade da versão 0.2 <ArrowUpRight size={15} />
+          </a>
+        </div>
+      </section>
+      <section className="container arm-development" id="desenvolvimento">
+        <span className="eyebrow">MASTER / FORA DO INSTALADOR {release?.version}</span>
+        <h2>A branch de desenvolvimento avançou.</h2>
+        <p>
+          A master consultada mantém o número de pacote 0.2.0, mas já documenta recursos posteriores
+          à tag distribuída: hierarquia de pavimentos, elementos e detalhamentos; edição isolada de
+          conjuntos; gerenciador de pranchas, folhas e vistas; composição vetorial em papel; e
+          migração até o formato <code>armadurastruct/5</code>.
+        </p>
+        <p>
+          Esses recursos não descrevem o instalador público 0.2.0 e não são representados pela
+          captura desta página. Eles passam para a seção disponível somente quando uma nova release
+          e o catálogo correspondente forem confirmados.
+        </p>
+        <a className="text-link" href={sources.development} target="_blank" rel="noreferrer">
+          Histórico do código em desenvolvimento <ArrowUpRight size={15} />
+        </a>
+      </section>
       <section className="section container arm-downloads" id="downloads">
         <div>
-          <span className="eyebrow">03 / VERSÃO ATUAL</span>
+          <span className="eyebrow">04 / VERSÃO DISTRIBUÍDA</span>
           <h2>
             Pronto para
             <br />
@@ -243,6 +354,16 @@ export function Armadura() {
         <div className="faq-list">
           <details>
             <summary>
+              Qual arquivo devo guardar para continuar editando?<span>+</span>
+            </summary>
+            <p>
+              Guarde o <code>.armstruct.json</code> no formato <code>armadurastruct/2</code>. Ele
+              preserva o modelo e as máscaras normalizadas. DXF, PDF e CSV são saídas de entrega e
+              não substituem o projeto editável.
+            </p>
+          </details>
+          <details>
+            <summary>
               O que faz esta versão?<span>+</span>
             </summary>
             <p>
@@ -278,10 +399,11 @@ export function Armadura() {
             </summary>
             <p>
               Sim. O {app.name} é distribuído sob {app.license.spdx}, com instruções de
-              desenvolvimento e testes no repositório.
+              desenvolvimento e testes no repositório. Essa é a licença do aplicativo; ela não é
+              generalizada para os demais projetos do ecossistema ou para o frontend do site.
             </p>
-            <a className="text-link" href={app.repository.url} target="_blank" rel="noreferrer">
-              Código no GitHub <ArrowUpRight size={15} />
+            <a className="text-link" href={sources.license} target="_blank" rel="noreferrer">
+              Licença da versão distribuída <ArrowUpRight size={15} />
             </a>
           </details>
         </div>

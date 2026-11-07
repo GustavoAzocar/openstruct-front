@@ -81,6 +81,16 @@ test('disponibilidade não promove a versão de código nem implica maturidade e
   assert.equal(getAppStatus(unpublished[0]), 'Em desenvolvimento');
 });
 
+test('ArmaduraStruct separa a release GPL do código posterior à tag', () => {
+  const armadura = getCurrentApp('armadurastruct');
+  assert.equal(armadura.distribution.version, '0.2.0');
+  assert.equal(armadura.distribution.sourceTag, 'v0.2.0');
+  assert.equal(armadura.documentation.ref, armadura.distribution.sourceCommit);
+  assert.equal(armadura.license.spdx, 'GPL-3.0-or-later');
+  assert.equal(armadura.license.ref, armadura.distribution.sourceCommit);
+  assert.notEqual(armadura.code.ref, armadura.distribution.sourceCommit);
+});
+
 test('uma fonte posterior à tag não pode fundamentar a descrição do instalador', () => {
   const data = copy();
   const app = data[1];

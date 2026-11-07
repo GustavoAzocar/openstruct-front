@@ -185,8 +185,8 @@ export const apps: AppEntry[] = [
     },
     code: {
       version: '0.2.0',
-      url: 'https://github.com/ricardocorsini/armadura-struct/blob/243e2b4aa2674658ccf739f50971e4a38abea219/package.json',
-      ref: '243e2b4aa2674658ccf739f50971e4a38abea219',
+      url: 'https://github.com/ricardocorsini/armadura-struct/blob/2b19db198eba2ad4174b366df457521d3dc45808/package.json',
+      ref: '2b19db198eba2ad4174b366df457521d3dc45808',
     },
     distribution: {
       version: '0.2.0',

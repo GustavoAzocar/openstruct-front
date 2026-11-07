@@ -50,6 +50,11 @@
   font-size: 11px;
   color: var(--muted);
 }
+.arm-hero-meta a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .arm-identity-art {
   margin: 0;
   border-radius: 26px;
@@ -138,6 +143,13 @@
   color: var(--muted);
   line-height: 1.8;
 }
+.arm-source-link {
+  margin-top: 16px;
+  max-width: 100%;
+  white-space: normal;
+  font-size: 11px;
+  line-height: 1.6;
+}
 .arm-workflow {
   background: var(--surface-2);
   border-block: 1px solid var(--line);
@@ -221,6 +233,91 @@
   font-size: 12px;
   margin-top: 6px;
 }
+.arm-files-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 28px;
+}
+.arm-files-grid article {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+.arm-files-grid article > svg {
+  color: var(--accent);
+  margin-bottom: 22px;
+}
+.arm-files-grid .eyebrow {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 9px;
+}
+.arm-files-grid h3 {
+  font-size: 21px;
+  line-height: 1.4;
+}
+.arm-files-grid p {
+  margin-top: 14px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.85;
+}
+.arm-files-grid .arm-file-limit {
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 12px;
+}
+.arm-files-note {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr) auto;
+  gap: 28px;
+  align-items: start;
+  margin-top: 28px;
+  padding: 26px 28px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.arm-files-note strong {
+  font-family: 'Sora', sans-serif;
+  font-size: 15px;
+}
+.arm-files-note p {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.8;
+}
+.arm-files-note .text-link {
+  max-width: 240px;
+  white-space: normal;
+  font-size: 11px;
+  line-height: 1.6;
+}
+.arm-development {
+  padding: 36px 40px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: var(--surface-2);
+  scroll-margin-top: 110px;
+}
+.arm-development h2 {
+  margin-top: 16px;
+  font-size: 29px;
+  line-height: 1.35;
+}
+.arm-development p {
+  max-width: 900px;
+  margin-top: 15px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.85;
+}
+.arm-development .text-link {
+  margin-top: 20px;
+  max-width: 100%;
+  white-space: normal;
+}
 .arm-faq {
   padding-top: 30px;
 }
@@ -234,6 +331,18 @@
   .arm-workflow-inner,
   .arm-downloads {
     gap: 50px;
+  }
+  .arm-files-grid {
+    gap: 18px;
+  }
+  .arm-files-grid article {
+    padding: 23px;
+  }
+  .arm-files-note {
+    grid-template-columns: 180px minmax(0, 1fr);
+  }
+  .arm-files-note .text-link {
+    grid-column: 2;
   }
   .arm-hero .button-row {
     align-items: flex-start;
@@ -274,6 +383,24 @@
   }
   .arm-download-card {
     padding: 25px;
+  }
+  .arm-files-grid {
+    grid-template-columns: 1fr;
+  }
+  .arm-files-note {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 23px;
+  }
+  .arm-files-note .text-link {
+    grid-column: auto;
+    max-width: 100%;
+  }
+  .arm-development {
+    padding: 28px 23px;
+  }
+  .arm-development h2 {
+    font-size: 24px;
   }
   .arm-editor-preview figcaption {
     font-size: 8px;

@@ -70,8 +70,8 @@ const articles = [
     id: 'armadurastruct',
     n: '08',
     title: `${armadura.name}: desenho e quadro de aço`,
-    body: 'Importe DXF ou DWG como máscara, confira as unidades e desenhe barras e estribos com as ferramentas CAD. Vistas rebatidas e quantitativos permanecem vinculados às posições. Salve o projeto editável e exporte DXF, PDF ou CSV. A primeira versão trabalha com comprimentos geométricos, sem dimensionamento ou verificações normativas.',
-    action: `Conheça o ${armadura.name} e seu guia`,
+    body: `${armadura.name}${armadura.distribution ? ' ' + armadura.distribution.version : ''} importa DXF ASCII ou DWG como máscaras 2D, com compatibilidade limitada às entidades reconhecidas. O detalhamento, os comprimentos geométricos e o quadro permanecem no projeto editável .armstruct.json, formato armadurastruct/2. As saídas são DXF, PDF A3 e CSV; não há exportação DWG. Traspasse, dimensionamento e verificações de projeto são manuais. A licença deste aplicativo é ${armadura.license.spdx}.`,
+    action: `Fluxo, arquivos e limites do ${armadura.name}`,
     to: armadura.route,
   },
   {

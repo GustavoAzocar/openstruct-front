@@ -20,18 +20,19 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 
 ## Páginas
 
-| Endereço              | Conteúdo                                                                            |
-| --------------------- | ----------------------------------------------------------------------------------- |
-| `/`                   | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ              |
-| `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
-| `/apps/consolostruct` | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
-| `/apps/molastruct`    | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
-| `/launcher`           | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
-| `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação               |
-| `/community`          | Formas de contribuir e acompanhar o projeto                                         |
-| Outros endereços      | Página 404 com navegação de retorno                                                 |
+| Endereço               | Conteúdo                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------- |
+| `/`                    | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ              |
+| `/apps`                | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
+| `/apps/consolostruct`  | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
+| `/apps/molastruct`     | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
+| `/apps/armadurastruct` | ArmaduraStruct 0.2.0: fluxo CAD, formatos, saídas, licença e limites                |
+| `/launcher`            | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
+| `/docs`                | Guia inicial com busca, unidades, limitações da prévia e participação               |
+| `/community`           | Formas de contribuir e acompanhar o projeto                                         |
+| Outros endereços       | Página 404 com navegação de retorno                                                 |
 
-ConsoloStruct e MolaStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
+ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
 
 ## Struct Launcher e downloads
 
@@ -139,6 +140,26 @@ normativa global. Consulte o [mapa de evidências](docs/MOLASTRUCT-PUBLICADO.md)
 antes de atualizar as afirmações junto com uma nova distribuição.
 
 O componente `FoundationPreview` permite alternar entre sapata e bloco, com 1, 2, 3 ou 4 estacas. **É um esquema conceitual de apresentação, sem cálculo de rigidez, recalque ou capacidade de carga.** Os detalhes técnicos e a integração com o aplicativo serão acrescentados posteriormente.
+
+## ArmaduraStruct
+
+A página descreve a release distribuída **0.2.0**, tag `v0.2.0`. A captura exibida
+é o mesmo `docs/preview.png` dessa tag: mostra as abas Projeto/Propriedades e os
+recursos disponíveis, sem hierarquia ou gerenciador de pranchas posterior.
+
+O fluxo público é importar uma máscara DXF ASCII ou DWG, detalhar, conferir os
+quantitativos e exportar. DWG é somente entrada, com compatibilidade limitada às
+entidades reconhecidas; a saída CAD é DXF. O arquivo editável `.armstruct.json`
+usa `armadurastruct/2`, enquanto PDF A3 e CSV completam as saídas documentais.
+As unidades e o caráter manual do traspasse e das verificações de projeto ficam
+visíveis junto ao quadro de entradas e saídas.
+
+A master consultada continua com package 0.2.0, mas documenta hierarquia,
+detalhamentos compostos, pranchas, folhas/vistas e o formato `armadurastruct/5`.
+Esses recursos aparecem apenas como desenvolvimento, fora do instalador público.
+O aplicativo usa **GPL-3.0-or-later**, independentemente da licença deste frontend
+e dos demais projetos. O [mapa de evidências](docs/ARMADURASTRUCT-PUBLICADO.md)
+fixa as afirmações à tag e registra as diferenças da master.
 
 ## Identidade visual
 
