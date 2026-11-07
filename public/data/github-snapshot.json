@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "generatedAt": null,
   "retryAt": null,
   "repositories": [
@@ -11,6 +11,25 @@
       "status": "unavailable",
       "problem": "visibility",
       "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
       "lists": {
         "issues": {
           "state": "unavailable",
@@ -36,11 +55,6 @@
           "truncated": false,
           "items": []
         }
-      },
-      "release": {
-        "state": "unavailable",
-        "checkedAt": null,
-        "item": null
       }
     },
     {
@@ -51,6 +65,25 @@
       "status": "unavailable",
       "problem": "visibility",
       "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
       "lists": {
         "issues": {
           "state": "unavailable",
@@ -76,11 +109,6 @@
           "truncated": false,
           "items": []
         }
-      },
-      "release": {
-        "state": "unavailable",
-        "checkedAt": null,
-        "item": null
       }
     },
     {
@@ -91,6 +119,25 @@
       "status": "unavailable",
       "problem": "visibility",
       "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
       "lists": {
         "issues": {
           "state": "unavailable",
@@ -116,11 +163,6 @@
           "truncated": false,
           "items": []
         }
-      },
-      "release": {
-        "state": "unavailable",
-        "checkedAt": null,
-        "item": null
       }
     },
     {
@@ -131,6 +173,25 @@
       "status": "unavailable",
       "problem": "visibility",
       "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
       "lists": {
         "issues": {
           "state": "unavailable",
@@ -156,11 +217,6 @@
           "truncated": false,
           "items": []
         }
-      },
-      "release": {
-        "state": "unavailable",
-        "checkedAt": null,
-        "item": null
       }
     },
     {
@@ -171,6 +227,25 @@
       "status": "unavailable",
       "problem": "visibility",
       "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
       "lists": {
         "issues": {
           "state": "unavailable",
@@ -196,11 +271,6 @@
           "truncated": false,
           "items": []
         }
-      },
-      "release": {
-        "state": "unavailable",
-        "checkedAt": null,
-        "item": null
       }
     }
   ]

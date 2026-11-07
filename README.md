@@ -312,3 +312,9 @@ Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md).
 A rota `/development` reúne os cinco repositórios públicos, com seleção por repositório na URL, contagens de itens únicos no recorte de issues/PRs, releases estáveis e datas por fonte. Falhas e dados antigos são identificados sem esconder a navegação. As versões de instalação continuam vindo do catálogo assinado, separadas das publicações do código.
 
 Veja [cobertura, contrato v2 e validação](docs/CENTRAL-DESENVOLVIMENTO.md).
+
+## Issues com filtros e paginação
+
+A central `/development#issues` permite filtrar issues por repositório, estado e labels reais, buscar no recorte carregado e navegar em páginas de dez itens. A URL preserva a seleção, com histórico voltar/avançar. As contagens distinguem o recorte do total do repositório e excluem PRs; o snapshot v3 conserva abertas/fechadas e sua cobertura separadamente.
+
+Veja [contrato, filtros e validação da OSF-19](docs/ISSUES-CENTRAL.md).

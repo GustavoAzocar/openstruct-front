@@ -1,0 +1,184 @@
+.issue-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 16px;
+  margin: 26px 0 16px;
+}
+.issue-filters label {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+  font-size: 12px;
+}
+.issue-filters input,
+.issue-filters select {
+  min-height: 44px;
+  min-width: 0;
+  max-width: 100%;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.issue-filters select {
+  width: 200px;
+}
+.issue-filters .issue-search {
+  flex: 1 1 230px;
+}
+.issue-filters input {
+  width: 100%;
+}
+.issue-filter-note {
+  font-size: 12px;
+}
+.issues-section > .result-count {
+  font-size: 13px;
+  color: var(--ink);
+}
+.issue-coverage {
+  border-block: 1px solid var(--line);
+  padding: 14px 0;
+  margin: 22px 0;
+  font-size: 12px;
+}
+.issue-coverage summary {
+  cursor: pointer;
+  min-height: 32px;
+}
+.issue-coverage ul {
+  list-style: none;
+  padding: 0;
+}
+.issue-coverage li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+}
+.issue-coverage strong {
+  font-weight: 500;
+  min-width: 220px;
+}
+.issue-coverage span {
+  color: var(--muted);
+}
+.issues-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.issue-row {
+  padding: 22px 0;
+  border-block-start: 1px solid var(--line);
+  min-width: 0;
+}
+.issue-row-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+  margin-bottom: 12px;
+}
+.issue-state {
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 3px 7px;
+  color: var(--ink);
+}
+.issue-title {
+  font-size: 16px;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+.issue-title svg {
+  display: inline;
+  vertical-align: middle;
+  color: var(--accent);
+}
+.issue-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+  font-size: 11px;
+  color: var(--muted);
+}
+.issue-label {
+  max-width: 100%;
+  border: 1px solid var(--line);
+  background: var(--surface-2);
+  border-radius: 4px;
+  padding: 3px 8px;
+  overflow-wrap: anywhere;
+}
+.issue-row-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.issue-row-meta > span {
+  display: inline-flex;
+  gap: 5px;
+  align-items: center;
+  flex-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+.issue-row-meta a {
+  color: var(--accent);
+}
+.issue-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 24px;
+}
+.issue-pagination > span {
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+}
+@media (max-width: 700px) {
+  .issue-filters {
+    align-items: stretch;
+  }
+  .issue-filters label,
+  .issue-filters button {
+    width: 100%;
+  }
+  .issue-filters select {
+    width: 100%;
+  }
+  .issue-pagination {
+    flex-wrap: wrap;
+  }
+  .issue-pagination > span {
+    order: -1;
+    width: 100%;
+    text-align: center;
+  }
+  .issue-coverage strong {
+    min-width: 0;
+    width: 100%;
+  }
+  .issue-coverage summary {
+    min-height: 44px;
+  }
+  .issue-row-meta a {
+    min-height: 32px;
+  }
+}

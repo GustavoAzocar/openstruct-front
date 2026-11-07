@@ -38,6 +38,7 @@ test('shares the pending static request, omits credentials and never queries the
     fetchImpl: async (url, options) => {
       calls.push(url);
       assert.equal(options.credentials, 'omit');
+      assert.equal(options.cache, 'no-cache');
       assert.equal(options.headers.Authorization, undefined);
       return new Response(JSON.stringify(snapshot));
     },

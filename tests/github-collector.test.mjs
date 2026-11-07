@@ -32,6 +32,9 @@ function metadata(repository, extra = {}) {
 function issue(repository, number = 1, extra = {}) {
   return {
     number,
+    state: 'open',
+    labels: [],
+    comments: 0,
     title: 'Teste publico@example.com',
     html_url: 'https://github.com/' + repository + '/issues/' + number,
     updated_at: '2026-11-07T15:00:00Z',
@@ -50,6 +53,8 @@ function fixture(overrides = () => null) {
     assert.ok(GITHUB_REPOSITORIES.includes(repository));
     if (!endpoint) return response(metadata(repository));
     if (endpoint === 'releases/latest') return response({}, 404);
+    if (endpoint === 'issues' && new URL(url).searchParams.get('state') === 'closed')
+      return response([]);
     if (endpoint === 'issues') return response([issue(repository)]);
     return response([]);
   };
@@ -57,7 +62,7 @@ function fixture(overrides = () => null) {
 
 test('exports only selected public fields, redacts emails and rejects unknown contract keys', async () => {
   const { snapshot, requests } = await collectGithub({ fetchImpl: fixture(), now });
-  assert.equal(requests, 30);
+  assert.equal(requests, 35);
   assert.equal(snapshot.repositories.length, 5);
   assert.ok(snapshot.repositories.every((entry) => entry.status === 'ready'));
   const json = JSON.stringify(snapshot);
@@ -97,7 +102,8 @@ test('follows Link pagination, filters PRs out of issues and declares a bounded 
   const result = await collectGithub({
     now,
     fetchImpl: fixture((url) => {
-      if (!url.includes('/issues?')) return null;
+      if (!(url.includes('/issues?') && new URL(url).searchParams.get('state') === 'open'))
+        return null;
       const u = new URL(url);
       const repository = u.pathname.split('/').slice(2, 4).join('/');
       const page = Number(u.searchParams.get('page'));
@@ -109,7 +115,7 @@ test('follows Link pagination, filters PRs out of issues and declares a bounded 
       });
     }),
   });
-  assert.equal(result.requests, 35);
+  assert.equal(result.requests, 40);
   assert.deepEqual(
     result.snapshot.repositories[0].lists.issues.items.map((item) => item.id),
     ['1', '2'],
@@ -121,7 +127,7 @@ test('304 reuses sanitized page and pagination, with a fresh visibility check ev
   const first = await collectGithub({
     now,
     fetchImpl: fixture((url) =>
-      url.includes('/issues?')
+      url.includes('/issues?') && new URL(url).searchParams.get('state') === 'open'
         ? response([issue(url.split('/repos/')[1].split('/issues')[0])], 200, { etag: '"same"' })
         : null,
     ),
@@ -136,7 +142,7 @@ test('304 reuses sanitized page and pagination, with a fresh visibility check ev
         metadataCalls++;
         assert.equal(options.headers['If-None-Match'], undefined);
       }
-      if (url.includes('/issues?')) {
+      if (url.includes('/issues?') && new URL(url).searchParams.get('state') === 'open') {
         assert.equal(options.headers['If-None-Match'], '"same"');
         return response(null, 304);
       }
@@ -245,7 +251,11 @@ test('rejects unauthorized repositories and any data on unconfirmed visibility',
 test('a 304 without saved page is unavailable, while a successful empty list is fresh', async () => {
   const result = await collectGithub({
     now,
-    fetchImpl: fixture((url) => (url.includes('/issues?') ? response(null, 304) : null)),
+    fetchImpl: fixture((url) =>
+      url.includes('/issues?') && new URL(url).searchParams.get('state') === 'open'
+        ? response(null, 304)
+        : null,
+    ),
   });
   assert.equal(result.snapshot.repositories[0].lists.issues.state, 'unavailable');
   assert.equal(result.snapshot.repositories[0].lists.pulls.state, 'fresh');
@@ -260,7 +270,7 @@ test('Retry-After HTTP-date is honored and a foreign pagination origin cannot be
   const result = await collectGithub({
     now,
     fetchImpl: fixture((url) =>
-      url.includes('/issues?')
+      url.includes('/issues?') && new URL(url).searchParams.get('state') === 'open'
         ? response([], 200, {
             link: '<https://evil.example/private?per_page=30&page=2>; rel="next"',
           })
@@ -294,7 +304,7 @@ test('collects only public stable releases, including conditional 304 and confir
         : null,
     ),
   });
-  assert.equal(first.snapshot.schemaVersion, 2);
+  assert.equal(first.snapshot.schemaVersion, 3);
   assert.equal(first.snapshot.repositories[0].release.item.tag, 'v1.2.3');
   assert.ok(!JSON.stringify(first.snapshot).includes('not exported'));
   const second = await collectGithub({

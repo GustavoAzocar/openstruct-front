@@ -8,10 +8,10 @@ A OSF-17 está implementada e sua branch pública já serve dados reais. A lacun
 - `/development`: visão geral dos cinco repositórios autorizados, sem ranking por estrelas.
 - `?repo=consolo-struct` (ou outro slug da allowlist): visão do repositório. Valores desconhecidos retornam à visão geral; voltar/avançar restaura a seleção.
 - `#repositories` e `#releases`: cartões por produto/infraestrutura e suas publicações.
-- `#issues` e `#pull-requests`: prévias de atividade aberta, até 12 itens por seção, ordenadas por atualização. Os cartões levam a essas seções já com o repositório selecionado.
+- `#issues`: lista da OSF-19 com filtros e páginas de dez itens. `#pull-requests`: prévia de PRs abertos, até 12 itens, ordenados por atualização. Os cartões levam a essas seções já com o repositório selecionado.
 - Menu, rodapé e Comunidade dão acesso à central. Ideias e problemas agora passam pela escolha do repositório, sem aplicar labels supostamente existentes.
 
-OSF-19 e OSF-20 ainda estão abertas. Esta entrega oferece os pontos de acesso e a prévia real das listas, sem fingir filtros de labels, histórico fechado, comentários, reviews ou checks. Os links externos levam às listagens oficiais completas; as próximas tarefas podem evoluir as mesmas seções sem bloquear esta central.
+Na entrega da OSF-18, as listas eram prévias abertas. A OSF-19 evoluiu a seção de issues com estado, labels, autor, comentários, busca e paginação. OSF-20 permanece para a evolução dos PRs, sem antecipar reviews ou checks. Os links externos continuam levando às listagens oficiais completas.
 
 ## Contagens e cobertura
 
@@ -40,3 +40,7 @@ A revisão visual deve cobrir seleção por URL, voltar/avançar, links das seç
 O endereço do leitor inclui o parâmetro fixo `?schema=2` para separar o cache HTTP do contrato anterior durante a migração. Não é um parâmetro aleatório por visitante: todos compartilham a mesma origem estática, com a janela de cinco minutos do loader preservada.
 
 Verificação local: 71 testes aprovados e build concluído. No Chromium, foram conferidos a seleção por sistema e a navegação voltar/avançar, acesso a partir da Comunidade, âncoras das listas, menu móvel e ambos os temas. Larguras conferidas: 1348 px e 337 px (simulada por zoom), sem rolagem horizontal. Não houve teste em aparelho físico. A primeira coleta v2 em Actions confirmou os cinco repositórios; as listas abertas estavam vazias e as releases/ausências foram preservadas como dados reais.
+
+## Evolução na OSF-19
+
+A seção de issues agora tem filtros por repositório/estado/label, busca local e paginação em URL. A coleção detalhada contempla abertas e fechadas; as métricas superiores e os cartões mantêm a definição de issues abertas. O contrato v3 preserva a leitura v1/v2 e as releases da OSF-18. OSF-20 permanece para a evolução dos PRs. Consulte [a documentação das issues](ISSUES-CENTRAL.md).

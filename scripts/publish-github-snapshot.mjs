@@ -1,20 +1,26 @@
 import { readFile } from 'node:fs/promises';
 import { setTimeout as pause } from 'node:timers/promises';
-import { validateGithubSnapshot } from '../src/lib/github-snapshot.ts';
+import { validateGithubSnapshot, SNAPSHOT_MAX_BYTES } from '../src/lib/github-snapshot.ts';
 
 const repository = 'ricardocorsini/openstruct-front';
 const branch = 'github-data';
 const raw = await readFile('out/snapshot.json', 'utf8');
-if (Buffer.byteLength(raw) > 400_000) throw new Error('Snapshot too large');
+if (Buffer.byteLength(raw) > SNAPSHOT_MAX_BYTES) throw new Error('Snapshot too large');
 const snapshot = validateGithubSnapshot(JSON.parse(raw));
 if (!snapshot.generatedAt) throw new Error('Cannot publish an uncollected snapshot');
 const token = process.env.GH_WRITE_TOKEN;
 if (!token) throw new Error('Missing publication credential');
 async function api(path, method = 'GET', data) {
   const response = await fetch('https://api.github.com/repos/' + repository + path, {
-    method, redirect: 'error', signal: AbortSignal.timeout(15_000),
-    headers: { Authorization: 'Bearer ' + token, Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28', 'Content-Type': 'application/json' },
+    method,
+    redirect: 'error',
+    signal: AbortSignal.timeout(15_000),
+    headers: {
+      Authorization: 'Bearer ' + token,
+      Accept: 'application/vnd.github+json',
+      'X-GitHub-Api-Version': '2022-11-28',
+      'Content-Type': 'application/json',
+    },
     body: data ? JSON.stringify(data) : undefined,
   });
   if (response.status === 404 && method === 'GET') return null;
@@ -38,7 +44,8 @@ const tree = await api('/git/trees', 'POST', {
 });
 const commit = await api('/git/commits', 'POST', {
   message: 'data: refresh public GitHub snapshot',
-  tree: tree.sha, parents: ref ? [ref.object.sha] : [],
+  tree: tree.sha,
+  parents: ref ? [ref.object.sha] : [],
 });
 if (ref) await api('/git/refs/heads/' + branch, 'PATCH', { sha: commit.sha, force: false });
 else await api('/git/refs', 'POST', { ref: 'refs/heads/' + branch, sha: commit.sha });

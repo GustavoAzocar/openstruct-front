@@ -14,7 +14,7 @@ Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não subst
 
 O agendamento do GitHub é aproximado, pode atrasar e pode ser desativado após inatividade em repositórios públicos. Confira a aba Actions e reative/execute manualmente quando necessário. O primeiro push da implementação na master inicia a coleta. Branch inexistente na primeira execução usa estado vazio explícito, nunca números inventados.
 
-## Fronteira pública e contrato v2 (compatível com v1)
+## Fronteira pública e contrato v3 (compatível com v1/v2)
 
 Allowlist fixa em `src/lib/github-snapshot.ts`:
 openstruct-front, consolo-struct, mola-struct, armadura-struct e openstruct-catalog, todos de ricardocorsini.
@@ -26,22 +26,22 @@ Após confirmação pública atual, falhas de uma lista preservam somente o últ
 
 Não se consulta launcher-struct. Distribuição e informações públicas do Launcher continuam no openstruct-catalog e no fluxo existente do catálogo assinado; atividade do hub não é atividade do código privado do Launcher.
 
-O contrato rejeita campos inesperados, IDs duplicados, fontes externas, e-mails em textos, estados incoerentes e JSON maior que 400.000 bytes. Não exporta bodies, comentários, perfis completos, e-mails, nomes pessoais, mensagens de erro remotas ou tokens. Títulos e descrições públicos têm tamanho limitado, caracteres de controle removidos e padrões de e-mail substituídos. As URLs são verificadas contra as fontes autorizadas. O frontend trata textos como texto React, sem HTML remoto.
+O contrato rejeita campos inesperados, IDs duplicados, fontes externas, e-mails em textos, estados incoerentes e JSON maior que 1.000.000 bytes. Não exporta bodies, comentários, perfis completos, e-mails, nomes pessoais, mensagens de erro remotas ou tokens. Títulos e descrições públicos têm tamanho limitado, caracteres de controle removidos e padrões de e-mail substituídos. As URLs são verificadas contra as fontes autorizadas. O frontend trata textos como texto React, sem HTML remoto.
 
 Cada repositório registra visibilidade confirmada, horário, última coleta totalmente bem-sucedida, resumo, problema e estado das quatro listas. O snapshot registra versão do contrato, geração e eventual `retryAt`. O horário da geração não torna uma lista antiga atual: `checkedAt` e `state` pertencem a cada lista.
 
 ## Listas e limites
 
-| Lista          | Seleção e ordem                   | Limite e interpretação                                                                                               |
-| -------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Issues         | Abertas, atualizadas recentemente | Até 2 páginas de 30 entradas REST; o endpoint inclui PRs, que são removidos. Podem restar menos de 60 issues.        |
-| PRs            | Abertos, atualizados recentemente | Até 60; não inclui PRs fechados ou mesclados.                                                                        |
-| Milestones     | Abertos, prazo crescente          | Até 60; `count` é número de issues ainda abertas no milestone.                                                       |
-| Contribuidores | Ordem do endpoint GitHub          | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
+| Lista          | Seleção e ordem                                    | Limite e interpretação                                                                                               |
+| -------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Issues         | Abertas e fechadas, separadamente, por atualização | Até 2 páginas de 30 por estado; PRs são removidos. O resumo aberto é derivado da mesma coleta.                       |
+| PRs            | Abertos, atualizados recentemente                  | Até 60; não inclui PRs fechados ou mesclados.                                                                        |
+| Milestones     | Abertos, prazo crescente                           | Até 60; `count` é número de issues ainda abertas no milestone.                                                       |
+| Contribuidores | Ordem do endpoint GitHub                           | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
 
 `truncated=true` significa que havia próxima página além do teto. `false` significa que o endpoint filtrado terminou, nunca que todo o histórico do projeto foi coletado. `items[].updatedAt` aplica-se a issues/PRs; é null nas outras listas. `id` é número ou login; `title` é título ou login. O resumo `openIssuesAndPullRequests` é a contagem combinada oficial do GitHub, não uma contagem separada de issues.
 
-Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **50 GETs por execução** (5 × [1 metadado + 4 listas × 2 páginas + 1 release]); caso usual mínimo: 30. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
+Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **60 GETs por execução** (5 × [1 metadado + 3 listas × 2 páginas + 2 estados de issues × 2 páginas + 1 release]); caso usual mínimo: 35. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
 
 ETags persistem via Actions cache em `.cache/github/pages.json`, com apenas páginas já normalizadas. Um 304 reaproveita os dados e a paginação sanitizados, após nova confirmação pública; sem corpo em cache não produz lista vazia fictícia.
 403/429 suspendem novos pedidos, respeitando Retry-After (segundos/data), reset quando esgotado e mínimo de um minuto. Não há retentativa imediata nem runner dormindo: `retryAt` atravessa execuções e impede chamadas antes do prazo.
@@ -64,3 +64,7 @@ Referências: [boas práticas REST](https://docs.github.com/en/rest/using-the-re
 ## Evolução na OSF-18
 
 O contrato v2 acrescenta a última release estável por repositório. O leitor migra v1 sem inventar releases; o cache Actions usa a chave v2. Ausência de release (404) é um resultado confirmado; falhas preservam a última release pública como desatualizada. A versão distribuída dos aplicativos continua no catálogo assinado, separada da release do repositório. Veja [a documentação da central](CENTRAL-DESENVOLVIMENTO.md).
+
+## Evolução na OSF-19
+
+O contrato v3 acrescenta `issueDetails` com coleções independentes de abertas/fechadas, labels exatas, login/URL pública do autor e contagem de comentários. O resumo aberto existente é derivado sem nova chamada e não é somado às coleções detalhadas. Limite do snapshot: 1 MB, saída compacta; cache e endereço de leitura usam v3. Veja [as definições de cobertura e filtros](ISSUES-CENTRAL.md).

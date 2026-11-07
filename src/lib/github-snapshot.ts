@@ -9,12 +9,12 @@ export const GITHUB_REPOSITORIES = [
 export type PublicRepository = (typeof GITHUB_REPOSITORIES)[number];
 export const ACTIVITY_KINDS = ['issues', 'pulls', 'milestones', 'contributors'] as const;
 export type ActivityKind = (typeof ACTIVITY_KINDS)[number];
-export const SNAPSHOT_MAX_BYTES = 400_000;
+export const SNAPSHOT_MAX_BYTES = 1_000_000;
 export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=2';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=3';
 export type ActivityItem = {
   id: string;
   title: string;
@@ -28,6 +28,19 @@ export type ActivityList = {
   truncated: boolean;
   items: ActivityItem[];
 };
+export const ISSUE_STATES = ['open', 'closed'] as const;
+export type IssueState = (typeof ISSUE_STATES)[number];
+export type PublicIssue = {
+  number: number;
+  title: string;
+  state: IssueState;
+  url: string;
+  updatedAt: string | null;
+  labels: string[] | null;
+  author: { login: string; url: string | null } | null;
+  comments: number | null;
+};
+export type IssueCollection = Omit<ActivityList, 'items'> & { items: PublicIssue[] };
 export type PublicRelease = {
   tag: string;
   name: string;
@@ -57,9 +70,10 @@ export type RepositorySnapshot = {
   } | null;
   lists: Record<ActivityKind, ActivityList>;
   release: ReleaseSnapshot;
+  issueDetails: Record<IssueState, IssueCollection>;
 };
 export type GithubSnapshot = {
-  schemaVersion: 2;
+  schemaVersion: 3;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -67,6 +81,9 @@ export type GithubSnapshot = {
 
 export function emptyRelease(): ReleaseSnapshot {
   return { state: 'unavailable', checkedAt: null, item: null };
+}
+export function emptyIssueCollection(): IssueCollection {
+  return { state: 'unavailable', checkedAt: null, truncated: false, items: [] };
 }
 export function emptyRepository(repository: PublicRepository): RepositorySnapshot {
   return {
@@ -78,6 +95,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
     problem: 'visibility',
     summary: null,
     release: emptyRelease(),
+    issueDetails: { open: emptyIssueCollection(), closed: emptyIssueCollection() },
     lists: {
       issues: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
       pulls: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
@@ -88,7 +106,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 2,
+    schemaVersion: 3,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -132,7 +150,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2].includes(root.schemaVersion as number) ||
+    ![1, 2, 3].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -150,7 +168,8 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'problem',
       'summary',
       'lists',
-      ...(root.schemaVersion === 2 ? ['release'] : []),
+      ...(root.schemaVersion !== 1 ? ['release'] : []),
+      ...(root.schemaVersion === 3 ? ['issueDetails'] : []),
     ]);
     if (
       !GITHUB_REPOSITORIES.includes(repo.repository as PublicRepository) ||
@@ -198,7 +217,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       integer(summary.forks);
       integer(summary.openIssuesAndPullRequests);
     }
-    if (root.schemaVersion === 2) {
+    if (root.schemaVersion !== 1) {
       const release = object(repo.release, ['state', 'checkedAt', 'item']);
       if (!['fresh', 'stale', 'unavailable'].includes(release.state as string))
         throw new Error('Invalid release state');
@@ -233,6 +252,79 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       }
     }
     const lists = object(repo.lists, [...ACTIVITY_KINDS]);
+    if (root.schemaVersion === 3) {
+      const details = object(repo.issueDetails, [...ISSUE_STATES]);
+      const issueNumbers = new Set<number>();
+      for (const scope of ISSUE_STATES) {
+        const collection = object(details[scope], ['state', 'checkedAt', 'truncated', 'items']);
+        date(collection.checkedAt);
+        if (
+          !['fresh', 'stale', 'unavailable'].includes(collection.state as string) ||
+          typeof collection.truncated !== 'boolean' ||
+          !Array.isArray(collection.items) ||
+          collection.items.length > PAGE_SIZE * MAX_PAGES
+        )
+          throw new Error('Invalid issue collection');
+        if (
+          collection.state === 'unavailable' &&
+          (collection.checkedAt !== null || collection.items.length || collection.truncated)
+        )
+          throw new Error('Unavailable issue collection contains data');
+        if (collection.state !== 'unavailable' && collection.checkedAt === null)
+          throw new Error('Missing issue collection check');
+        if (repo.visibility !== 'public' && collection.state !== 'unavailable')
+          throw new Error('Unconfirmed issue visibility');
+        for (const rawIssue of collection.items) {
+          const issue = object(rawIssue, [
+            'number',
+            'title',
+            'state',
+            'url',
+            'updatedAt',
+            'labels',
+            'author',
+            'comments',
+          ]);
+          integer(issue.number);
+          text(issue.title, 200);
+          date(issue.updatedAt);
+          if (
+            issue.number === 0 ||
+            issueNumbers.has(issue.number as number) ||
+            issue.state !== scope ||
+            issue.url !== 'https://github.com/' + repo.repository + '/issues/' + issue.number
+          )
+            throw new Error('Invalid or duplicate issue');
+          issueNumbers.add(issue.number as number);
+          if (issue.comments !== null) integer(issue.comments);
+          if (issue.labels !== null) {
+            if (!Array.isArray(issue.labels) || issue.labels.length > 30)
+              throw new Error('Invalid issue labels');
+            const labels = new Set<string>();
+            for (const label of issue.labels) {
+              text(label, 100);
+              if (!label || labels.has(label)) throw new Error('Invalid issue label');
+              labels.add(label);
+            }
+          }
+          if (issue.author !== null) {
+            const author = object(issue.author, ['login', 'url']);
+            text(author.login, 50);
+            if (!/^[a-z\d][a-z\d-]{0,38}(?:\[bot\])?$/i.test(author.login))
+              throw new Error('Invalid public author');
+            if (
+              author.url !== null &&
+              author.url !== 'https://github.com/' + author.login &&
+              !(
+                author.login.endsWith('[bot]') &&
+                author.url === 'https://github.com/apps/' + author.login.slice(0, -5)
+              )
+            )
+              throw new Error('Invalid author source');
+          }
+        }
+      }
+    }
     for (const kind of ACTIVITY_KINDS) {
       const list = object(lists[kind], ['state', 'checkedAt', 'truncated', 'items']);
       date(list.checkedAt);
@@ -281,12 +373,38 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     }
   }
   const validated = value as GithubSnapshot;
-  // v1 has no release evidence. Never infer a release from a version or combined issue count.
-  return root.schemaVersion === 2
+  // Older contracts collected only open issues. Missing metadata stays unknown, never zero/empty.
+  return root.schemaVersion === 3
     ? validated
     : {
         ...validated,
-        schemaVersion: 2,
-        repositories: validated.repositories.map((repo) => ({ ...repo, release: emptyRelease() })),
+        schemaVersion: 3,
+        repositories: validated.repositories.map((repo) => ({
+          ...repo,
+          release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
+          issueDetails: {
+            open: {
+              ...repo.lists.issues,
+              items: [
+                ...new Map(
+                  repo.lists.issues.items.map((item) => [
+                    item.url,
+                    {
+                      number: Number(item.url.slice(item.url.lastIndexOf('/') + 1)),
+                      title: item.title,
+                      url: item.url,
+                      updatedAt: item.updatedAt,
+                      state: 'open' as const,
+                      labels: null,
+                      author: null,
+                      comments: null,
+                    },
+                  ]),
+                ).values(),
+              ],
+            },
+            closed: emptyIssueCollection(),
+          },
+        })),
       };
 }

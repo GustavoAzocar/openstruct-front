@@ -1,7 +1,9 @@
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowUpRight, CircleDot, GitPullRequest, GitBranch, RefreshCw, Tag } from 'lucide-react';
 import { usePublicCatalog } from '../components/CatalogProvider';
 import { useGithubActivity } from '../components/useGithubActivity';
+import { IssuesList } from '../components/IssuesList';
+import { issueRepositoryParams } from '../lib/issues';
 import {
   developmentSources,
   developmentView,
@@ -62,7 +64,7 @@ function RepositoryCard({
       <p>{source.description}</p>
       <dl className="development-repo-counts">
         <div>
-          <dt>Issues no recorte</dt>
+          <dt>Issues abertas no recorte</dt>
           <dd>{loading && !repo.entry ? '—' : <ListCount list={issues} />}</dd>
         </div>
         <div>
@@ -257,7 +259,8 @@ function ActivityOverview({
 }
 
 export function Development() {
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
   const { result, loading, now, retryAt, canRefresh, refresh } = useGithubActivity();
   const { products } = usePublicCatalog();
   const sources = selectDevelopmentSources(params.get('repo'));
@@ -272,10 +275,19 @@ export function Development() {
   const old = Boolean(generatedAt && now - Date.parse(generatedAt) > SNAPSHOT_STALE_MS);
   const hasProblems = view.repositories.some(
     (repo) =>
+      repo.entry?.status !== 'ready' ||
       repo.issues.state !== 'fresh' ||
       repo.pulls.state !== 'fresh' ||
       repo.release.state !== 'fresh',
   );
+  function changeRepository(slug: string) {
+    const next = issueRepositoryParams(new URLSearchParams(window.location.search), slug);
+    const search = next.toString();
+    navigate(
+      { search: search ? '?' + search : '', hash: window.location.hash },
+      { preventScrollReset: true },
+    );
+  }
   return (
     <div className="container development-page">
       <section className="page-hero development-hero">
@@ -333,7 +345,7 @@ export function Development() {
         <select
           id="development-repository"
           value={selected}
-          onChange={(event) => setParams(event.target.value ? { repo: event.target.value } : {})}
+          onChange={(event) => changeRepository(event.target.value)}
         >
           <option value="">Visão geral · todos os repositórios</option>
           {developmentSources.map((source) => (
@@ -343,7 +355,7 @@ export function Development() {
           ))}
         </select>
         {selected && (
-          <button className="text-link" onClick={() => setParams({})}>
+          <button className="text-link" onClick={() => changeRepository('')}>
             Mostrar todos
           </button>
         )}
@@ -408,7 +420,13 @@ export function Development() {
           ))}
         </div>
       </section>
-      <ActivityOverview kind="issues" data={view.issues} sources={sources} loading={loading} />
+      <IssuesList
+        snapshot={result?.snapshot}
+        sources={sources}
+        loading={loading}
+        now={now}
+        offline={Boolean(result && result.source !== 'public')}
+      />
       <ActivityOverview kind="pulls" data={view.pulls} sources={sources} loading={loading} />
       <aside className="development-launcher">
         <h2>Distribuição pelo Struct Launcher</h2>

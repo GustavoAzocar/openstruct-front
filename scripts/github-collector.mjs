@@ -6,12 +6,14 @@ import {
   emptyGithubSnapshot,
   emptyRepository,
   emptyRelease,
+  emptyIssueCollection,
+  ISSUE_STATES,
   validateGithubSnapshot,
 } from '../src/lib/github-snapshot.ts';
 
 const API = 'https://api.github.com/repos/';
 const RESPONSE_LIMIT = 2_000_000;
-const REQUEST_LIMIT = GITHUB_REPOSITORIES.length * (2 + ACTIVITY_KINDS.length * MAX_PAGES);
+const REQUEST_LIMIT = GITHUB_REPOSITORIES.length * (2 + (ACTIVITY_KINDS.length + 1) * MAX_PAGES);
 const safeText = (value, max) =>
   String(value ?? '')
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
@@ -53,7 +55,7 @@ function nextPage(header, current) {
 function normalizeItems(kind, body) {
   if (!Array.isArray(body) || body.length > PAGE_SIZE) throw new RequestError('shape');
   return body
-    .filter((item) => item && (kind !== 'issues' || !item.pull_request))
+    .filter((item) => item && (kind !== 'issues' || !Object.hasOwn(item, 'pull_request')))
     .filter(
       (item) =>
         kind !== 'contributors' ||
@@ -71,6 +73,51 @@ function normalizeItems(kind, body) {
             ? count(item.open_issues)
             : null,
     }));
+}
+function normalizeIssues(body, scope) {
+  if (!Array.isArray(body) || body.length > PAGE_SIZE) throw new RequestError('shape');
+  return body
+    .filter((item) => item && !Object.hasOwn(item, 'pull_request'))
+    .map((item) => {
+      if (!Number.isSafeInteger(item.number) || item.number < 1 || item.state !== scope)
+        throw new RequestError('issue');
+      const names = Array.isArray(item.labels)
+        ? item.labels.map((label) => (typeof label === 'string' ? label : label?.name))
+        : null;
+      // Preserve exact real label names; privacy/size failures are unknown, never invented labels.
+      const labels =
+        names &&
+        names.length <= 30 &&
+        names.every(
+          (name) =>
+            typeof name === 'string' && name && name.length <= 100 && safeText(name, 100) === name,
+        )
+          ? [...new Set(names)]
+          : null;
+      const login = item.user?.login;
+      let author = null;
+      if (typeof login === 'string' && /^[a-z\d][a-z\d-]{0,38}(?:\[bot\])?$/i.test(login)) {
+        const url = item.user.html_url;
+        author = {
+          login,
+          url:
+            url === 'https://github.com/' + login ||
+            (login.endsWith('[bot]') && url === 'https://github.com/apps/' + login.slice(0, -5))
+              ? url
+              : null,
+        };
+      }
+      return {
+        number: item.number,
+        title: safeText(item.title, 200),
+        state: scope,
+        url: item.html_url,
+        updatedAt: timestamp(item.updated_at),
+        labels,
+        author,
+        comments: Number.isSafeInteger(item.comments) && item.comments >= 0 ? item.comments : null,
+      };
+    });
 }
 function normalizeRelease(body) {
   if (body === null) return null; // A 404 from /releases/latest confirms absence of a stable release.
@@ -229,6 +276,7 @@ export async function collectGithub({
         defaultBranch: safeText(body.default_branch, 100),
       };
       for (const kind of ACTIVITY_KINDS) {
+        if (kind === 'issues') continue;
         try {
           const query =
             kind === 'contributors'
@@ -261,7 +309,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 2,
+            schemaVersion: 3,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -279,6 +327,103 @@ export async function collectGithub({
           entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
         }
       }
+      for (const scope of ISSUE_STATES) {
+        const firstUrl =
+          prefix +
+          '/issues?per_page=' +
+          PAGE_SIZE +
+          '&page=1&state=' +
+          scope +
+          '&sort=updated&direction=desc';
+        try {
+          let url = firstUrl;
+          const items = [];
+          const seenPages = new Set();
+          for (let page = 0; page < MAX_PAGES; page++) {
+            if (seenPages.has(url)) throw new RequestError('pagination');
+            seenPages.add(url);
+            const response = await request(url, pages[url]);
+            const normalized =
+              response.body === undefined ? response.items : normalizeIssues(response.body, scope);
+            pages[url] = { items: normalized, etag: response.etag, next: response.next };
+            items.push(...normalized);
+            if (!response.next) {
+              url = '';
+              break;
+            }
+            url = nextPage('<' + response.next + '>; rel="next"', url);
+          }
+          entry.issueDetails[scope] = {
+            state: 'fresh',
+            checkedAt: at,
+            truncated: Boolean(url),
+            items: [...new Map(items.map((item) => [item.number, item])).values()],
+          };
+          validateGithubSnapshot({
+            schemaVersion: 3,
+            generatedAt: at,
+            retryAt: null,
+            repositories: GITHUB_REPOSITORIES.map((id) =>
+              id === repository
+                ? {
+                    ...entry,
+                    status: 'partial',
+                    issueDetails: {
+                      ...entry.issueDetails,
+                      [scope === 'open' ? 'closed' : 'open']: emptyIssueCollection(),
+                    },
+                  }
+                : emptyRepository(id),
+            ),
+          });
+        } catch (error) {
+          const last = old?.visibility === 'public' ? old.issueDetails[scope] : null;
+          entry.issueDetails[scope] = last?.checkedAt
+            ? { ...last, state: 'stale' }
+            : emptyIssueCollection();
+          for (const key of Object.keys(pages))
+            if (
+              key.startsWith(prefix + '/issues?') &&
+              new URL(key).searchParams.get('state') === scope
+            )
+              delete pages[key];
+          entry.status = 'partial';
+          entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
+        }
+      }
+      // An issue can close/reopen between the two requests. Prefer fresh evidence, then the latest update.
+      const owners = new Map();
+      for (const scope of ISSUE_STATES)
+        for (const issue of entry.issueDetails[scope].items) {
+          const candidate = { issue, scope, fresh: entry.issueDetails[scope].state === 'fresh' };
+          const last = owners.get(issue.number);
+          if (
+            !last ||
+            (candidate.fresh && !last.fresh) ||
+            (candidate.fresh === last.fresh &&
+              (Date.parse(issue.updatedAt ?? '') || 0) >=
+                (Date.parse(last.issue.updatedAt ?? '') || 0))
+          )
+            owners.set(issue.number, candidate);
+        }
+      for (const scope of ISSUE_STATES)
+        entry.issueDetails[scope].items = entry.issueDetails[scope].items.filter(
+          (issue) => owners.get(issue.number).scope === scope,
+        );
+      // Keep the OSF-18 open summary coherent, without a second API request or double counting.
+      const open = entry.issueDetails.open;
+      entry.lists.issues = {
+        state: open.state,
+        checkedAt: open.checkedAt,
+        truncated: open.truncated,
+        items: open.items.map((item) => ({
+          id: String(item.number),
+          title: item.title,
+          url: item.url,
+          updatedAt: item.updatedAt,
+          count: null,
+        })),
+      };
       const releaseUrl = prefix + '/releases/latest';
       try {
         const response = await request(releaseUrl, pages[releaseUrl]);
@@ -289,7 +434,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 2,
+          schemaVersion: 3,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -315,7 +460,7 @@ export async function collectGithub({
     repositories.push(entry);
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 2,
+    schemaVersion: 3,
     generatedAt: at,
     retryAt,
     repositories,
