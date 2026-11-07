@@ -57,6 +57,6 @@ O navegador compartilha uma promessa por janela de cinco minutos, com timeout de
 - Mantenha a branch github-data fora da origem do deploy do site. Ela contém só dados. Não altere a branch de produção da Vercel para github-data.
 - Alterar schema exige novo versionamento, migração dos consumidores e invalidação do cache.
 - Testes simulam privacidade, paginação/limite, 304, timeout, origem inválida, falha parcial, 403/429 e fallback do frontend.
-- Nesta execução, testes e build serão verificados em Actions; o ambiente local e o navegador estão indisponíveis. Não houve inspeção visual desktop/mobile ou dos temas.
+- Nesta execução, testes e build foram verificados em Actions; o ambiente local e o navegador estão indisponíveis. Não houve inspeção visual desktop/mobile ou dos temas.
 
 Referências: [boas práticas REST](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api), [limites REST](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) e [agendamentos Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).

@@ -162,3 +162,21 @@ test('rejects unauthorized repositories and any data on unconfirmed visibility',
     truncated: false, items: [issue(GITHUB_REPOSITORIES[0])] };
   assert.throws(() => validateGithubSnapshot(unknown));
 });
+
+test('a 304 without saved page is unavailable, while a successful empty list is fresh', async () => {
+  const result = await collectGithub({ now, fetchImpl: fixture((url) =>
+    url.includes('/issues?') ? response(null, 304) : null) });
+  assert.equal(result.snapshot.repositories[0].lists.issues.state, 'unavailable');
+  assert.equal(result.snapshot.repositories[0].lists.pulls.state, 'fresh');
+});
+test('Retry-After HTTP-date is honored and a foreign pagination origin cannot be followed', async () => {
+  const throttled = await collectGithub({ now, fetchImpl: async () =>
+    response({}, 429, { 'retry-after': new Date(at + 900000).toUTCString() }) });
+  assert.equal(throttled.snapshot.retryAt, new Date(at + 900000).toISOString());
+  const result = await collectGithub({ now, fetchImpl: fixture((url) =>
+    url.includes('/issues?') ? response([], 200, {
+      link: '<https://evil.example/private?per_page=30&page=2>; rel="next"',
+    }) : null) });
+  assert.equal(result.snapshot.repositories[0].lists.issues.state, 'unavailable');
+  assert.equal(result.snapshot.repositories[0].lists.pulls.state, 'fresh');
+});

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { loadGithubActivity } from '../lib/github-client';
 import type { GithubLoadResult } from '../lib/github-client';
-import { GITHUB_REPOSITORIES } from '../lib/github-snapshot';
+import { GITHUB_REPOSITORIES, SNAPSHOT_STALE_MS } from '../lib/github-snapshot';
 import './public-github-status.css';
 
 export function PublicGithubStatus() {
@@ -31,7 +31,9 @@ export function PublicGithubStatus() {
               <a href={'https://github.com/' + repository} target="_blank" rel="noreferrer">{repository.split('/')[1]}</a>
               <span>{entry?.summary
                 ? entry.summary.stars + ' estrelas · ' + entry.summary.openIssuesAndPullRequests + ' issues e PRs abertos' +
-                  (entry.status !== 'ready' || result?.stale ? ' · dados parciais ou desatualizados' : '')
+                  (entry.status !== 'ready' || result?.source !== 'public' || !entry.verifiedPublicAt ||
+                    Date.now() - Date.parse(entry.verifiedPublicAt) > SNAPSHOT_STALE_MS
+                    ? ' · dados parciais ou desatualizados' : '')
                 : 'Dados não confirmados nesta coleta'}</span>
             </li>
           );
