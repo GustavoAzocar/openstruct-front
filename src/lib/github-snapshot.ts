@@ -438,6 +438,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           schemaVersion: 4,
           repositories: validated.repositories.map((repo) => ({
             ...repo,
+            status: repo.status === 'ready' ? 'partial' : repo.status,
             lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
           })),
         }
@@ -446,6 +447,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
         schemaVersion: 4,
         repositories: validated.repositories.map((repo) => ({
           ...repo,
+          status: repo.status === 'ready' ? 'partial' : repo.status,
           release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
           lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
           issueDetails: {

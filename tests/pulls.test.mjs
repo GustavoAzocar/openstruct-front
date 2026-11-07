@@ -161,6 +161,10 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
       .filter((item) => item.pull.state === 'open')
       .map(({ pull, ...item }) => item);
   const migrated = validateGithubSnapshot(snapshot);
+  assert.doesNotThrow(() => validateGithubSnapshot(migrated));
+  assert.equal(migrated.repositories[0].status, 'partial');
+  const restored = await collectGithub({ previous: migrated, now, fetchImpl: api() });
+  assert.equal(restored.snapshot.repositories[0].status, 'ready');
   assert.equal(migrated.schemaVersion, 4);
   assert.equal(migrated.repositories[0].lists.pulls.state, 'unavailable');
   assert.equal(
