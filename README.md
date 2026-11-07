@@ -22,7 +22,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 
 | Endereço               | Conteúdo                                                                            |
 | ---------------------- | ----------------------------------------------------------------------------------- |
-| `/`                    | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ              |
+| `/`                    | Apresentação, ArmaduraStruct em destaque, aplicativos, princípios e FAQ             |
 | `/apps`                | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
 | `/apps/consolostruct`  | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
 | `/apps/molastruct`     | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
@@ -200,6 +200,13 @@ O componente `FoundationPreview` permite alternar entre sapata e bloco, com 1, 2
 A página descreve a release distribuída **0.2.0**, tag `v0.2.0`. A captura exibida
 é o mesmo `docs/preview.png` dessa tag: mostra as abas Projeto/Propriedades e os
 recursos disponíveis, sem hierarquia ou gerenciador de pranchas posterior.
+
+A home destaca o aplicativo com essa captura real e com o fluxo importar máscara
+→ detalhar → conferir o quadro de aço → salvar/exportar. A captura e os recursos
+apresentados têm versão própria, independente da versão para instalar consultada
+no catálogo assinado. O acesso principal continua pelo Struct Launcher. A origem,
+o compromisso editorial e a manutenção da imagem estão registrados em
+[Destaque do ArmaduraStruct — OSF-07](docs/ARMADURASTRUCT-DESTAQUE.md).
 
 O fluxo público é importar uma máscara DXF ASCII ou DWG, detalhar, conferir os
 quantitativos e exportar. DWG é somente entrada, com compatibilidade limitada às

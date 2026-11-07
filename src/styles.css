@@ -739,13 +739,13 @@ body {
   margin-top: 35px;
   font-size: 11px;
 }
-.consolo-spotlight {
+.app-spotlight {
   padding-block: 28px 72px;
   background: var(--brand);
   color: #f4f1e9;
   overflow: hidden;
 }
-.consolo-spotlight .section-kicker {
+.app-spotlight .section-kicker {
   border-color: #ffffff40;
   color: #f4f1e9b3;
 }
@@ -2537,7 +2537,7 @@ body {
     flex-shrink: 0;
     margin-top: 2px;
   }
-  .consolo-spotlight {
+  .app-spotlight {
     padding-bottom: 40px;
   }
   .spotlight-copy {

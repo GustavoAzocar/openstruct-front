@@ -8,20 +8,25 @@ import {
   MoveUpRight,
   Sparkles,
   Download,
+  FileInput,
+  PenTool,
+  ListChecks,
+  FileOutput,
 } from 'lucide-react';
 import { Mark } from '../components/Brand';
 import { AppCard } from '../components/AppCard';
-import { CorbelModel } from '../components/CorbelModel';
-import { ModelPreview } from '../components/ModelPreview';
+import { ArmaduraShowcase } from '../components/ArmaduraShowcase';
 import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
 import { currentApps, currentAppNames, getCurrentApp } from '../lib/apps';
 import { AppStatus } from '../components/AppStatus';
-import { CatalogSyncStatus } from '../components/CatalogAvailability';
+import { CatalogSyncStatus, ProductCatalogMeta } from '../components/CatalogAvailability';
 import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
+import { armaduraScreenshot } from '../lib/product-media';
 
-const consolo = getCurrentApp('consolostruct');
+const armadura = getCurrentApp('armadurastruct');
 const mola = getCurrentApp('molastruct');
+const homeApps = [armadura, ...currentApps.filter((app) => app.id !== armadura.id)];
 
 export function Home() {
   const { launch, community } = useExperience();
@@ -41,47 +46,28 @@ export function Home() {
             </span>
           </h1>
           <p>
-            Boas ferramentas ampliam possibilidades. Estamos construindo um novo jeito de calcular,
-            compreender e detalhar estruturas.
+            ArmaduraStruct em destaque: desenhe barras e estribos, confira o quadro de aço e explore
+            o ecossistema OpenStruct.
           </p>
           <div className="hero-actions">
             <Link className="button button-primary" to="/launcher">
-              Baixar o launcher <Download size={18} />
+              {LAUNCHER_INSTALL_LABEL} <Download size={18} />
             </Link>
-            <Link className="button button-plain" to="/apps">
-              Explore os aplicativos <ArrowUpRight size={16} />
+            <Link className="button button-plain" to={armadura.route}>
+              Conhecer o {armadura.name} <ArrowUpRight size={16} />
             </Link>
           </div>
           <div className="hero-meta">
             <span>
               <i /> Código aberto
             </span>
-            <span>Feito para engenharia</span>
             <span>Construído em comunidade</span>
+            <Link to="/apps">
+              Explore os aplicativos <ArrowUpRight size={12} />
+            </Link>
           </div>
         </div>
-        <div className="hero-art">
-          <div className="hero-orbit orbit-one" />
-          <div className="hero-orbit orbit-two" />
-          <span className="hero-coordinate">ESTRUTURA / CONEXÃO / POSSIBILIDADE</span>
-          <div className="hero-drawing">
-            <CorbelModel />
-          </div>
-          <div className="hero-app-stamp">
-            <img src={consolo.image} alt={consolo.imageAlt} width="110" height="110" />
-            <div>
-              <span>PRIMEIRO APLICATIVO</span>
-              <strong>{consolo.name}</strong>
-              <Link to={consolo.route}>
-                Conheça <ArrowUpRight size={14} />
-              </Link>
-            </div>
-          </div>
-          <div className="hero-art-caption">
-            <span>01 / PRÉVIA SVG · SEM CÁLCULO</span>
-            <MoveUpRight size={18} />
-          </div>
-        </div>
+        <ArmaduraShowcase />
       </section>
       <div className="principle-strip">
         <div className="container">
@@ -114,7 +100,7 @@ export function Home() {
         </div>
         <CatalogSyncStatus />
         <div className="home-app-grid">
-          {currentApps.map((app, i) => (
+          {homeApps.map((app, i) => (
             <AppCard key={app.id} app={app} featured={i === 0} />
           ))}
         </div>
@@ -122,37 +108,84 @@ export function Home() {
           <Sparkles size={15} /> Um ecossistema em construção. Conheça {currentAppNames}.
         </p>
       </section>
-      <section className="consolo-spotlight">
+      <section className="app-spotlight" aria-labelledby="arm-home-spotlight-title">
         <div className="container">
           <div className="section-kicker">
             <span>02 / EM DESTAQUE</span>
-            <span>{consolo.name.toUpperCase()}</span>
+            <span>{armadura.name.toUpperCase()}</span>
           </div>
           <div className="spotlight-layout">
             <div className="spotlight-copy">
-              <span className="pill">CONCRETO ARMADO</span>
-              <h2>
-                Um pequeno apoio.
-                <br />
-                Muitas possibilidades.
+              <span className="pill">DETALHAMENTO DE ARMADURAS</span>
+              <h2 id="arm-home-spotlight-title">
+                O desenho avança.
+                <br />O quadro acompanha.
               </h2>
               <p>
-                O {consolo.name} reúne geometria, verificações de ELU, memória de cálculo e
-                detalhamento com quadro de aço. Explore o escopo da versão publicada e instale o
-                aplicativo para trabalhar com seus projetos.
+                Da máscara de referência ao DXF, PDF e CSV. Organize barras, estribos e posições,
+                confira os quantitativos e conserve o projeto editável no {armadura.name}.
               </p>
               <Link className="button button-ink" to="/launcher">
                 {LAUNCHER_INSTALL_LABEL} <Download size={17} />
               </Link>
               <span className="spotlight-note">
-                <AppStatus app={consolo} />
+                <AppStatus app={armadura} />
               </span>
-              <Link className="text-link consolo-release-link" to={consolo.route}>
-                Recursos, documentação e limites <ArrowRight size={16} />
+              <ProductCatalogMeta app={armadura} />
+              <Link className="text-link spotlight-product-link" to={armadura.route}>
+                Conhecer o {armadura.name} <ArrowRight size={16} />
               </Link>
             </div>
-            <div className="spotlight-preview">
-              <ModelPreview simple />
+            <div className="arm-home-workflow">
+              <div className="arm-home-workflow-heading">
+                <span>DO PRIMEIRO TRAÇO À ENTREGA</span>
+                <span>RECURSOS DA {armaduraScreenshot.version}</span>
+              </div>
+              <ol>
+                {[
+                  {
+                    Icon: FileInput,
+                    title: 'Importe a máscara.',
+                    text: 'Use DXF ou DWG como referência 2D e confira as unidades do desenho.',
+                  },
+                  {
+                    Icon: PenTool,
+                    title: 'Desenhe as armaduras.',
+                    text: 'Crie barras e estribos, organize as posições e trabalhe sobre a fôrma.',
+                  },
+                  {
+                    Icon: ListChecks,
+                    title: 'Confira o quadro de aço.',
+                    text: 'Revise quantidades, comprimentos geométricos e pesos teóricos vinculados às posições.',
+                  },
+                  {
+                    Icon: FileOutput,
+                    title: 'Salve e exporte.',
+                    text: 'Guarde o projeto .armstruct.json e prepare DXF, PDF A3 e CSV para a entrega.',
+                  },
+                ].map(({ Icon, title, text }, i) => (
+                  <li key={title}>
+                    <span className="arm-home-step-number">0{i + 1}</span>
+                    <div>
+                      <h3>{title}</h3>
+                      <p>{text}</p>
+                    </div>
+                    <Icon size={23} strokeWidth={1.5} aria-hidden="true" />
+                  </li>
+                ))}
+              </ol>
+              <p className="arm-home-workflow-limit">
+                O detalhamento é manual. Dimensionamento e verificações de projeto continuam sob
+                responsabilidade do projetista; DWG é entrada como máscara.
+              </p>
+              <a
+                className="text-link"
+                href={armaduraScreenshot.guideUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Guia da versão apresentada <ArrowUpRight size={15} />
+              </a>
             </div>
           </div>
         </div>

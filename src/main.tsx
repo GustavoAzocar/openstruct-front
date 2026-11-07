@@ -18,6 +18,7 @@ import './molastruct.css';
 import './armadurastruct.css';
 import './launcher.css';
 import './catalog.css';
+import './home.css';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

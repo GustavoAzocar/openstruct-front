@@ -21,6 +21,7 @@ import { getCurrentApp } from '../lib/apps';
 import { ProductAvailability } from '../components/CatalogAvailability';
 import { ProductInstallation } from '../components/ProductInstallation';
 import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
+import { armaduraScreenshot } from '../lib/product-media';
 
 const app = getCurrentApp('armadurastruct');
 const release = app.distribution;
@@ -148,15 +149,15 @@ export function Armadura() {
         </div>
         <figure className="arm-editor-preview">
           <img
-            src="/assets/armadurastruct-editor.webp"
-            alt="Interface real do ArmaduraStruct: ferramentas CAD, desenho de armaduras, propriedades e quadro de aço"
-            width="1600"
-            height="1000"
+            src={armaduraScreenshot.src}
+            alt={armaduraScreenshot.alt}
+            width={armaduraScreenshot.width}
+            height={armaduraScreenshot.height}
             loading="lazy"
           />
           <figcaption>
-            <span>CAPTURA REAL DA VERSÃO DISTRIBUÍDA · EXEMPLO DE DETALHAMENTO</span>
-            {release && <span>v{release.version}</span>}
+            <span>CAPTURA REAL DO APLICATIVO · EXEMPLO DE DETALHAMENTO</span>
+            <span>v{armaduraScreenshot.version}</span>
           </figcaption>
         </figure>
         <div className="arm-feature-grid">
