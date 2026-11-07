@@ -57,9 +57,12 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
   return {
     repository, visibility: 'unknown', verifiedPublicAt: null, lastSuccessAt: null,
     status: 'unavailable', problem: 'visibility', summary: null,
-    lists: Object.fromEntries(ACTIVITY_KINDS.map((kind) => [kind, {
-      state: 'unavailable', checkedAt: null, truncated: false, items: [],
-    }])) as RepositorySnapshot['lists'],
+    lists: {
+      issues: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
+      pulls: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
+      milestones: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
+      contributors: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
+    },
   };
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
