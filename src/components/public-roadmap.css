@@ -1,0 +1,118 @@
+.public-roadmap {
+  margin: 64px 0;
+  scroll-margin-top: 110px;
+}
+.roadmap-intro {
+  max-width: 850px;
+  line-height: 1.8;
+  font-size: 14px;
+}
+.roadmap-intro a {
+  color: var(--accent);
+  text-decoration: underline;
+}
+.roadmap-repositories {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+.roadmap-repository {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 28px;
+  min-width: 0;
+  background: var(--surface);
+}
+.roadmap-repository:only-child {
+  grid-column: 1 / -1;
+}
+.roadmap-kicker {
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+}
+.roadmap-repository h3 {
+  font-size: 24px;
+  margin: 12px 0;
+}
+.roadmap-repository h4 {
+  font-size: 17px;
+  line-height: 1.5;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+.roadmap-repository p {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.roadmap-note {
+  color: var(--muted);
+  font-size: 12px !important;
+  line-height: 1.8;
+}
+.roadmap-empty {
+  background: var(--surface-2);
+  padding: 16px;
+  border-radius: 6px;
+}
+.roadmap-document {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 8px;
+}
+.roadmap-milestones,
+.roadmap-document-items {
+  list-style: none;
+  padding: 0;
+}
+.roadmap-milestones li,
+.roadmap-document-items li {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+}
+.roadmap-state {
+  display: block;
+  margin-bottom: 8px;
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+}
+.roadmap-document-items a {
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.roadmap-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 24px;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.roadmap-links a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.roadmap-progress {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+}
+.roadmap-progress progress {
+  width: 100%;
+  accent-color: var(--accent);
+}
+@media (max-width: 760px) {
+  .roadmap-repositories {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .roadmap-repository {
+    padding: 20px;
+  }
+  .roadmap-links a {
+    min-height: 32px;
+  }
+}

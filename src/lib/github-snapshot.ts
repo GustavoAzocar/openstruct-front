@@ -16,7 +16,14 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=5';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=6';
+export type MilestoneMetadata = {
+  state: 'open' | 'closed';
+  openItems: number;
+  closedItems: number;
+  dueOn: string | null;
+  closedAt: string | null;
+};
 export type PullMetadata = {
   state: 'open' | 'closed';
   draft: boolean | null;
@@ -29,6 +36,7 @@ export type PullMetadata = {
   base: string | null;
 };
 export type ActivityItem = {
+  milestone?: MilestoneMetadata;
   pull?: PullMetadata;
   id: string;
   title: string;
@@ -88,7 +96,7 @@ export type RepositorySnapshot = {
   discussions: PublicDiscussion[];
 };
 export type GithubSnapshot = {
-  schemaVersion: 5;
+  schemaVersion: 6;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -122,7 +130,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 5,
+    schemaVersion: 6,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -166,7 +174,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3, 4, 5].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4, 5, 6].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -185,7 +193,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'summary',
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
-      ...(root.schemaVersion === 5 ? ['discussions'] : []),
+      ...((root.schemaVersion as number) >= 5 ? ['discussions'] : []),
       ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
     if (
@@ -268,7 +276,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           throw new Error('Invalid release source');
       }
     }
-    if (root.schemaVersion === 5) {
+    if ((root.schemaVersion as number) >= 5) {
       if (
         !Array.isArray(repo.discussions) ||
         repo.discussions.length > DISCUSSION_LIMIT ||
@@ -380,6 +388,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           'url',
           'updatedAt',
           'count',
+          ...(kind === 'milestones' && root.schemaVersion === 6 ? ['milestone'] : []),
           ...(kind === 'pulls' &&
           rawItem &&
           typeof rawItem === 'object' &&
@@ -387,6 +396,26 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
             ? ['pull']
             : []),
         ]);
+        if (kind === 'milestones' && root.schemaVersion === 6) {
+          const milestone = object(item.milestone, [
+            'state',
+            'openItems',
+            'closedItems',
+            'dueOn',
+            'closedAt',
+          ]);
+          if (!['open', 'closed'].includes(String(milestone.state)))
+            throw new Error('Invalid milestone state');
+          integer(milestone.openItems);
+          integer(milestone.closedItems);
+          if (!Number.isSafeInteger(Number(milestone.openItems) + Number(milestone.closedItems)))
+            throw new Error('Invalid milestone total');
+          date(milestone.dueOn);
+          date(milestone.closedAt);
+          if (milestone.state === 'open' && milestone.closedAt !== null)
+            throw new Error('Incoherent milestone state');
+          if (item.count !== milestone.openItems) throw new Error('Incoherent milestone count');
+        }
         if (item.pull !== undefined) {
           const pull = object(item.pull, [
             'state',
@@ -448,62 +477,49 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     }
   }
   const validated = value as GithubSnapshot;
-  // Older contracts collected only open issues. Missing metadata stays unknown, never zero/empty.
-  return (root.schemaVersion as number) >= 3
-    ? root.schemaVersion === 5
-      ? validated
-      : {
-          ...validated,
-          schemaVersion: 5,
-          repositories: validated.repositories.map((repo) => ({
-            ...repo,
-            status:
-              (root.schemaVersion as number) < 4 && repo.status === 'ready'
-                ? 'partial'
-                : repo.status,
-            discussions: [],
-            lists:
-              (root.schemaVersion as number) < 4
-                ? { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls }
-                : repo.lists,
-          })),
-        }
-    : {
-        ...validated,
-        schemaVersion: 5,
-        repositories: validated.repositories.map((repo) => ({
-          ...repo,
-          status:
-            (root.schemaVersion as number) < 4 && repo.status === 'ready' ? 'partial' : repo.status,
-          discussions: [],
-          release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
-          lists:
-            (root.schemaVersion as number) < 4
-              ? { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls }
-              : repo.lists,
-          issueDetails: {
-            open: {
-              ...repo.lists.issues,
-              items: [
-                ...new Map(
-                  repo.lists.issues.items.map((item) => [
-                    item.url,
-                    {
-                      number: Number(item.url.slice(item.url.lastIndexOf('/') + 1)),
-                      title: item.title,
-                      url: item.url,
-                      updatedAt: item.updatedAt,
-                      state: 'open' as const,
-                      labels: null,
-                      author: null,
-                      comments: null,
-                    },
-                  ]),
-                ).values(),
-              ],
+  if (root.schemaVersion === 6) return validated;
+  // Earlier milestones were open-only and lacked closed counters/state. Unknown is not zero.
+  return {
+    ...validated,
+    schemaVersion: 6,
+    repositories: validated.repositories.map((repo) => ({
+      ...repo,
+      status: repo.status === 'ready' ? 'partial' : repo.status,
+      discussions: (root.schemaVersion as number) >= 5 ? repo.discussions : [],
+      release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
+      lists: {
+        ...repo.lists,
+        milestones: emptyRepository(repo.repository).lists.milestones,
+        ...((root.schemaVersion as number) < 4
+          ? { pulls: emptyRepository(repo.repository).lists.pulls }
+          : {}),
+      },
+      issueDetails:
+        (root.schemaVersion as number) >= 3
+          ? repo.issueDetails
+          : {
+              open: {
+                ...repo.lists.issues,
+                items: [
+                  ...new Map(
+                    repo.lists.issues.items.map((item) => [
+                      item.url,
+                      {
+                        number: Number(item.url.slice(item.url.lastIndexOf('/') + 1)),
+                        title: item.title,
+                        url: item.url,
+                        updatedAt: item.updatedAt,
+                        state: 'open' as const,
+                        labels: null,
+                        author: null,
+                        comments: null,
+                      },
+                    ]),
+                  ).values(),
+                ],
+              },
+              closed: emptyIssueCollection(),
             },
-            closed: emptyIssueCollection(),
-          },
-        })),
-      };
+    })),
+  };
 }

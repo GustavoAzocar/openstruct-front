@@ -28,6 +28,9 @@ export function Community() {
           <Link to={site.developmentPath} className="button button-primary">
             Acompanhar desenvolvimento <ArrowRight size={17} />
           </Link>
+          <Link to={site.developmentPath + '#roadmap'} className="button button-outline">
+            Roadmap público
+          </Link>
           <button className="button button-outline" onClick={community}>
             <MessageCircle size={18} /> Comunidade no Discord
           </button>

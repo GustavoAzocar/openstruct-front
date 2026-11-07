@@ -304,7 +304,7 @@ test('collects only public stable releases, including conditional 304 and confir
         : null,
     ),
   });
-  assert.equal(first.snapshot.schemaVersion, 5);
+  assert.equal(first.snapshot.schemaVersion, 6);
   assert.equal(first.snapshot.repositories[0].release.item.tag, 'v1.2.3');
   assert.ok(!JSON.stringify(first.snapshot).includes('not exported'));
   const second = await collectGithub({
@@ -370,4 +370,72 @@ test('release failure keeps old public release as stale; draft, prerelease and u
   });
   assert.equal(hidden.snapshot.repositories[0].release.state, 'unavailable');
   assert.equal(hidden.snapshot.repositories[0].release.item, null);
+});
+
+test('milestones collect both states, preserve exact counters/dates and reuse normalized 304 pages', async () => {
+  const endpoint = (url) => new URL(url).pathname.endsWith('/milestones');
+  const data = (url) => {
+    assert.equal(new URL(url).searchParams.get('state'), 'all');
+    return [
+      {
+        number: 1,
+        title: 'Milestone aberto',
+        html_url:
+          url.split('/milestones')[0].replace('api.github.com/repos/', 'github.com/') +
+          '/milestone/1',
+        state: 'open',
+        open_issues: 3,
+        closed_issues: 1,
+        updated_at: '2026-11-07T15:00:00Z',
+        due_on: null,
+        closed_at: null,
+      },
+      {
+        number: 2,
+        title: 'Fechado com pendência',
+        html_url:
+          url.split('/milestones')[0].replace('api.github.com/repos/', 'github.com/') +
+          '/milestone/2',
+        state: 'closed',
+        open_issues: 1,
+        closed_issues: 2,
+        updated_at: '2026-11-07T15:00:00Z',
+        due_on: '2026-12-01T00:00:00Z',
+        closed_at: '2026-11-07T15:00:00Z',
+      },
+    ];
+  };
+  const first = await collectGithub({
+    now,
+    fetchImpl: fixture((url) =>
+      endpoint(url) ? response(data(url), 200, { etag: '"milestones"' }) : null,
+    ),
+  });
+  const list = first.snapshot.repositories[0].lists.milestones;
+  assert.equal(list.state, 'fresh');
+  assert.equal(list.items[1].milestone.state, 'closed');
+  assert.equal(list.items[1].milestone.openItems, 1);
+  assert.equal(list.items[0].milestone.dueOn, null);
+  assert.equal(list.items[0].updatedAt, '2026-11-07T15:00:00.000Z');
+  const second = await collectGithub({
+    now,
+    previous: first.snapshot,
+    cache: first.cache,
+    fetchImpl: fixture((url, options) => {
+      if (!endpoint(url)) return null;
+      assert.equal(options.headers['If-None-Match'], '"milestones"');
+      return response(null, 304);
+    }),
+  });
+  assert.deepEqual(second.snapshot.repositories[0].lists.milestones, list);
+  const failed = await collectGithub({
+    now,
+    previous: first.snapshot,
+    fetchImpl: fixture((url) =>
+      endpoint(url) ? response(data(url).map((m) => ({ ...m, closed_issues: -1 }))) : null,
+    ),
+  });
+  assert.equal(failed.snapshot.repositories[0].lists.milestones.state, 'stale');
+  assert.deepEqual(failed.snapshot.repositories[0].lists.milestones.items, list.items);
+  assert.equal(failed.snapshot.repositories[0].issueDetails.open.state, 'fresh');
 });

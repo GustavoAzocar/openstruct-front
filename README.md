@@ -305,6 +305,10 @@ o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma
 
 ## Dados públicos do GitHub
 
+O **[roadmap público](https://www.openstruct.com.br/development#roadmap)** combina
+milestones reais com trechos revisados de documentos públicos, separando planejamento
+e instalação. Veja [fontes, regras de estado e atualização](docs/ROADMAP-PUBLICO.md).
+
 A Comunidade tem a seção **Para começar**, com issues abertas selecionadas por
 labels configuradas em cada repositório e caminhos reais de documentação, exemplos
 e revisão visual quando não há oportunidades. Veja [critérios, fontes e manutenção](docs/PRIMEIRAS-CONTRIBUICOES.md).

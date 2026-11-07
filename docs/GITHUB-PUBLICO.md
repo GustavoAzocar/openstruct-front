@@ -35,11 +35,11 @@ Cada repositório registra visibilidade confirmada, horário, última coleta tot
 | Lista          | Seleção e ordem                                    | Limite e interpretação                                                                                               |
 | -------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Issues         | Abertas e fechadas, separadamente, por atualização | Até 2 páginas de 30 por estado; PRs são removidos. O resumo aberto é derivado da mesma coleta.                       |
-| PRs            | Abertos, atualizados recentemente                  | Até 60; não inclui PRs fechados ou mesclados.                                                                        |
-| Milestones     | Abertos, prazo crescente                           | Até 60; `count` é número de issues ainda abertas no milestone.                                                       |
+| PRs            | Todos os estados, por atualização                  | Até 60 no conjunto; distingue aberto, rascunho, mesclado e fechado sem merge.                                                                        |
+| Milestones     | Abertos e fechados, prazo crescente                | Até 60; v6 preserva estado e contadores de itens vinculados (issues + PRs), previsão e fechamento.                   |
 | Contribuidores | Ordem do endpoint GitHub                           | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
 
-`truncated=true` significa que havia próxima página além do teto. `false` significa que o endpoint filtrado terminou, nunca que todo o histórico do projeto foi coletado. `items[].updatedAt` aplica-se a issues/PRs; é null nas outras listas. `id` é número ou login; `title` é título ou login. O resumo `openIssuesAndPullRequests` é a contagem combinada oficial do GitHub, não uma contagem separada de issues.
+`truncated=true` significa que havia próxima página além do teto. `false` significa que o endpoint filtrado terminou, nunca que todo o histórico do projeto foi coletado. `items[].updatedAt` aplica-se a issues, PRs e milestones; é null em contribuidores. `id` é número ou login; `title` é título ou login. O resumo `openIssuesAndPullRequests` é a contagem combinada oficial do GitHub, não uma contagem separada de issues.
 
 Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **60 GETs de resumos por execução** (5 × [1 metadado + 3 listas × 2 páginas + 2 estados de issues × 2 páginas + 1 release]); caso usual mínimo: 35. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
 
@@ -110,3 +110,10 @@ para até dois itens recentes por repositório. O runner habilita essa coleta se
 requisições por visitante. O teto passa a 90 GETs e os textos antigos não são
 reutilizados quando sua atualização falha. Leitor e cache de páginas usam v5.
 Veja [limites, remoção, privacidade e renderização](DETALHES-COMENTARIOS.md).
+
+## Roadmap (OSF-23)
+
+O contrato v6 amplia os milestones para `state=all`, com contadores e datas oficiais.
+Contratos anteriores são migrados sem inferir estados ou progresso. A central
+reutiliza o snapshot e mostra planejamento separado do catálogo de instalação.
+Consulte [regras, fontes editoriais e manutenção](ROADMAP-PUBLICO.md).

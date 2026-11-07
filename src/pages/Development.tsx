@@ -4,6 +4,7 @@ import { usePublicCatalog } from '../components/CatalogProvider';
 import { useGithubActivity } from '../components/useGithubActivity';
 import { PullRequestsList } from '../components/PullRequestsList';
 import { IssuesList } from '../components/IssuesList';
+import { PublicRoadmap } from '../components/PublicRoadmap';
 import { issueRepositoryParams } from '../lib/issues';
 import {
   developmentSources,
@@ -202,6 +203,9 @@ export function Development() {
           <Link className="button button-outline" to="/community">
             Como contribuir
           </Link>
+          <a className="button button-outline" href="#roadmap">
+            Roadmap público
+          </a>
         </div>
       </section>
       <section className="development-sync" aria-label="Atualização dos dados">
@@ -314,6 +318,13 @@ export function Development() {
           ))}
         </div>
       </section>
+      <PublicRoadmap
+        snapshot={result?.snapshot}
+        sources={sources}
+        loading={loading}
+        now={now}
+        offline={Boolean(result && result.source !== 'public')}
+      />
       <IssuesList
         snapshot={result?.snapshot}
         sources={sources}

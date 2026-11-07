@@ -196,7 +196,7 @@ test('v4 migration is repeatable, preserves real PR evidence and does not fabric
   legacy.schemaVersion = 4;
   for (const repo of legacy.repositories) delete repo.discussions;
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.doesNotThrow(() => validateGithubSnapshot(migrated));
   assert.deepEqual(migrated.repositories[0].lists.pulls, legacy.repositories[0].lists.pulls);
   assert.deepEqual(migrated.repositories[0].discussions, []);

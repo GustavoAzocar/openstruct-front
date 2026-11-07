@@ -166,7 +166,7 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
   assert.equal(migrated.repositories[0].status, 'partial');
   const restored = await collectGithub({ previous: migrated, now, fetchImpl: api() });
   assert.equal(restored.snapshot.repositories[0].status, 'ready');
-  assert.equal(migrated.schemaVersion, 5);
+  assert.equal(migrated.schemaVersion, 6);
   assert.equal(migrated.repositories[0].lists.pulls.state, 'unavailable');
   assert.equal(
     selectPulls(migrated, developmentSources, 'all', now()).coverage.some((row) => row.known),

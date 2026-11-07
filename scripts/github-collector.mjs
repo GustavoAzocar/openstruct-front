@@ -66,7 +66,8 @@ function normalizeItems(kind, body) {
       id: safeText(kind === 'contributors' ? item.login : item.number, 100),
       title: safeText(kind === 'contributors' ? item.login : item.title, 200),
       url: item.html_url,
-      updatedAt: kind === 'issues' || kind === 'pulls' ? timestamp(item.updated_at) : null,
+      updatedAt: kind === 'contributors' ? null : timestamp(item.updated_at),
+      ...(kind === 'milestones' ? { milestone: normalizeMilestone(item) } : {}),
       ...(kind === 'pulls' ? { pull: normalizePull(item) } : {}),
       count:
         kind === 'contributors'
@@ -75,6 +76,26 @@ function normalizeItems(kind, body) {
             ? count(item.open_issues)
             : null,
     }));
+}
+function normalizeMilestone(item) {
+  if (
+    !['open', 'closed'].includes(item.state) ||
+    !Number.isSafeInteger(item.open_issues) ||
+    item.open_issues < 0 ||
+    !Number.isSafeInteger(item.closed_issues) ||
+    item.closed_issues < 0 ||
+    !Number.isSafeInteger(item.open_issues + item.closed_issues)
+  )
+    throw new RequestError('milestone');
+  for (const field of ['due_on', 'closed_at'])
+    if (item[field] != null && !timestamp(item[field])) throw new RequestError('milestone');
+  return {
+    state: item.state,
+    openItems: item.open_issues,
+    closedItems: item.closed_issues,
+    dueOn: timestamp(item.due_on),
+    closedAt: timestamp(item.closed_at),
+  };
 }
 function normalizePull(item) {
   if (item.state !== 'open' && item.state !== 'closed') throw new RequestError('pull');
@@ -310,7 +331,7 @@ export async function collectGithub({
             kind === 'contributors'
               ? 'anon=false'
               : kind === 'milestones'
-                ? 'state=open&sort=due_on&direction=asc'
+                ? 'state=all&sort=due_on&direction=asc'
                 : 'state=all&sort=updated&direction=desc';
           let url = prefix + '/' + kind + '?per_page=' + PAGE_SIZE + '&page=1&' + query;
           const items = [];
@@ -337,7 +358,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 5,
+            schemaVersion: 6,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -388,7 +409,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 5,
+            schemaVersion: 6,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -462,7 +483,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 5,
+          schemaVersion: 6,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -491,7 +512,7 @@ export async function collectGithub({
   // Withdraw detail text first if the combined snapshot reaches the public size cap.
   while (
     Buffer.byteLength(
-      JSON.stringify({ schemaVersion: 5, generatedAt: at, retryAt, repositories }),
+      JSON.stringify({ schemaVersion: 6, generatedAt: at, retryAt, repositories }),
     ) > 1_000_000
   ) {
     const repo = [...repositories].reverse().find((repo) => repo.discussions.length);
@@ -501,7 +522,7 @@ export async function collectGithub({
     repo.problem = 'request';
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 5,
+    schemaVersion: 6,
     generatedAt: at,
     retryAt,
     repositories,
