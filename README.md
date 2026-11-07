@@ -59,9 +59,10 @@ validação de formato do feed como uma verificação criptográfica.
 Os downloads não exigem login GitHub. A sugestão de sistema é apenas visual: os dois formatos
 ficam visíveis, inclusive no celular. macOS/ARM não são anunciados como alvos nativos.
 
-ConsoloStruct, MolaStruct e ArmaduraStruct têm pacotes desktop públicos registrados
-em `src/lib/apps.ts`. A disponibilidade dos produtos é separada da maturidade de
-seus métodos e da versão mais recente de seus códigos.
+ConsoloStruct, MolaStruct e ArmaduraStruct usam o catálogo público assinado para
+versão e disponibilidade. `src/lib/apps.ts` registra a versão que fundamenta a
+descrição técnica revisada. A disponibilidade dos produtos é separada da maturidade
+de seus métodos e da versão mais recente de seus códigos.
 Os endereços e o leitor estão em `src/lib/launcher.ts`. Execute `npm test` para verificar
 seleção de arquivos, publicações incompletas, origens inválidas e estados de rede.
 
@@ -73,15 +74,40 @@ releases estáveis entram pelo mesmo feed, sem editar os links do frontend.
 
 ![Página do Struct Launcher](docs/launcher-page.png)
 
+## Versões dos aplicativos — catálogo público
+
+Home, catálogo, diálogo, biblioteca ilustrativa e páginas de produto compartilham
+uma consulta a `openstruct-catalog/main/catalog.signed.json`. O leitor valida o
+esquema v1, a assinatura Ed25519 do envelope e as assinaturas dos metadados dos
+pacotes. Chaves públicas, IDs e repositórios autorizados ficam fixados em
+`src/lib/catalog-trust.ts`; nenhum token ou chave privada vai para o navegador.
+
+A seleção é por produto e canal `stable`, com ordenação SemVer e os assets próprios
+de cada versão. Não usa a release `latest` do hub nem `launcher/latest.json` para os
+aplicativos. O conteúdo técnico continua fixado na ref editorial, mesmo quando uma
+nova versão para instalar é publicada; a página mostra essa diferença.
+
+Há carregamento, data da consulta, indisponibilidade por produto e nova tentativa
+limitada a três consultas por sessão, com intervalo mínimo de um minuto e respeito
+a `Retry-After`. Sem polling automático. Depois de 15 minutos, o dado fica marcado
+como desatualizado até uma nova consulta. Um erro preserva o último envelope válido
+do produto, sempre identificado como desatualizado. O cache local e o snapshot
+incluído no site passam novamente pela verificação criptográfica antes de liberar
+links. O conteúdo editorial continua navegável sem rede.
+
+`npm test` inclui o catálogo real assinado e casos de adulteração, versões distintas,
+fonte não autorizada, falha parcial, cache e limites de consulta. Consulte
+[o contrato e a manutenção](docs/CATALOGO-PUBLICO.md) para atualizar as fontes.
+
+![Catálogo com versões e data da consulta por aplicativo](docs/catalogo-publico.png)
+
 ## Links e integrações opcionais
 
 Copie `.env.example` para `.env.local` e preencha os endereços que estiverem disponíveis:
 
 ```dotenv
 VITE_CONSOLOSTRUCT_URL=https://seu-aplicativo.example
-VITE_CONSOLOSTRUCT_DOWNLOAD_URL=https://seu-download.example
 VITE_MOLASTRUCT_URL=https://seu-molastruct.example
-VITE_MOLASTRUCT_DOWNLOAD_URL=https://seu-download-molastruct.example
 VITE_DISCORD_URL=https://discord.gg/seu-convite
 ```
 
@@ -94,7 +120,8 @@ alternativa enquanto o convite não for configurado.
 Os links gerais e as integrações opcionais ficam em `src/lib/config.ts`. Os dados
 oficiais dos produtos ficam em `src/lib/apps.ts`, com tipos e validação em
 `src/lib/app-registry.ts`. As antigas variáveis `VITE_*_REPOSITORY` não sobrescrevem
-mais os repositórios oficiais.
+mais os repositórios oficiais. As antigas `VITE_*_DOWNLOAD_URL` também deixaram de
+ser usadas: os pacotes oficiais devem passar pelo catálogo assinado.
 
 ## Registro editorial dos produtos
 

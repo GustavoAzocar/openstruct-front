@@ -4,7 +4,8 @@ import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink, Download } from 'lucide-react';
 import { appIntegrations, site } from '../lib/config';
 import { currentApps } from '../lib/apps';
-import { getAppStatus } from '../lib/app-registry';
+import { AppStatus } from './AppStatus';
+import { ProductCatalogMeta } from './CatalogAvailability';
 
 type ExperienceState = { launch: () => void; community: () => void };
 const ExperienceContext = createContext<ExperienceState | null>(null);
@@ -82,8 +83,9 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
                     <div className="launch-app-info">
                       <strong>{app.name}</strong>
                       <span>
-                        {app.category} · {getAppStatus(app)}
+                        {app.category} · <AppStatus app={app} />
                       </span>
+                      <ProductCatalogMeta app={app} />
                     </div>
                     {externalUrl ? (
                       <a

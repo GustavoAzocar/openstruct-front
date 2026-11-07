@@ -7,13 +7,11 @@ export const site = {
 };
 
 /** Optional integrations do not change official repositories or product availability. */
-export const appIntegrations: Record<string, { webUrl: string; downloadUrl: string }> = {
+export const appIntegrations: Record<string, { webUrl: string }> = {
   consolostruct: {
     webUrl: import.meta.env.VITE_CONSOLOSTRUCT_URL || '',
-    downloadUrl: import.meta.env.VITE_CONSOLOSTRUCT_DOWNLOAD_URL || '',
   },
   molastruct: {
     webUrl: import.meta.env.VITE_MOLASTRUCT_URL || '',
-    downloadUrl: import.meta.env.VITE_MOLASTRUCT_DOWNLOAD_URL || '',
   },
 };

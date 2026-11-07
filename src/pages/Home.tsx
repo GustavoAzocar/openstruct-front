@@ -16,7 +16,8 @@ import { ModelPreview } from '../components/ModelPreview';
 import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
 import { currentApps, currentAppNames, getCurrentApp } from '../lib/apps';
-import { getAppStatus } from '../lib/app-registry';
+import { AppStatus } from '../components/AppStatus';
+import { CatalogSyncStatus } from '../components/CatalogAvailability';
 
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
@@ -110,6 +111,7 @@ export function Home() {
             </Link>
           </div>
         </div>
+        <CatalogSyncStatus />
         <div className="home-app-grid">
           {currentApps.map((app, i) => (
             <AppCard key={app.id} app={app} featured={i === 0} />
@@ -142,8 +144,7 @@ export function Home() {
                 Instalar pelo Launcher <Download size={17} />
               </Link>
               <span className="spotlight-note">
-                {consolo.distribution && <>Aplicativo {consolo.distribution.version} · </>}
-                {getAppStatus(consolo)}
+                <AppStatus app={consolo} />
               </span>
               <Link className="text-link consolo-release-link" to={consolo.route}>
                 Recursos, documentação e limites <ArrowRight size={16} />

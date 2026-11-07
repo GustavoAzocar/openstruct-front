@@ -3,6 +3,7 @@ import { ArrowUpRight, ArrowRight } from 'lucide-react';
 import type { AppEntry } from '../lib/app-registry';
 import { AppGlyph } from './Brand';
 import { AppStatus } from './AppStatus';
+import { ProductCatalogMeta } from './CatalogAvailability';
 
 export function AppCard({ app, featured = false }: { app: AppEntry; featured?: boolean }) {
   return (
@@ -33,6 +34,7 @@ export function AppCard({ app, featured = false }: { app: AppEntry; featured?: b
         </div>
         <h3>{app.route ? <Link to={app.route}>{app.name}</Link> : app.name}</h3>
         <p>{app.description}</p>
+        {app.stage === 'current' && <ProductCatalogMeta app={app} />}
         {app.route ? (
           <Link className="text-link" to={app.route}>
             Explorar o aplicativo <ArrowRight size={16} />

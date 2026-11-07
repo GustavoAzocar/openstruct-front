@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
 import { currentAppNames, getCurrentApp } from '../lib/apps';
+import { ProductCatalogMeta } from '../components/CatalogAvailability';
 
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
@@ -147,6 +148,9 @@ export function Docs() {
               <span className="eyebrow">GUIA / {a.n}</span>
               <h2>{a.title}</h2>
               <p>{a.body}</p>
+              {[consolo, mola, armadura].find((app) => app.id === a.id) && (
+                <ProductCatalogMeta app={getCurrentApp(a.id)} />
+              )}
               {a.external ? (
                 <a className="text-link" href={a.to} target="_blank" rel="noreferrer">
                   {a.action} <ArrowUpRight size={16} />

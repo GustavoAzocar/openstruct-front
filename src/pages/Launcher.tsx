@@ -11,15 +11,19 @@ import {
 import { Mark } from '../components/Brand';
 import { LauncherDownloads } from '../components/LauncherDownloads';
 import { currentApps, getCurrentApp } from '../lib/apps';
-import { getAppStatus } from '../lib/app-registry';
+import { AppStatus } from '../components/AppStatus';
+import { usePublicCatalog } from '../components/CatalogProvider';
 import { LAUNCHER_RELEASES_URL } from '../lib/launcher';
 
 const consolo = getCurrentApp('consolostruct');
-const availableNames = new Intl.ListFormat('pt-BR').format(
-  currentApps.filter((app) => app.distribution?.platforms.length).map((app) => app.name),
-);
-
 export function Launcher() {
+  const { products } = usePublicCatalog();
+  const availableNames = new Intl.ListFormat('pt-BR').format(
+    currentApps
+      .filter((app) => products[app.id as keyof typeof products]?.status === 'ready')
+      .map((app) => app.name),
+  );
+  const consoloAvailability = products.consolostruct;
   return (
     <>
       <section className="container launcher-hero">
@@ -75,7 +79,9 @@ export function Launcher() {
                     <strong>{app.name}</strong>
                     <span>{app.category}</span>
                   </div>
-                  <span className="launcher-preview-status">{getAppStatus(app)}</span>
+                  <span className="launcher-preview-status">
+                    <AppStatus app={app} />
+                  </span>
                 </div>
               ))}
             </div>
@@ -159,7 +165,7 @@ export function Launcher() {
           </h2>
           <p>
             Depois de abrir o launcher, consulte a biblioteca para instalar os aplicativos.
-            {availableNames && ` Disponíveis para desktop: ${availableNames}.`}
+            {availableNames && ` Pacotes nos últimos dados verificados: ${availableNames}.`}
           </p>
           <Link className="text-link" to="/apps">
             Conheça os aplicativos <ArrowRight size={16} />
@@ -227,8 +233,8 @@ export function Launcher() {
               Como instalar o {consolo.name}?<span>+</span>
             </summary>
             <p>
-              {consolo.distribution
-                ? `${consolo.name} ${consolo.distribution.version} já está disponível na biblioteca. Abra o Struct Launcher, escolha o aplicativo e instale o pacote do seu sistema. O cálculo e o detalhamento são executados no aplicativo; a prévia SVG do site é apenas ilustrativa.`
+              {consoloAvailability.release
+                ? `${consolo.name} ${consoloAvailability.release.version} consta nos últimos dados verificados${consoloAvailability.stale ? ' (desatualizados)' : ''}. Abra o Struct Launcher, escolha o aplicativo e instale o pacote do seu sistema. O cálculo e o detalhamento são executados no aplicativo; a prévia SVG do site é apenas ilustrativa.`
                 : 'Consulte a página do aplicativo para acompanhar sua disponibilidade e explorar a prévia visual.'}
             </p>
             <Link className="text-link" to={consolo.route}>

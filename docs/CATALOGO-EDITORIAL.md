@@ -8,7 +8,9 @@ O registro não contém conteúdo do repositório privado do Launcher.
 `src/lib/config.ts` guarda somente configuração do site e integrações opcionais de
 implantação. Os tipos, a validação e os rótulos derivados ficam em
 `src/lib/app-registry.ts`. Home, catálogo, diálogo, biblioteca ilustrativa do Launcher,
-rodapé e páginas dos produtos consomem esse mesmo registro.
+rodapé e páginas dos produtos consomem esse mesmo registro. A OSF-05 acrescenta a
+consulta compartilhada ao [catálogo público assinado](CATALOGO-PUBLICO.md) para
+versões de instalação e disponibilidade; ela não reescreve o conteúdo técnico.
 
 ## Campos e significados
 
@@ -25,9 +27,10 @@ rodapé e páginas dos produtos consomem esse mesmo registro.
 | `editorial.reviewedAt`                        | Data da revisão humana/editorial dos dados; não muda automaticamente no build.                                                                                             |
 | `editorial.sources`                           | URLs e refs imutáveis do texto-base, distribuição ou planejamento.                                                                                                         |
 
-`getAppStatus` deriva o rótulo de disponibilidade: planejamento, desenvolvimento sem
-pacote ou disponível para desktop. O canal `stable` de um pacote **não** torna o motor
-de engenharia validado nem altera `maturity`.
+`getAppStatus` conserva o rótulo derivado da revisão local para validação do registro.
+Na interface, `AppStatus` usa a consulta pública compartilhada, incluindo estados
+indisponível, desconhecido e desatualizado. O canal `stable` de um pacote **não**
+torna o motor de engenharia validado nem altera `maturity`.
 
 Na revisão inicial:
 
@@ -69,9 +72,9 @@ Quando presente, sua fonte precisa pertencer à versão distribuída.
 7. Rode `npm test` e `npm run build`. Confira nomes e status na home, catálogo e
    diálogo, além dos links nas páginas de produto, em mobile/desktop e ambos os temas.
 
-O guia de atualização não exige mudar os motores dos aplicativos. A sincronização
-automática de releases, os novos guias e a revisão detalhada das páginas de produto
-são evoluções independentes; esta mudança estabelece a base editorial.
+O guia de atualização não exige mudar os motores dos aplicativos. Novas releases
+atualizam a oferta de instalação pela consulta assinada; a revisão dos recursos,
+guias e fontes técnicas continua sendo uma etapa editorial explícita.
 
 ## Validação
 
@@ -91,9 +94,9 @@ instalador. O Launcher continua responsável por sua própria verificação de p
 ## Integrações de implantação
 
 `VITE_CONSOLOSTRUCT_URL` e `VITE_MOLASTRUCT_URL` continuam opcionais para abrir uma
-instância web configurada. `VITE_*_DOWNLOAD_URL` permite um endereço de acesso
-específico da implantação; na ausência dele, a página usa a release pública revisada.
-Essas opções não mudam versão, maturidade, disponibilidade ou proveniência oficiais.
+instância web configurada. As antigas `VITE_*_DOWNLOAD_URL` são ignoradas: um endereço
+de implantação não pode liberar um instalador fora da validação do catálogo.
+As integrações web não mudam versão, maturidade, disponibilidade ou proveniência oficiais.
 
 As antigas `VITE_CONSOLOSTRUCT_REPOSITORY` e `VITE_MOLASTRUCT_REPOSITORY` deixam de
 sobrescrever a identidade oficial. Para um fork com outros produtos, revise o registro

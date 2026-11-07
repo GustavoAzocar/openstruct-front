@@ -18,6 +18,8 @@ import {
   Save,
 } from 'lucide-react';
 import { getCurrentApp } from '../lib/apps';
+import { ProductAvailability } from '../components/CatalogAvailability';
+import { useProductAvailability } from '../components/CatalogProvider';
 
 const app = getCurrentApp('armadurastruct');
 const release = app.distribution;
@@ -61,6 +63,8 @@ const features = [
 ];
 
 export function Armadura() {
+  const availability = useProductAvailability(app.id);
+  const availableRelease = availability?.release;
   return (
     <>
       <section className="container arm-hero">
@@ -71,7 +75,7 @@ export function Armadura() {
           <div className="arm-product-name">
             <img src={app.image} alt="" width="56" height="56" />
             <strong>{app.name}</strong>
-            {release && <span>v{release.version}</span>}
+            {release && <span>v{release.version} · conteúdo</span>}
           </div>
           <h1>
             Da fôrma
@@ -111,6 +115,9 @@ export function Armadura() {
           </figcaption>
         </figure>
       </section>
+      <div className="container">
+        <ProductAvailability app={app} />
+      </div>
       <div className="arm-feature-strip">
         <div className="container">
           <span>
@@ -319,23 +326,32 @@ export function Armadura() {
         </div>
         <div className="arm-download-card">
           <span className="eyebrow">
-            {app.name.toUpperCase()} {release?.version}
+            {app.name.toUpperCase()} {availableRelease?.version ?? ' / SEM PACOTE CONFIRMADO'}
           </span>
-          {release?.platforms.map((asset) => (
+          {availability?.stale && (
+            <p className="catalog-product-meta">Último dado válido, desatualizado.</p>
+          )}
+          {availableRelease?.assets.map((asset) => (
             <a
-              className={`button ${asset.os === 'windows' ? 'button-ink' : 'button-outline'}`}
+              className={`button ${asset.platform === 'windows' ? 'button-ink' : 'button-outline'}`}
               href={asset.url}
-              key={asset.os}
+              key={`${asset.platform}-${asset.arch}`}
             >
-              <Download size={18} /> {asset.os === 'windows' ? 'Windows' : 'Linux'}
+              <Download size={18} /> {asset.platform === 'windows' ? 'Windows' : 'Linux'}
               <span>
-                .{asset.format} · {asset.arch}
+                .{asset.kind === 'nsis' ? 'exe' : 'AppImage'} · {asset.arch}
               </span>
             </a>
           ))}
+          {!availableRelease && (
+            <p>Download indisponível até a confirmação de um pacote válido no canal estável.</p>
+          )}
           <a
             className="text-link"
-            href={release?.releaseUrl || app.repository.url}
+            href={
+              availableRelease?.releaseUrl ||
+              'https://github.com/ricardocorsini/openstruct-catalog/releases'
+            }
             target="_blank"
             rel="noreferrer"
           >

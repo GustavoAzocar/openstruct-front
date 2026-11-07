@@ -3,6 +3,7 @@ import { Search, ArrowUpRight } from 'lucide-react';
 import { AppCard } from '../components/AppCard';
 import { site } from '../lib/config';
 import { apps } from '../lib/apps';
+import { CatalogSyncStatus } from '../components/CatalogAvailability';
 
 const categories = ['Todos', ...new Set(apps.map((app) => app.category))];
 export function Catalog() {
@@ -36,6 +37,7 @@ export function Catalog() {
           e o que está no nosso horizonte.
         </p>
       </section>
+      <CatalogSyncStatus />
       <div className="catalog-controls">
         <div className="category-tabs" role="group" aria-label="Filtrar aplicativos por categoria">
           {categories.map((item) => (

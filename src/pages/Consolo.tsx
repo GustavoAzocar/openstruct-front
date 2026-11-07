@@ -15,6 +15,8 @@ import {
 } from 'lucide-react';
 import { ModelPreview } from '../components/ModelPreview';
 import { AppStatus } from '../components/AppStatus';
+import { ProductAvailability } from '../components/CatalogAvailability';
+import { useProductAvailability } from '../components/CatalogProvider';
 import { appIntegrations } from '../lib/config';
 import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
@@ -79,6 +81,7 @@ const features = [
 ];
 
 export function Consolo() {
+  const availableRelease = useProductAvailability(app.id)?.release;
   return (
     <>
       <section className="product-hero container">
@@ -124,7 +127,7 @@ export function Consolo() {
             <span className="product-meta">
               {release && (
                 <>
-                  Aplicativo {release.version} · {platforms} x86_64 ·{' '}
+                  Conteúdo revisado: {release.version} · {platforms} x86_64 ·{' '}
                 </>
               )}
               {getMaturityLabel(app)}
@@ -133,6 +136,9 @@ export function Consolo() {
         </div>
       </section>
 
+      <div className="container">
+        <ProductAvailability app={app} />
+      </div>
       <section className="container product-demo" id="demonstracao">
         <div className="consolo-demo-heading">
           <h2>Uma prévia do site.</h2>
@@ -240,7 +246,7 @@ export function Consolo() {
             Limites à vista.
           </h2>
           <p>
-            {release && <>O aplicativo está na versão {release.version}. </>}
+            {release && <>Este escopo descreve a versão {release.version}. </>}
             {engine && (
               <>
                 O motor de cálculo é o {engine.version}, com a política {engine.policy}.{' '}
@@ -308,25 +314,20 @@ export function Consolo() {
               Abra um projeto.
             </h2>
             <p>
-              {release && (
-                <>
-                  {app.name} {release.version} está disponível para {platforms} x86_64.{' '}
-                </>
-              )}
               Instale pelo Struct Launcher e consulte o guia para abrir os exemplos incluídos,
               conferir as entradas e acompanhar o resultado.
             </p>
             <Link className="button button-primary" to="/launcher">
               <Download size={17} /> Instalar pelo Launcher
             </Link>
-            {release && (
+            {availableRelease && (
               <a
                 className="text-link consolo-release-link"
-                href={release.releaseUrl}
+                href={availableRelease.releaseUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Notas da versão e instaladores avulsos <ArrowUpRight size={15} />
+                Notas e instaladores {availableRelease.version} <ArrowUpRight size={15} />
               </a>
             )}
           </article>
@@ -356,16 +357,6 @@ export function Consolo() {
                 rel="noreferrer"
               >
                 Abrir instância web <ArrowUpRight size={15} />
-              </a>
-            )}
-            {integration.downloadUrl && (
-              <a
-                className="text-link consolo-release-link"
-                href={integration.downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Acesso alternativo ao aplicativo <ArrowUpRight size={15} />
               </a>
             )}
           </article>
@@ -401,7 +392,7 @@ export function Consolo() {
                   O motor é o {engine.version}, política {engine.policy}.{' '}
                 </>
               )}
-              {release && <>O aplicativo é o {release.version}. </>}
+              {release && <>A apresentação descreve o aplicativo {release.version}. </>}
               As duas versões evoluem separadamente. Consulte os critérios e as pendências na
               memória de cada peça.
             </p>

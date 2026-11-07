@@ -17,6 +17,8 @@ import { appIntegrations } from '../lib/config';
 import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
 import { AppStatus } from '../components/AppStatus';
+import { ProductAvailability } from '../components/CatalogAvailability';
+import { useProductAvailability } from '../components/CatalogProvider';
 
 const app = getCurrentApp('molastruct');
 const release = app.distribution;
@@ -125,6 +127,7 @@ const methods = [
 ];
 
 export function Mola() {
+  const availableRelease = useProductAvailability(app.id)?.release;
   return (
     <>
       <section className="product-hero container mola-product-hero">
@@ -169,7 +172,7 @@ export function Mola() {
             <span className="product-meta">
               {release && (
                 <>
-                  Aplicativo {release.version} · {platforms} x86_64 ·{' '}
+                  Conteúdo revisado: {release.version} · {platforms} x86_64 ·{' '}
                 </>
               )}
               {getMaturityLabel(app)}
@@ -177,6 +180,9 @@ export function Mola() {
           </div>
         </div>
       </section>
+      <div className="container">
+        <ProductAvailability app={app} />
+      </div>
       <section className="container mola-overview" id="visao-geral">
         <FoundationPreview />
         <div className="demo-caption">
@@ -459,9 +465,9 @@ export function Mola() {
           <h2 id="mola-development-title">A branch avançou. A distribuição é outra.</h2>
           <p>
             O código revisado da branch {app.repository.branch} identifica a versão{' '}
-            {app.code.version}. O catálogo e a release pública consultados oferecem{' '}
-            {release.version}. Os itens abaixo estão documentados nas revisões posteriores, sem
-            pacote correspondente confirmado nessa consulta.
+            {app.code.version}. A apresentação foi revisada na release {release.version}. Os itens
+            abaixo estão documentados nas revisões posteriores, sem pacote correspondente confirmado
+            nessa consulta.
           </p>
           <ul>
             <li>
@@ -496,25 +502,20 @@ export function Mola() {
               Confira seu modelo.
             </h2>
             <p>
-              {release && (
-                <>
-                  {app.name} {release.version} está disponível para {platforms} x86_64.{' '}
-                </>
-              )}
               Abra o Struct Launcher e escolha o aplicativo na biblioteca. Consulte os exemplos, os
               métodos e as pendências antes de interpretar os resultados.
             </p>
             <Link className="button button-primary" to="/launcher">
               Instalar pelo Launcher <Download size={17} />
             </Link>
-            {release && (
+            {availableRelease && (
               <a
                 className="text-link mola-source-link"
-                href={release.releaseUrl}
+                href={availableRelease.releaseUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Release e instaladores avulsos <ArrowUpRight size={15} />
+                Release e instaladores {availableRelease.version} <ArrowUpRight size={15} />
               </a>
             )}
           </article>
@@ -544,16 +545,6 @@ export function Mola() {
                 rel="noreferrer"
               >
                 Abrir instância web <ArrowUpRight size={15} />
-              </a>
-            )}
-            {integration.downloadUrl && (
-              <a
-                className="text-link mola-source-link"
-                href={integration.downloadUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Acesso alternativo ao aplicativo <ArrowUpRight size={15} />
               </a>
             )}
           </article>
