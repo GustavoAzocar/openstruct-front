@@ -1,0 +1,32 @@
+.public-github {
+  border-top: 1px solid var(--line);
+  padding: 48px 0;
+}
+.public-github p {
+  max-width: 78ch;
+  line-height: 1.7;
+  margin-top: 16px;
+}
+.public-github ul {
+  display: grid;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.public-github li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 0;
+}
+.public-github a {
+  color: var(--accent);
+  overflow-wrap: anywhere;
+}
+.public-github li span {
+  font-size: 14px;
+  color: var(--muted);
+}

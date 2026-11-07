@@ -1,3 +1,4 @@
+import { PublicGithubStatus } from '../components/PublicGithubStatus';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -89,6 +90,7 @@ export function Community() {
           </article>
         ))}
       </section>
+      <PublicGithubStatus />
       <section className="community-note">
         <span className="eyebrow">NOSSO PONTO EM COMUM</span>
         <h2>

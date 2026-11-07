@@ -1,0 +1,182 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": null,
+  "retryAt": null,
+  "repositories": [
+    {
+      "repository": "ricardocorsini/openstruct-front",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
+    },
+    {
+      "repository": "ricardocorsini/consolo-struct",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
+    },
+    {
+      "repository": "ricardocorsini/mola-struct",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
+    },
+    {
+      "repository": "ricardocorsini/armadura-struct",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
+    },
+    {
+      "repository": "ricardocorsini/openstruct-catalog",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
+    }
+  ]
+}
