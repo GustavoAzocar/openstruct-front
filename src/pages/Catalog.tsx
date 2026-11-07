@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useSearchParams, useLocation, useNavigationType } from 'react-router-dom';
+import { Link, useSearchParams, useLocation, useNavigationType } from 'react-router-dom';
 import { usePublicCatalog } from '../components/CatalogProvider';
 import { defaultFilters, readFilters, writeFilters, selectCatalog } from '../lib/catalog-filters';
 import type { CatalogFilters } from '../lib/catalog-filters';
 import '../catalog-filters.css';
-import { Search, ArrowUpRight } from 'lucide-react';
+import { Search, ArrowRight } from 'lucide-react';
 import { AppCard } from '../components/AppCard';
 import { site } from '../lib/config';
 import { apps } from '../lib/apps';
@@ -172,14 +172,9 @@ export function Catalog() {
           <h2>Sentiu falta de uma ferramenta?</h2>
           <p>O ecossistema está em construção. Conte o que faria diferença no seu trabalho.</p>
         </div>
-        <a
-          href={`${site.repository}/issues/new`}
-          target="_blank"
-          rel="noreferrer"
-          className="button button-ink"
-        >
-          Compartilhe uma ideia <ArrowUpRight size={17} />
-        </a>
+        <Link to={`${site.developmentPath}#repositories`} className="button button-ink">
+          Compartilhe uma ideia <ArrowRight size={17} />
+        </Link>
       </section>
     </div>
   );

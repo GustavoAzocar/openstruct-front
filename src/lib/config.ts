@@ -1,8 +1,7 @@
 /** Site-wide links; reviewed product metadata lives in apps.ts. */
 export const site = {
   name: 'OpenStruct',
-  repository: 'https://github.com/ricardocorsini/openstruct-front',
-  organization: 'https://github.com/ricardocorsini',
+  websiteRepository: 'https://github.com/ricardocorsini/openstruct-front',
   developmentPath: '/development',
   discord: import.meta.env.VITE_DISCORD_URL || '',
 };

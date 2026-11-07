@@ -2,6 +2,11 @@
 
 Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct, MolaStruct e ArmaduraStruct.
 
+Os acessos institucionais levam à central `/development`, onde cada produto tem
+seu próprio repositório público. O frontend continua público e aparece explicitamente
+como **Código deste site** no rodapé; a licença MIT ali indicada pertence ao site.
+Repositórios e licenças dos aplicativos permanecem no registro editorial.
+
 ## Desenvolvimento
 
 Requisitos: Node.js 24 LTS e npm.

@@ -1,4 +1,10 @@
-import { CatalogRequestError, loadPublicCatalog, verifySignedCatalog } from './catalog.ts';
+import {
+  CatalogRequestError,
+  CatalogValidationError,
+  loadPublicCatalog,
+  verifySignedCatalog,
+} from './catalog.ts';
+import { SignatureVerificationUnavailableError } from './signatures.ts';
 import type { CatalogRelease, SignedCatalog, VerifiedCatalog } from './catalog.ts';
 import { CATALOG_IDS } from './catalog-trust.ts';
 import type { CatalogProductId } from './catalog-trust.ts';
@@ -6,13 +12,14 @@ import type { CatalogProductId } from './catalog-trust.ts';
 export const CATALOG_CACHE_KEY = 'openstruct:verified-catalog:v1';
 export const CATALOG_TTL_MS = 15 * 60_000;
 export const CATALOG_MAX_ATTEMPTS = 3;
+type CatalogFailure = 'offline' | 'invalid' | 'unsupported';
 export type ProductAvailability = {
   status: 'unknown' | 'ready' | 'unavailable';
   release?: CatalogRelease;
   checkedAt?: string;
   catalogPublishedAt?: string;
   stale: boolean;
-  issue?: 'missing' | 'invalid' | 'offline' | 'expired' | 'rollback';
+  issue?: CatalogFailure | 'missing' | 'expired' | 'rollback';
 };
 export type CatalogState = {
   loading: boolean;
@@ -22,6 +29,7 @@ export type CatalogState = {
   canRetry: boolean;
   lastAttemptAt?: string;
   failed: boolean;
+  failure?: CatalogFailure;
 };
 type CacheEntry = { envelope: SignedCatalog; checkedAt: string };
 type Cache = Partial<Record<CatalogProductId, CacheEntry>>;
@@ -125,17 +133,23 @@ export function createCatalogStore(options: StoreOptions) {
       const { envelope, catalog } = await load();
       accept(catalog, { envelope, checkedAt: new Date(now()).toISOString() }, false);
       persist();
-      update({ ...state, failed: false });
+      update({ ...state, failed: false, failure: undefined });
     } catch (error) {
       if (error instanceof CatalogRequestError) retryDelay = error.retryAfterMs;
+      const failure: CatalogFailure =
+        error instanceof SignatureVerificationUnavailableError
+          ? 'unsupported'
+          : error instanceof CatalogValidationError
+            ? 'invalid'
+            : 'offline';
       const products = { ...state.products };
       for (const id of CATALOG_IDS)
         products[id] = {
           ...products[id],
           stale: Boolean(products[id].checkedAt),
-          issue: 'offline',
+          issue: failure,
         };
-      update({ ...state, products, failed: true });
+      update({ ...state, products, failed: true, failure });
     } finally {
       update({ ...state, loading: false, retryAt: now() + retryDelay, canRetry: false });
     }
@@ -198,10 +212,11 @@ export function createCatalogStore(options: StoreOptions) {
   };
 }
 
-export function availabilityLabel(product?: ProductAvailability): string {
+export function availabilityLabel(product?: ProductAvailability, loading = false): string {
   if (product?.status === 'ready')
     return product.stale ? 'Disponível · dado desatualizado' : 'Disponível para desktop';
   if (product?.status === 'unavailable')
     return product.stale ? 'Sem pacote · dado desatualizado' : 'Sem pacote no canal estável';
+  if (loading) return 'Consultando catálogo…';
   return 'Disponibilidade não confirmada';
 }

@@ -78,9 +78,6 @@ export function Layout() {
             <NavLink to={site.developmentPath} onClick={close}>
               Desenvolvimento
             </NavLink>
-            <a href={site.repository} target="_blank" rel="noreferrer" onClick={close}>
-              GitHub <ArrowUpRight size={13} />
-            </a>
             <Link to="/launcher" className="button button-primary mobile-launch" onClick={close}>
               Baixar Launcher <Download size={15} />
             </Link>
@@ -123,9 +120,9 @@ export function Layout() {
                 <br />
                 Novas formas de fazer engenharia.
               </p>
-              <a className="text-link" href={site.repository} target="_blank" rel="noreferrer">
-                <GitFork size={17} /> Construído em público <ArrowUpRight size={15} />
-              </a>
+              <Link className="text-link" to={site.developmentPath}>
+                <GitFork size={17} /> Construído em público <ArrowRight size={15} />
+              </Link>
             </div>
             <div>
               <span className="footer-heading">ECOSSISTEMA</span>
@@ -151,8 +148,8 @@ export function Layout() {
             </div>
             <div>
               <span className="footer-heading">CONSTRUA COM A GENTE</span>
-              <a href={site.repository} target="_blank" rel="noreferrer">
-                GitHub <ArrowUpRight size={13} />
+              <a href={site.websiteRepository} target="_blank" rel="noreferrer">
+                Código deste site <ArrowUpRight size={13} />
               </a>
               <button onClick={community}>
                 Discord <ArrowUpRight size={13} />
@@ -167,8 +164,12 @@ export function Layout() {
             <span className="footer-note">
               <Mark monochrome /> Feito por quem gosta de entender como funciona.
             </span>
-            <a href={`${site.repository}/blob/master/LICENSE`} target="_blank" rel="noreferrer">
-              Código aberto / MIT <ArrowUpRight size={12} />
+            <a
+              href={`${site.websiteRepository}/blob/master/LICENSE`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Licença deste site · MIT <ArrowUpRight size={12} />
             </a>
           </div>
         </div>

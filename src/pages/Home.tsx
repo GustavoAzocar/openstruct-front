@@ -72,9 +72,9 @@ export function Home() {
       <div className="principle-strip">
         <div className="container">
           <span>O conhecimento avança quando é compartilhado.</span>
-          <a href={site.repository} target="_blank" rel="noreferrer">
-            <GitFork size={16} /> Conheça o projeto no GitHub <ArrowUpRight size={15} />
-          </a>
+          <Link to={site.developmentPath}>
+            <GitFork size={16} /> Conheça o ecossistema <ArrowRight size={15} />
+          </Link>
         </div>
       </div>
       <section className="section container" id="aplicativos">

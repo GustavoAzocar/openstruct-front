@@ -1,14 +1,6 @@
 import { PublicGithubStatus } from '../components/PublicGithubStatus';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  ArrowUpRight,
-  GitFork,
-  MessageCircle,
-  GitPullRequest,
-  BookOpen,
-  Lightbulb,
-} from 'lucide-react';
+import { ArrowRight, MessageCircle, GitPullRequest, BookOpen, Lightbulb } from 'lucide-react';
 import { Mark } from '../components/Brand';
 import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
@@ -32,14 +24,6 @@ export function Community() {
           <Link to={site.developmentPath} className="button button-primary">
             Acompanhar desenvolvimento <ArrowRight size={17} />
           </Link>
-          <a
-            href={site.repository}
-            target="_blank"
-            rel="noreferrer"
-            className="button button-outline"
-          >
-            <GitFork size={18} /> Encontre o projeto <ArrowUpRight size={16} />
-          </a>
           <button className="button button-outline" onClick={community}>
             <MessageCircle size={18} /> Comunidade no Discord
           </button>

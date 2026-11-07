@@ -1,7 +1,7 @@
 import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink, Download } from 'lucide-react';
+import { ArrowRight, GitFork, X, ExternalLink, Download } from 'lucide-react';
 import { appIntegrations, site } from '../lib/config';
 import { currentApps } from '../lib/apps';
 import { AppStatus } from './AppStatus';
@@ -123,17 +123,12 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
               começa uma conversa.
             </h2>
             <p>
-              Nosso espaço no Discord está sendo preparado. Enquanto isso, acompanhe o projeto e
-              compartilhe sugestões no GitHub.
+              Nosso espaço no Discord está sendo preparado. Enquanto isso, escolha um projeto na
+              central de desenvolvimento para acompanhar o código e compartilhar sugestões.
             </p>
-            <a
-              className="button button-primary"
-              href={site.repository}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <GitFork size={18} /> Acompanhar no GitHub <ArrowUpRight size={17} />
-            </a>
+            <Link className="button button-primary" to={site.developmentPath} onClick={close}>
+              <GitFork size={18} /> Explorar os projetos <ArrowRight size={17} />
+            </Link>
           </>
         )}
       </dialog>

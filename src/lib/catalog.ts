@@ -1,5 +1,6 @@
 import { CATALOG_IDS, CATALOG_TRUST, CATALOG_URL, PRODUCT_POLICIES } from './catalog-trust.ts';
 import type { CatalogProductId, CatalogTrust } from './catalog-trust.ts';
+import { SignatureVerificationUnavailableError, verifyEd25519 } from './signatures.ts';
 
 export type CatalogAsset = {
   platform: 'windows' | 'linux';
@@ -31,8 +32,14 @@ export type VerifiedCatalog = {
 export type SignedCatalog = { payload: string; signature: string; keyId: string };
 export const CATALOG_MAX_BYTES = 1_000_000;
 
+export class CatalogValidationError extends Error {
+  constructor() {
+    super('Catálogo público inválido.');
+    this.name = 'CatalogValidationError';
+  }
+}
 function requireValue(condition: unknown): asserts condition {
-  if (!condition) throw new Error('Catálogo público inválido.');
+  if (!condition) throw new CatalogValidationError();
 }
 function record(value: unknown): Record<string, unknown> {
   requireValue(value && typeof value === 'object' && !Array.isArray(value));
@@ -86,17 +93,8 @@ export function packageMessage(id: string, releaseVersion: string, asset: Catalo
   return `OPENSTRUCT-PACKAGE-V1\n${id}\n${releaseVersion}\n${asset.platform}\n${asset.arch}\n${asset.kind}\n${asset.size}\n${asset.sha256}\n${asset.executable ?? ''}`;
 }
 async function verifyBytes(message: string, signature: unknown, key: unknown): Promise<void> {
-  requireValue(typeof crypto !== 'undefined' && crypto.subtle);
-  const publicKey = await crypto.subtle.importKey('raw', base64(key, 32), 'Ed25519', false, [
-    'verify',
-  ]);
   requireValue(
-    await crypto.subtle.verify(
-      'Ed25519',
-      publicKey,
-      base64(signature, 64),
-      new TextEncoder().encode(message),
-    ),
+    await verifyEd25519(new TextEncoder().encode(message), base64(signature, 64), base64(key, 32)),
   );
 }
 
@@ -246,7 +244,8 @@ export async function verifySignedCatalog(
     }
     try {
       products[id] = await readProduct(id, matches[0], trust, channel);
-    } catch {
+    } catch (error) {
+      if (error instanceof SignatureVerificationUnavailableError) throw error;
       products[id] = { status: 'invalid', reason: 'invalid' };
     }
   }
@@ -280,7 +279,12 @@ export async function loadPublicCatalog(request: typeof fetch = fetch): Promise<
   requireValue(Number(response.headers.get('content-length') || 0) <= CATALOG_MAX_BYTES);
   const raw = await response.text();
   requireValue(new TextEncoder().encode(raw).length <= CATALOG_MAX_BYTES);
-  const envelope = JSON.parse(raw) as SignedCatalog;
-  const catalog = await verifySignedCatalog(envelope);
-  return { envelope, catalog };
+  try {
+    const envelope = JSON.parse(raw) as SignedCatalog;
+    const catalog = await verifySignedCatalog(envelope);
+    return { envelope, catalog };
+  } catch (error) {
+    if (error instanceof SignatureVerificationUnavailableError) throw error;
+    throw new CatalogValidationError();
+  }
 }

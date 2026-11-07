@@ -1,7 +1,12 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
-import { verifySignedCatalog, CatalogRequestError } from '../src/lib/catalog.ts';
+import {
+  verifySignedCatalog,
+  CatalogRequestError,
+  CatalogValidationError,
+} from '../src/lib/catalog.ts';
+import { SignatureVerificationUnavailableError } from '../src/lib/signatures.ts';
 import { createCatalogStore, CATALOG_TTL_MS, availabilityLabel } from '../src/lib/catalog-store.ts';
 import { CATALOG_IDS } from '../src/lib/catalog-trust.ts';
 
@@ -210,4 +215,47 @@ test('catálogo anterior ao último dado conhecido não substitui as ofertas', a
   await store.start();
   assert.equal(store.getSnapshot().products.molastruct.release.version, '0.5.1');
   assert.equal(store.getSnapshot().products.molastruct.issue, 'rollback');
+});
+
+test('carregamento inicial difere de disponibilidade desconhecida sem inventar pacotes', () => {
+  assert.equal(availabilityLabel(undefined, true), 'Consultando catálogo…');
+  assert.equal(
+    availabilityLabel({ status: 'unknown', stale: false }),
+    'Disponibilidade não confirmada',
+  );
+  assert.equal(
+    availabilityLabel({ status: 'unavailable', stale: false }, true),
+    'Sem pacote no canal estável',
+  );
+});
+
+test('falhas de rede, validação e compatibilidade conservam causas distintas e dados válidos', async () => {
+  for (const [error, failure] of [
+    [new Error('offline'), 'offline'],
+    [new CatalogValidationError(), 'invalid'],
+    [new SignatureVerificationUnavailableError(), 'unsupported'],
+  ]) {
+    const store = createCatalogStore({
+      baseline,
+      load: async () => {
+        throw error;
+      },
+    });
+    await store.start();
+    const state = store.getSnapshot();
+    assert.equal(state.failure, failure);
+    assert.equal(state.products.armadurastruct.issue, failure);
+    assert.equal(state.products.armadurastruct.status, 'ready');
+    assert.equal(state.products.armadurastruct.stale, true);
+    const empty = createCatalogStore({
+      baseline: { ...baseline, envelope: {} },
+      load: async () => {
+        throw error;
+      },
+    });
+    await empty.start();
+    assert.equal(empty.getSnapshot().products.armadurastruct.status, 'unknown');
+    assert.equal(empty.getSnapshot().products.armadurastruct.release, undefined);
+    assert.equal(empty.getSnapshot().products.armadurastruct.issue, failure);
+  }
 });

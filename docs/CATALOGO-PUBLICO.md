@@ -75,10 +75,40 @@ estado e orçamento de chamadas, inclusive em React StrictMode.
   identificado. A assinatura v1 não contém expiração: sem rede, não há como afirmar
   que o snapshot é a publicação mais recente; por isso o aviso de desatualização.
 
-Sem WebCrypto/Ed25519 em contexto seguro, a interface editorial continua disponível,
-com acesso às releases oficiais, mas sem liberar os botões dependentes da verificação.
+O leitor tenta primeiro Ed25519 nativo via WebCrypto. Quando o navegador retorna
+`NotSupportedError` (por exemplo, Chrome anterior ao 137), carrega apenas o módulo
+Ed25519 de `@noble/curves` **2.4.0**, com verificação estrita `zip215: false`
+(RFC 8032). A dependência e `@noble/hashes` ficam fixadas no lockfile. Uma assinatura
+recusada pelo verificador nativo **não** ativa a alternativa. Chaves fixadas, bytes
+assinados, validação de origem e assinaturas de pacotes permanecem obrigatórios.
+Sem WebCrypto em contexto seguro, ou se o módulo de compatibilidade falhar, a
+interface editorial continua disponível, com acesso às releases oficiais, mas sem
+liberar novos botões dependentes da verificação.
 A página não baixa instaladores para calcular seus hashes: verifica as assinaturas
 do catálogo e dos metadados. O Launcher verifica os bytes do pacote ao instalar.
+
+### O que significa “Disponibilidade não confirmada”
+
+É o estado `unknown`: o navegador ainda não obteve um registro verificado para o
+produto. Não significa que o projeto esteja indisponível, sem release ou em
+planejamento. Durante a primeira validação, o rótulo é **“Consultando catálogo…”**.
+Depois, falhas de consulta, publicação inválida e impossibilidade de verificar
+assinaturas têm explicações distintas. O último dado válido é preservado e marcado
+como desatualizado; não se transforma uma falha em confirmação manual.
+
+A análise em 07/11/2026 confirmou o catálogo publicado em `2026-11-07T12:23:39.598Z`:
+ConsoloStruct 0.7.1, MolaStruct 0.5.1 e ArmaduraStruct 0.2.0. A implementação anterior
+dependia exclusivamente de Ed25519 nativo e classificava também os erros de
+validação/compatibilidade como falha de rede. A suíte agora simula um navegador sem
+esse algoritmo e verifica o envelope real e todos os seus pacotes pela alternativa,
+além de rejeição de adulteração e de chave de ordem pequena. Isso não equivale a
+ter executado fisicamente cada navegador antigo.
+
+Fontes de compatibilidade e implementação:
+
+- [Chromium: Ed25519, marco de publicação 137](https://groups.google.com/a/chromium.org/g/blink-dev/c/T2kriFdjXsg/m/KTXVrIxpAgAJ).
+- [noble-curves: API de verificação estrita e histórico de auditorias](https://github.com/paulmillr/noble-curves).
+  O upstream registra auditoria na versão 2.3.0; isso não é uma nova auditoria desta integração.
 
 ## Versão para instalar e descrição técnica
 

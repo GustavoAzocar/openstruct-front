@@ -12,6 +12,7 @@
     "sync:github": "node --experimental-strip-types scripts/sync-github.mjs"
   },
   "dependencies": {
+    "@noble/curves": "2.4.0",
     "lucide-react": "^1.69.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",

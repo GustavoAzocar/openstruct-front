@@ -132,11 +132,11 @@ export function Docs() {
           ))}
           <a
             className="docs-repo"
-            href={`${site.repository}#readme`}
+            href={`${site.websiteRepository}#readme`}
             target="_blank"
             rel="noreferrer"
           >
-            Documentação do código <ArrowUpRight size={15} />
+            Documentação deste site <ArrowUpRight size={15} />
           </a>
         </aside>
         <div className="docs-articles">

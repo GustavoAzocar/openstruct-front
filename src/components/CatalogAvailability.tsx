@@ -9,14 +9,20 @@ const formatDate = (value: string) =>
     new Date(value),
   );
 export function CatalogSyncStatus() {
-  const { loading, failed, attempts, canRetry, refresh, lastAttemptAt } = usePublicCatalog();
+  const { loading, failure, attempts, canRetry, refresh, lastAttemptAt } = usePublicCatalog();
+  const failureMessage =
+    failure === 'unsupported'
+      ? 'Não foi possível verificar as assinaturas neste navegador. Tente um navegador atualizado e acesse o site por HTTPS.'
+      : failure === 'invalid'
+        ? 'A publicação recebida foi recusada pela validação. Novos pacotes não foram liberados.'
+        : 'Não foi possível consultar o catálogo público. Tente novamente após o intervalo.';
   return (
     <div className="catalog-sync-status">
       <p role="status">
         {loading
           ? 'Consultando versões no catálogo público…'
-          : failed
-            ? 'Consulta indisponível. Os últimos dados verificados estão marcados como desatualizados.'
+          : failure
+            ? `${failureMessage} Quando há dados anteriores verificados, eles aparecem como desatualizados.`
             : 'Consulta concluída. Versões e disponibilidade são conferidas por aplicativo.'}
         {lastAttemptAt && (
           <>
@@ -35,25 +41,34 @@ export function CatalogSyncStatus() {
               ? 'Consultar novamente'
               : 'Nova consulta após o intervalo'}
       </button>
-      <small>Canal estável · até 3 consultas por sessão, com intervalo mínimo de 1 minuto.</small>
+      <small>
+        Disponibilidade baseada nos pacotes do catálogo público assinado, verificados por
+        aplicativo. Canal estável · até 3 consultas por sessão, com intervalo mínimo de 1 minuto.
+      </small>
     </div>
   );
 }
 
 export function ProductCatalogMeta({ app }: { app: CurrentApp }) {
   const product = useProductAvailability(app.id);
+  const { loading } = usePublicCatalog();
   return (
     <p className="catalog-product-meta">
       {product?.release && <>Versão para instalar: {product.release.version} · </>}
       {product?.checkedAt ? (
         <>Verificado em {formatDate(product.checkedAt)}.</>
+      ) : loading ? (
+        'Consultando o catálogo público.'
       ) : (
-        'Aguardando confirmação do catálogo.'
+        'Nenhum pacote pôde ser confirmado neste navegador.'
       )}
       {product?.stale && <strong> Dado desatualizado.</strong>}
       {product?.issue === 'missing' && ' Produto ausente na última consulta.'}
       {product?.issue === 'invalid' && ' Publicação recusada pela validação.'}
       {product?.issue === 'rollback' && ' Catálogo anterior ao último dado válido.'}
+      {product?.issue === 'offline' && ' A consulta ao catálogo falhou.'}
+      {product?.issue === 'unsupported' &&
+        ' Verificação de assinaturas indisponível; use HTTPS e um navegador atualizado.'}
     </p>
   );
 }
@@ -71,7 +86,7 @@ export function ProductAvailability({ app }: { app: CurrentApp }) {
           {app.name}
           {release && <> {release.version}</>}
         </strong>{' '}
-        · {availabilityLabel(product)}
+        · {availabilityLabel(product, loading)}
       </p>
       <ProductCatalogMeta app={app} />
       {release && (
