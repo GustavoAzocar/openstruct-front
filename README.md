@@ -163,6 +163,20 @@ as releases dos aplicativos. O feed do próprio Launcher continua dinâmico.
 
 ## Prévia do ConsoloStruct
 
+A página também apresenta quatro capturas reais da interface **0.7.1**, motor
+**0.4.0**, executada no navegador a partir da tag publicada: entradas/modelo 3D,
+memória calculada, vistas de detalhamento e quadro de aço. Cada figura informa
+versão, legenda e acesso ao arquivo original para ampliação. A captura principal
+oferece uma alternativa estática à prévia SVG, que continua identificada como
+esquemática e sem cálculo.
+
+As imagens usam o exemplo público fictício `consolos-detalhados.lume.json`, C01,
+sem alterar os dados. O manifesto tipado `src/lib/consolo-media.ts` registra
+origem, commit, exemplo, licença, ambiente, recortes, dimensões e hashes. Consulte
+[Capturas do ConsoloStruct — OSF-08](docs/CONSOLOSTRUCT-CAPTURAS.md) para reproduzir
+e atualizar o conjunto. A galeria tem versão própria; o escopo técnico revisado
+abaixo continua sendo o da **0.6.0**, e a disponibilidade vem do catálogo assinado.
+
 A demonstração é uma representação esquemática em SVG. Permite alternar entre modelo, armadura e detalhe, ajustar a projeção de 25 a 60 cm, separar camadas e restaurar o exemplo. **Não executa cálculo, dimensionamento, verificação normativa ou geração de desenho para obra.** A página separa essa prévia do aplicativo desktop publicado.
 
 A apresentação do ConsoloStruct descreve o aplicativo **0.6.0**, com motor **0.3.0**,

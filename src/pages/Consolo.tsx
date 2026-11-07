@@ -14,6 +14,7 @@ import {
   BookOpen,
 } from 'lucide-react';
 import { ModelPreview } from '../components/ModelPreview';
+import { ConsoloCaptures } from '../components/ConsoloCaptures';
 import { AppStatus } from '../components/AppStatus';
 import { ProductAvailability } from '../components/CatalogAvailability';
 import { ProductInstallation } from '../components/ProductInstallation';
@@ -131,6 +132,9 @@ export function Consolo() {
               )}
               {getMaturityLabel(app)}
             </span>
+            <a className="text-link consolo-captures-link" href="#capturas">
+              Veja o aplicativo em capturas reais <ArrowRight size={15} />
+            </a>
           </div>
         </div>
       </section>
@@ -138,11 +142,12 @@ export function Consolo() {
       <div className="container">
         <ProductAvailability app={app} />
       </div>
+      <ConsoloCaptures scopeVersion={release?.version} />
       <section className="container product-demo" id="demonstracao">
         <div className="consolo-demo-heading">
           <h2>Uma prévia do site.</h2>
-          <a className="text-link" href="#recursos">
-            Conheça o aplicativo <ArrowRight size={16} />
+          <a className="text-link" href="#consolo-modelo">
+            Ver a captura real do modelo <ArrowRight size={16} />
           </a>
         </div>
         <ModelPreview />

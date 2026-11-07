@@ -14,6 +14,7 @@ import { Community, NotFound } from './pages/Community';
 import { getCurrentApp } from './lib/apps';
 import { CatalogProvider } from './components/CatalogProvider';
 import './styles.css';
+import './consolostruct.css';
 import './molastruct.css';
 import './armadurastruct.css';
 import './launcher.css';
