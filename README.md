@@ -290,3 +290,10 @@ A página reutiliza a galeria acessível da OSF-10 com três imagens oficiais da
 docs da tag 0.5.1. As telas preservam rótulos históricos v0.1/v0.2/v0.5, indicados
 individualmente, sem fingir que foram capturadas na versão do instalador.
 [Origem, licença e limites das capturas](docs/MOLASTRUCT-CAPTURAS.md).
+
+### Filtros compartilháveis do catálogo
+
+A seleção em `/apps` é persistida na URL: busca sem acentos, categoria,
+disponibilidade, plataforma e horizonte futuro. Copiar link compartilha os filtros;
+o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma.
+[Contrato e comportamento dos filtros](docs/FILTROS-CATALOGO.md).
