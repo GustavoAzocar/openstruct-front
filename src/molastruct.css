@@ -349,6 +349,64 @@
   font-size: 11px;
   line-height: 1.8;
 }
+.mola-reference-note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.mola-source-link {
+  margin-top: 18px;
+  max-width: 100%;
+  white-space: normal;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.mola-source-link svg {
+  flex-shrink: 0;
+}
+.access-main .mola-source-link {
+  display: flex;
+  width: fit-content;
+}
+.mola-method-status {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--accent);
+  font:
+    10px/1.7 'IBM Plex Mono',
+    monospace;
+}
+.mola-limits .mola-method-groups {
+  margin-top: 0;
+}
+.mola-limits ul,
+.mola-development ul {
+  padding-left: 19px;
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.9;
+}
+.mola-limits li + li,
+.mola-development li + li {
+  margin-top: 9px;
+}
+.mola-development {
+  padding: 35px 40px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface-2);
+  scroll-margin-top: 110px;
+}
+.mola-development h2 {
+  font-size: 27px;
+  line-height: 1.4;
+}
+.mola-development p {
+  margin-top: 18px;
+  max-width: 850px;
+  font-size: 14px;
+  line-height: 1.9;
+}
 .mola-community {
   background: var(--brand);
   color: #f4f1e9;
@@ -424,6 +482,12 @@
   }
 }
 @media (max-width: 700px) {
+  .mola-development {
+    padding: 28px 23px;
+  }
+  .mola-development h2 {
+    font-size: 23px;
+  }
   .mola-discovery {
     grid-template-columns: 76px minmax(0, 1fr);
     padding: 22px 20px;

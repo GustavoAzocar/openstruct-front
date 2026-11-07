@@ -62,8 +62,8 @@ const articles = [
     id: 'molastruct',
     n: '07',
     title: `${mola.name}: fundação + solo`,
-    body: 'O MolaStruct está sendo desenvolvido para auxiliar na estimativa da rigidez à translação e à rotação do conjunto fundação + solo. O escopo inicial reúne geometria da fundação, perfil de sondagem e características do solo, contemplando sapatas e blocos com 1, 2, 3 ou 4 estacas. A página apresenta os métodos previstos e um esquema conceitual que não executa cálculos.',
-    action: `Conheça o ${mola.name}`,
+    body: `${mola.name}${mola.distribution ? ' ' + mola.distribution.version : ''} estima a rigidez de sapatas e blocos sobre 1 a 4 estacas, com SPT, camadas, matriz 6×6 e memória. Rigidez, recalque e capacidade são resultados distintos. Consulte os métodos disponíveis, a conferência parcial NBR 6122:2022 e os limites da versão publicada. A seleção de CRH/TQS e as sapatas FEMA/Teixeira–Godoy das revisões posteriores não fazem parte desse instalador; o esquema do site é apenas ilustrativo.`,
+    action: 'Métodos, limites e documentação',
     to: mola.route,
   },
   {

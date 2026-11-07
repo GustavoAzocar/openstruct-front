@@ -98,7 +98,7 @@ export function FoundationPreview() {
           <span className="eyebrow">FUNDAÇÃO + SOLO</span>
           <h3 id="foundation-preview-title">O apoio também faz parte do modelo.</h3>
         </div>
-        <span className="preview-label">Representação conceitual</span>
+        <span className="preview-label">SVG · sem cálculo</span>
       </div>
       <div className="foundation-preview-body">
         <div className="foundation-options">
@@ -131,12 +131,13 @@ export function FoundationPreview() {
           <div className="foundation-option-note">
             <strong>Translação e rotação.</strong>
             <p>
-              O MolaStruct propõe estimar a rigidez do apoio a partir da geometria da fundação e das
-              características do solo.
+              No aplicativo, a geometria da fundação e as características do solo alimentam a
+              estimativa da rigidez do apoio. Aqui, os controles alteram apenas o desenho.
             </p>
           </div>
           <small>
-            Este esquema permite explorar as configurações previstas, sem executar cálculos.
+            Este esquema permite explorar as configurações, sem executar cálculos. Não é uma captura
+            da interface do aplicativo.
           </small>
         </div>
         <div className="foundation-canvas">

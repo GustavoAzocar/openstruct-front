@@ -1,63 +1,130 @@
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
-  ArrowRight,
   ArrowUpRight,
-  Box,
   Layers3,
-  Ruler,
   MoveHorizontal,
-  RotateCcw,
+  Ruler,
   FileText,
+  Table2,
   GitFork,
   Download,
+  BookOpen,
+  ClipboardCheck,
 } from 'lucide-react';
 import { FoundationPreview } from '../components/FoundationPreview';
-import { useExperience } from '../components/Experience';
 import { appIntegrations } from '../lib/config';
 import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
 import { AppStatus } from '../components/AppStatus';
 
 const app = getCurrentApp('molastruct');
+const release = app.distribution;
 const integration = appIntegrations[app.id];
-const downloadUrl = integration.downloadUrl || app.distribution?.releaseUrl;
+const sourceRoot = app.repository.url + '/blob/' + app.documentation.ref;
+const documents = {
+  readme: app.documentation.url,
+  engine: sourceRoot + '/docs/MOTOR.md',
+  methods: sourceRoot + '/docs/METODOLOGIAS.md',
+  normative: sourceRoot + '/docs/NBR6122-2022.md',
+  validation: sourceRoot + '/docs/VALIDACAO.md',
+};
+const developmentHistory = app.repository.url + '/blob/' + app.code.ref + '/CHANGELOG.md';
+const platforms = new Intl.ListFormat('pt-BR').format(
+  release?.platforms.map((asset) => (asset.os === 'windows' ? 'Windows' : 'Linux')) || [],
+);
 
 const features = [
   {
-    Icon: Box,
-    title: 'Comece pela fundação.',
-    text: 'Definição da geometria do elemento de fundação, considerando sapatas e blocos sobre estacas.',
-  },
-  {
-    Icon: Layers3,
-    title: 'Traga o solo para o modelo.',
-    text: 'Perfil de sondagem e características do solo como informações de entrada para a estimativa.',
+    Icon: Table2,
+    title: 'Preserve a matriz completa.',
+    text: 'Leia os seis coeficientes e a matriz 6×6, com acoplamentos entre translações e rotações. Cada Kii pressupõe os demais graus de liberdade impedidos; seis molas isoladas não representam todos os acoplamentos.',
+    source: documents.engine,
+    sourceLabel: 'Matriz, unidades e convenções',
   },
   {
     Icon: MoveHorizontal,
-    title: 'Estime a rigidez à translação.',
-    text: 'Um apoio à definição das molas que representam a deformabilidade do conjunto fundação + solo.',
-  },
-  {
-    Icon: RotateCcw,
-    title: 'Considere a rotação.',
-    text: 'Estimativas de rigidez à rotação para apoiar decisões sobre a representação das fundações na análise estrutural.',
+    title: 'Interprete a rigidez.',
+    text: 'A matriz relaciona ações e deslocamentos no apoio. O bloco é rígido, com estacas verticais e ligação à flexão rígida ou rotulada. Graus de liberdade livres são identificados; ações incompatíveis bloqueiam a solução.',
+    source: documents.engine,
+    sourceLabel: 'Modelos e condições de contorno',
   },
   {
     Icon: Ruler,
-    title: 'Explore os recalques.',
-    text: 'Para sapatas, o escopo inclui estimativa do recalque vertical com base na Teoria da Elasticidade.',
+    title: 'Leia o recalque no modelo.',
+    text: 'A resposta às ações fornece deslocamentos e rotações. Nas sapatas Mindlin, o recalque é o do centro sob pressão uniforme, não a solução de contato de uma base perfeitamente rígida.',
+    source: documents.engine,
+    sourceLabel: 'Ponto de avaliação e hipóteses',
+  },
+  {
+    Icon: Layers3,
+    title: 'Compare as hipóteses.',
+    text: 'Selecione métodos por fundação e examine comparação, sensibilidade e parâmetros intermediários. Confira a cobertura das camadas e do SPT e estude o refinamento da discretização antes de adotar resultados.',
+    source: documents.methods,
+    sourceLabel: 'Metodologias e calibração',
   },
   {
     Icon: FileText,
-    title: 'Organize as verificações.',
-    text: 'Informações de capacidade de carga e tensões de ruptura, de acordo com os métodos previstos para cada tipo de fundação.',
+    title: 'Leve a memória com você.',
+    text: 'Consulte a memória na interface e em PDF. Exporte matriz e SPT em CSV, geometria em DXF e desenhos SVG. Salve o projeto JSON versionado para reabrir e transportar seus dados.',
+    source: documents.readme,
+    sourceLabel: 'Recursos e exportações',
+  },
+  {
+    Icon: ClipboardCheck,
+    title: 'Confira serviço e resistência.',
+    text: 'A conferência parcial NBR 6122:2022 separa ações ELS e ELU, limites justificados, critérios calculados, declarações e pendências. Ela não altera silenciosamente a matriz nem aprova o projeto inteiro.',
+    source: documents.normative,
+    sourceLabel: 'Alcance da conferência parcial',
+  },
+];
+
+const methods = [
+  {
+    scope: 'ESTACAS / RIGIDEZ',
+    title: 'Winkler.',
+    text: 'Viga de Euler–Bernoulli na lateral e barras axial e torsional, com reação distribuída e condensação no topo. kh, kt e kp são entradas independentes. O grupo soma as estacas com seus braços; o redutor η é informado.',
+    limit:
+      'Sem interação lateral entre estacas nem contato bloco–solo. η não é fator de segurança de resistência.',
+  },
+  {
+    scope: 'RIGIDEZ VERTICAL E RECALQUE',
+    title: 'Mindlin · Aoki–Lopes · Steinbrenner.',
+    text: 'Superposição vertical em camadas até a base indeslocável. Nas estacas, inclui encurtamento EA e flexibilidade mútua do grupo. A parcela de carga de fuste/ponta é proporcional fixa, informada ou baseada em RL/RP.',
+    limit:
+      'Steinbrenner é uma aproximação para camadas. Lateral e torção das estacas continuam em Winkler; não há transferência não linear t-z/q-z.',
+  },
+  {
+    scope: 'ESTACAS / PERFIL SIMPLIFICADO',
+    title: 'Randolph–Wroth conforme a documentação TQS.',
+    text: 'Expressão simplificada de fuste, com camada equivalente explícita e grupo rígido sem interação. A rigidez horizontal é proporcional a Kz; as aproximações de rotação estão registradas no motor.',
+    limit:
+      'Não inclui o termo de base da solução completa de Randolph–Wroth nem comprova equivalência integral com o TQS.',
+  },
+  {
+    scope: 'SAPATAS / OPÇÃO LEGADA',
+    title: 'Disco equivalente.',
+    text: 'Translações por disco de mesma área em semiespaço elástico, com E e ν homogeneizados na faixa 2B. Rotações aproximadas por molas distribuídas sobre o retângulo.',
+    limit:
+      'Kx e Ky iguais perdem a anisotropia da base retangular. Sem correção de embutimento ou solução unilateral de contato.',
+  },
+  {
+    scope: 'SAPATAS / REAÇÃO VERTICAL',
+    title: 'kv informado · SAFE/Morrison.',
+    text: 'Use kv informado ou a correlação publicada para σadm, com conversões de unidades e faixa controlada. A tensão admissível é uma entrada independente, não inferida automaticamente de qult/FS.',
+    limit:
+      'Sem extrapolar a faixa da correlação. kv depende do modelo e da dimensão de referência; não é uma propriedade universal do solo.',
+  },
+  {
+    scope: 'PARÂMETROS / CORRELAÇÕES OPCIONAIS',
+    title: 'SPT → E.',
+    text: 'Schmertmann com K_E editável por camada ou E0 inicial de Aoki para estacas, com fatores 6/4/3 por execução. As opções usam médias ponderadas e preservam os valores E manuais salvos.',
+    limit:
+      'ν permanece informado. Trocar E não recalibra kh/kt/kp; E0 Aoki não implementa a atualização posterior do módulo por tensões.',
   },
 ];
 
 export function Mola() {
-  const { community } = useExperience();
   return (
     <>
       <section className="product-hero container mola-product-hero">
@@ -76,35 +143,36 @@ export function Mola() {
         </div>
         <div className="product-intro">
           <h2>
-            Uma base melhor
+            Da sondagem
             <br />
-            para suas decisões.
+            ao apoio elástico.
           </h2>
           <div>
             <p>
-              Uma ferramenta aberta em desenvolvimento para auxiliar na estimativa da rigidez do
-              conjunto fundação + solo e na sua representação na análise estrutural.
+              Organize fundações, SPT e camadas de solo para estimar rigidez à translação e à
+              rotação. Compare métodos, examine a matriz completa e acompanhe hipóteses e resultados
+              na memória. O cálculo é local no aplicativo.
             </p>
             <div className="button-row">
-              <a
-                className="button button-primary"
-                href={integration.webUrl || app.previewAnchor}
-                {...(integration.webUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
-              >
-                {integration.webUrl ? `Abrir ${app.name}` : 'Conheça a proposta'}{' '}
-                <ArrowUpRight size={17} />
-              </a>
+              <Link className="button button-primary" to="/launcher">
+                <Download size={17} /> Instalar pelo Launcher
+              </Link>
               <a
                 className="button button-outline"
-                href={app.repository.url}
+                href={documents.readme}
                 target="_blank"
                 rel="noreferrer"
               >
-                <GitFork size={17} /> Acompanhe o projeto
+                <BookOpen size={17} /> Documentação da versão
               </a>
             </div>
             <span className="product-meta">
-              {getMaturityLabel(app)} · {app.category} · Interação solo-estrutura
+              {release && (
+                <>
+                  Aplicativo {release.version} · {platforms} x86_64 ·{' '}
+                </>
+              )}
+              {getMaturityLabel(app)}
             </span>
           </div>
         </div>
@@ -112,42 +180,43 @@ export function Mola() {
       <section className="container mola-overview" id="visao-geral">
         <FoundationPreview />
         <div className="demo-caption">
-          <span>Explore sapatas e blocos com 1, 2, 3 ou 4 estacas.</span>
-          <span>Esquema de apresentação · Sem cálculo de rigidez</span>
+          <span>Prévia SVG do site; não é uma captura do aplicativo.</span>
+          <span>Altera apenas o desenho. Sem cálculo de rigidez, recalque ou capacidade.</span>
         </div>
       </section>
-      <section className="section container">
+      <section className="section container" id="entradas">
         <div className="section-kicker">
-          <span>01 / UM PONTO DE PARTIDA</span>
-          <span>GEOMETRIA + SONDAGEM + SOLO</span>
+          <span>01 / ENTRADAS DO APLICATIVO</span>
+          <span>{release && <>VERSÃO {release.version}</>}</span>
         </div>
         <div className="section-heading">
           <h2>
-            O que acontece na base
+            A fundação e o solo.
             <br />
-            importa para a estrutura.
+            Com parâmetros explícitos.
           </h2>
           <p>
-            O objetivo é oferecer uma forma simples de reunir as informações da fundação e do solo
-            para apoiar a tomada de decisão do projetista.
+            Esta página descreve a versão distribuída{release && <> {release.version}</>}. Defina o
+            modelo e justifique seus parâmetros; o SPT não fornece sozinho todos os coeficientes
+            necessários às estimativas.
           </p>
         </div>
         <div className="mola-inputs">
           {[
             {
               n: '01',
-              title: 'Geometria da fundação',
-              text: 'Tipo e dimensões do elemento. Para blocos, a configuração das estacas.',
+              title: 'Geometria e ações.',
+              text: 'Sapatas retangulares ou blocos sobre 1 a 4 estacas. Informe dimensões, espaçamentos, cotas, concreto, ligação estaca–bloco e ações no centro da base.',
             },
             {
               n: '02',
-              title: 'Perfil de sondagem',
-              text: 'Informações do terreno organizadas a partir do perfil de investigação.',
+              title: 'SPT e camadas.',
+              text: 'Edite a sondagem, importe CSV/TSV ou cole dados de planilha. Defina camadas, nível d’água e a base rígida quando o método exigir. Recusa no SPT não comprova uma base indeslocável.',
             },
             {
               n: '03',
-              title: 'Características do solo',
-              text: 'Parâmetros necessários às estimativas, conforme o método adotado.',
+              title: 'Método e parâmetros.',
+              text: 'Informe E, ν, reações Winkler ou selecione uma correlação disponível. Confira unidades, cobertura do perfil e parâmetros de capacidade, como α, K e F1/F2 de Aoki–Velloso.',
             },
           ].map((item) => (
             <article key={item.n}>
@@ -157,37 +226,63 @@ export function Mola() {
             </article>
           ))}
         </div>
+        <a
+          className="text-link mola-source-link"
+          href={documents.engine}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Entradas, unidades e condições de contorno <ArrowUpRight size={16} />
+        </a>
       </section>
-      <section className="mola-foundations">
+      <section className="mola-foundations" id="capacidade">
         <div className="container">
           <div className="section-kicker">
-            <span>02 / TIPOS DE FUNDAÇÃO</span>
-            <span>DUAS FRENTES, UMA MESMA PROPOSTA</span>
+            <span>02 / CAPACIDADE, EM SEPARADO</span>
+            <span>RESISTÊNCIA NÃO É RIGIDEZ</span>
           </div>
           <div className="mola-foundation-grid">
             <article>
-              <span className="pill">FUNDAÇÕES SUPERFICIAIS</span>
-              <h2>Sapatas.</h2>
+              <span className="pill">SAPATAS RETANGULARES</span>
+              <h2>Vésic e referência SPT.</h2>
               <p>
-                Estimativa do recalque vertical pela Teoria da Elasticidade, além das rigidezes e
-                informações de tensão de ruptura previstas no escopo.
+                A tensão última usa fatores de Vésic e de forma para carga vertical centrada. Os
+                demais fatores são unitários. qSPT = C × N é uma referência exploratória, com C
+                informado; não é tensão de ruptura nem critério normativo universal.
               </p>
               <ul>
-                <li>Geometria da fundação e características do solo.</li>
-                <li>Rigidezes à translação e à rotação.</li>
-                <li>Terzaghi, Vesic e correlações com SPT para as estimativas de ruptura.</li>
+                <li>
+                  Parâmetros da camada de apoio e influência do nível d’água, com simplificações
+                  explícitas.
+                </li>
+                <li>
+                  qref = qult/FS é separado da rigidez. Pressões negativas sinalizam perda de
+                  contato, sem redistribuição unilateral.
+                </li>
+                <li>
+                  <strong>Terzaghi permanece pendente e não gera resultados.</strong>
+                </li>
               </ul>
+              <a
+                className="text-link mola-source-link"
+                href={documents.engine}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Capacidade da sapata e limites <ArrowUpRight size={15} />
+              </a>
             </article>
             <article>
               <span className="pill">BLOCOS SOBRE ESTACAS</span>
-              <h2>De uma a quatro estacas.</h2>
+              <h2>Aoki–Velloso por estaca.</h2>
               <p>
-                Configurações de blocos com 1, 2, 3 ou 4 estacas, conectando a geometria do conjunto
-                às informações do terreno.
+                Integração por intervalos SPT e camadas, com F1/F2, α e K informados. A memória
+                separa resistência de fuste, ponta e total da estaca isolada. Esses valores não são
+                a rigidez nem a resistência última do grupo.
               </p>
               <div
                 className="pile-number-strip"
-                aria-label="Configurações previstas: 1, 2, 3 e 4 estacas"
+                aria-label="Configurações disponíveis: 1, 2, 3 e 4 estacas"
               >
                 <span>1</span>
                 <span>2</span>
@@ -195,31 +290,40 @@ export function Mola() {
                 <span>4</span>
               </div>
               <p>
-                O método Aoki–Velloso integra o escopo para a estimativa da capacidade de carga das
-                estacas.
+                No Winkler, a capacidade não altera a rigidez linear. No Mindlin, RL/RP pode definir
+                a proporção fixa de transferência; isso não implementa mobilização não linear.
               </p>
+              <a
+                className="text-link mola-source-link"
+                href={documents.normative}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Resistência, execução e conferência ELU <ArrowUpRight size={15} />
+              </a>
             </article>
           </div>
         </div>
       </section>
-      <section className="section container">
+      <section className="section container" id="resultados">
         <div className="section-kicker">
-          <span>03 / RECURSOS PREVISTOS</span>
-          <span>RIGIDEZ, RECALQUE E CAPACIDADE DE CARGA</span>
+          <span>03 / RESULTADOS DISPONÍVEIS</span>
+          <span>RIGIDEZ · RECALQUE · CAPACIDADE</span>
         </div>
         <div className="section-heading">
           <h2>
             Do terreno
             <br />
-            ao apoio estrutural.
+            ao modelo estrutural.
           </h2>
           <p>
-            Este é o escopo inicial do MolaStruct. Os detalhes de entrada, resultados e aplicação
-            dos métodos serão apresentados conforme o desenvolvimento avançar.
+            Rigidez relaciona ações e deslocamentos; recalque é uma resposta às ações no modelo;
+            capacidade estima resistência. A conferência de um desses resultados não valida
+            automaticamente os demais.
           </p>
         </div>
-        <div className="feature-grid">
-          {features.map(({ Icon, title, text }, i) => (
+        <div className="feature-grid mola-feature-grid">
+          {features.map(({ Icon, title, text, source, sourceLabel }, i) => (
             <article key={title}>
               <div className="feature-top">
                 <Icon size={24} strokeWidth={1.5} />
@@ -227,98 +331,231 @@ export function Mola() {
               </div>
               <h3>{title}</h3>
               <p>{text}</p>
+              <a
+                className="text-link mola-source-link"
+                href={source}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {sourceLabel} <ArrowUpRight size={15} />
+              </a>
             </article>
           ))}
         </div>
-      </section>
-      <section className="container mola-methods" id="metodos">
-        <span className="eyebrow">04 / MÉTODOS DO ESCOPO INICIAL</span>
-        <h2>
-          Uma estimativa com
-          <br />
-          um caminho definido.
-        </h2>
-        <div className="mola-method-groups">
-          <article>
-            <span className="eyebrow">RIGIDEZ E DEFORMABILIDADE</span>
-            <h3>Mindlin · Steinbrenner · Winkler</h3>
-            <p>
-              Referências previstas para a representação da deformabilidade e para as estimativas do
-              conjunto fundação + solo. Para o recalque vertical de sapatas, a proposta utiliza a
-              Teoria da Elasticidade.
-            </p>
-          </article>
-          <article>
-            <span className="eyebrow">CAPACIDADE DE CARGA E RUPTURA</span>
-            <h3>Aoki–Velloso · Terzaghi · Vesic · SPT</h3>
-            <p>
-              Aoki–Velloso para a capacidade de carga das estacas; Terzaghi, Vesic e correlações com
-              SPT para as estimativas de tensão de ruptura em sapatas.
-            </p>
-          </article>
-        </div>
         <p className="mola-reference-note">
-          A descrição inicial também menciona a ABNT NBR 6122:1996 como referência histórica. Os
-          critérios, as hipóteses e as edições normativas de implementação serão especificados na
-          documentação técnica.
+          A matriz usa a ordem [ux, uy, uz, θx, θy, θz], no centro da base. As exportações mantêm as
+          convenções kN, m e rad, com unidades dos blocos de translação, acoplamento e rotação
+          identificadas na documentação.
         </p>
       </section>
-      <section className="section container">
+      <section className="container mola-methods" id="metodos">
+        <span className="eyebrow">
+          04 / MÉTODOS IMPLEMENTADOS{release && <> NA {release.version}</>}
+        </span>
+        <h2>
+          Um resultado.
+          <br />
+          Hipóteses identificadas.
+        </h2>
+        <div className="mola-method-groups">
+          {methods.map((method) => (
+            <article key={method.title}>
+              <span className="eyebrow">{method.scope}</span>
+              <span className="mola-method-status">Disponível na versão descrita</span>
+              <h3>{method.title}</h3>
+              <p>{method.text}</p>
+              <p>
+                <strong>Limites:</strong> {method.limit}
+              </p>
+              <a
+                className="text-link mola-source-link"
+                href={documents.engine}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Equações e domínio do método <ArrowUpRight size={15} />
+              </a>
+            </article>
+          ))}
+        </div>
+        <p className="mola-reference-note">
+          A versão distribuída já contém os perfis simplificados que citam a documentação TQS. Isso
+          é diferente da seleção posterior de coeficientes de reação horizontal (CRH). Não há
+          comprovação de equivalência integral com o TQS.{' '}
+          <a href={documents.methods} target="_blank" rel="noreferrer">
+            Leia a revisão das fontes e as diferenças de modelagem.
+          </a>
+        </p>
+      </section>
+      <section className="section container mola-limits" id="limites">
         <div className="section-kicker">
-          <span>05 / ACOMPANHE A CONSTRUÇÃO</span>
+          <span>05 / ALCANCE E VALIDAÇÃO</span>
+          <span>APLICATIVO EXPERIMENTAL</span>
+        </div>
+        <div className="section-heading">
+          <h2>
+            Limites visíveis.
+            <br />
+            Revisão necessária.
+          </h2>
+          <p>
+            A NBR 6122:2022 aparece em uma conferência parcial separada. Não fornece molas
+            universais nem certifica o motor; os limites de serviço precisam ser informados e
+            justificados para a obra.
+          </p>
+        </div>
+        <div className="mola-method-groups">
+          <article>
+            <h3>O que o modelo local não resolve.</h3>
+            <ul>
+              <li>
+                Interação global com a edificação, dimensionamento estrutural do bloco e das estacas
+                e ligação resistente.
+              </li>
+              <li>
+                Capacidade última do grupo, atrito negativo, adensamento, fluência e transferência
+                não linear de carga.
+              </li>
+              <li>
+                Contato unilateral da sapata e verificação completa de cargas excêntricas,
+                horizontais e condições executivas.
+              </li>
+            </ul>
+            <a
+              className="text-link mola-source-link"
+              href={documents.normative}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Critérios calculados e pendências <ArrowUpRight size={15} />
+            </a>
+          </article>
+          <article>
+            <h3>O que as conferências demonstram.</h3>
+            <p>
+              Há testes analíticos e comparação independente de matrizes Winkler em casos lineares
+              idealizados. Eles não validam automaticamente os parâmetros geotécnicos, o recalque
+              Mindlin ou todas as rigidezes de outro software. A validação com provas de carga
+              continua pendente.
+            </p>
+            <a
+              className="text-link mola-source-link"
+              href={documents.validation}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Evidências e limites da validação <ArrowUpRight size={15} />
+            </a>
+          </article>
+        </div>
+      </section>
+      {release && app.code.version !== release.version && (
+        <section
+          className="container mola-development"
+          id="desenvolvimento"
+          aria-labelledby="mola-development-title"
+        >
+          <span className="eyebrow">DESENVOLVIMENTO / FORA DO INSTALADOR {release.version}</span>
+          <h2 id="mola-development-title">A branch avançou. A distribuição é outra.</h2>
+          <p>
+            O código revisado da branch {app.repository.branch} identifica a versão{' '}
+            {app.code.version}. O catálogo e a release pública consultados oferecem{' '}
+            {release.version}. Os itens abaixo estão documentados nas revisões posteriores, sem
+            pacote correspondente confirmado nessa consulta.
+          </p>
+          <ul>
+            <li>
+              Seleção CRH de kh manual, K/nh (TQS 3829/3836) e SPT/m, com tabelas e regras de
+              discretização.
+            </li>
+            <li>
+              Sapatas em meio contínuo pelas constantes k0 da FEMA 273 e correlação Teixeira–Godoy.
+            </li>
+          </ul>
+          <a
+            className="text-link mola-source-link"
+            href={developmentHistory}
+            target="_blank"
+            rel="noreferrer"
+          >
+            Histórico do código em desenvolvimento <ArrowUpRight size={15} />
+          </a>
+        </section>
+      )}
+      <section className="section container" id="acesso">
+        <div className="section-kicker">
+          <span>06 / COMECE POR AQUI</span>
           <span>{app.name.toUpperCase()} / OPENSTRUCT</span>
         </div>
         <div className="access-grid">
           <article className="access-main">
-            <span className="pill">UM NOVO APLICATIVO OPENSTRUCT</span>
+            <span className="pill">APLICATIVO DESKTOP EXPERIMENTAL</span>
             <h2>
-              Uma fundação
+              Instale.
               <br />
-              para novas possibilidades.
+              Confira seu modelo.
             </h2>
             <p>
-              {app.distribution
-                ? `${app.name} ${app.distribution.version} está disponível para desktop.`
-                : `Acompanhe o desenvolvimento do ${app.name}.`}{' '}
-              Use o Struct Launcher para consultar os aplicativos disponíveis.
+              {release && (
+                <>
+                  {app.name} {release.version} está disponível para {platforms} x86_64.{' '}
+                </>
+              )}
+              Abra o Struct Launcher e escolha o aplicativo na biblioteca. Consulte os exemplos, os
+              métodos e as pendências antes de interpretar os resultados.
             </p>
-            {integration.webUrl ? (
+            <Link className="button button-primary" to="/launcher">
+              Instalar pelo Launcher <Download size={17} />
+            </Link>
+            {release && (
               <a
-                className="button button-primary"
+                className="text-link mola-source-link"
+                href={release.releaseUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Release e instaladores avulsos <ArrowUpRight size={15} />
+              </a>
+            )}
+          </article>
+          <article className="access-secondary">
+            <BookOpen size={27} strokeWidth={1.5} />
+            <h3>Documentação da versão distribuída.</h3>
+            <p>
+              Use as referências fixadas na tag{release && <> {release.sourceTag}</>}. O README
+              dessa tag ainda exibe rótulos da base 0.5.0; a versão do pacote publicado é
+              {release && <> {release.version}</>}. A disponibilidade é conferida pela release e
+              pelo catálogo, separadamente das ressalvas de validação do aplicativo nativo.
+            </p>
+            <a className="text-link" href={documents.readme} target="_blank" rel="noreferrer">
+              Leia a documentação <ArrowUpRight size={16} />
+            </a>
+            <div className="source-note">
+              <GitFork size={18} />
+              <a href={app.repository.url} target="_blank" rel="noreferrer">
+                Projeto no GitHub <ArrowUpRight size={14} />
+              </a>
+            </div>
+            {integration.webUrl && (
+              <a
+                className="text-link mola-source-link"
                 href={integration.webUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Abrir {app.name} <ArrowUpRight size={17} />
+                Abrir instância web <ArrowUpRight size={15} />
               </a>
-            ) : (
-              <Link className="button button-primary" to="/launcher">
-                Instalar pelo launcher <Download size={17} />
-              </Link>
             )}
-          </article>
-          <article className="access-secondary">
-            <Download size={27} strokeWidth={1.5} />
-            <h3>Também disponível diretamente.</h3>
-            <p>
-              Prefere instalar somente o MolaStruct? Os instaladores de cada versão e a documentação
-              estão disponíveis no repositório do aplicativo.
-            </p>
-            {downloadUrl ? (
-              <a className="text-link" href={downloadUrl} target="_blank" rel="noreferrer">
-                Baixar {app.name} <ArrowUpRight size={16} />
+            {integration.downloadUrl && (
+              <a
+                className="text-link mola-source-link"
+                href={integration.downloadUrl}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Acesso alternativo ao aplicativo <ArrowUpRight size={15} />
               </a>
-            ) : (
-              <button className="text-link" onClick={community}>
-                Acompanhe as novidades <ArrowRight size={16} />
-              </button>
             )}
-            <div className="source-note">
-              <GitFork size={18} />
-              <a href={app.repository.url} target="_blank" rel="noreferrer">
-                Veja o projeto no GitHub <ArrowUpRight size={14} />
-              </a>
-            </div>
           </article>
         </div>
       </section>
@@ -333,8 +570,8 @@ export function Mola() {
         </div>
         <div>
           <p>
-            Compartilhe um caso, uma sugestão ou uma dúvida sobre a representação das fundações no
-            modelo estrutural.
+            Compartilhe um caso reproduzível, uma revisão de parâmetros ou uma dúvida sobre a
+            representação das fundações no modelo estrutural.
           </p>
           <Link className="button button-ink" to="/community">
             Participe do MolaStruct <ArrowUpRight size={17} />

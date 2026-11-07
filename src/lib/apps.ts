@@ -86,7 +86,7 @@ export const apps: AppEntry[] = [
     name: 'MolaStruct',
     category: 'Fundações',
     description:
-      'Do solo ao modelo estrutural. Uma ferramenta para estimar a rigidez do conjunto fundação + solo.',
+      'Rigidez de sapatas e blocos sobre estacas, com perfil SPT, matriz 6×6 e memória de cálculo.',
     color: 'cobalt',
     symbol: 'footing',
     number: '02',

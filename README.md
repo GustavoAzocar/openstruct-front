@@ -25,7 +25,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/`                   | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ              |
 | `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
 | `/apps/consolostruct` | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
-| `/apps/molastruct`    | Página do MolaStruct, esquema de fundações, escopo inicial e métodos previstos      |
+| `/apps/molastruct`    | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
 | `/launcher`           | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
 | `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação               |
 | `/community`          | Formas de contribuir e acompanhar o projeto                                         |
@@ -121,9 +121,22 @@ de cada grupo de afirmações e distingue as saídas de geometria das de detalha
 
 ## MolaStruct
 
-A página do MolaStruct apresenta o escopo inicial informado para estimativa da rigidez à translação e à rotação do conjunto fundação + solo. Reúne geometria, perfil de sondagem e características do solo, com sapatas e blocos de 1 a 4 estacas.
+A página do MolaStruct descreve o aplicativo distribuído **0.5.1**, com geometria,
+SPT/camadas, sapatas retangulares e blocos sobre 1 a 4 estacas. Apresenta a matriz
+6×6 com acoplamentos, a resposta às ações e a capacidade em contextos separados,
+além de memória, exportações e conferência parcial NBR 6122:2022.
 
-Mindlin, Steinbrenner, molas de Winkler e Teoria da Elasticidade são apresentados no contexto de deformabilidade e rigidez. Aoki–Velloso aparece no contexto da capacidade de carga das estacas; Terzaghi, Vesic e correlações com SPT, nas estimativas de ruptura em sapatas. A NBR 6122:1996 é identificada como referência histórica da descrição inicial, sem alegação de conformidade normativa atual.
+Winkler, Mindlin/Aoki–Lopes/Steinbrenner, Randolph–Wroth simplificado,
+disco equivalente, kv/SAFE e correlações opcionais SPT → E têm hipóteses e fontes
+fixadas na tag. Aoki–Velloso trata capacidade de estaca isolada; Vésic e a referência
+exploratória SPT têm seus limites descritos. **Terzaghi permanece pendente**.
+
+O código revisado da master está em **0.7.0**. A seleção CRH/TQS das revisões
+posteriores e as sapatas FEMA/Teixeira–Godoy aparecem em seção separada, fora do
+instalador 0.5.1. A prévia SVG do site não executa o motor nem representa a
+interface real. Não há alegação de equivalência integral com TQS ou aprovação
+normativa global. Consulte o [mapa de evidências](docs/MOLASTRUCT-PUBLICADO.md)
+antes de atualizar as afirmações junto com uma nova distribuição.
 
 O componente `FoundationPreview` permite alternar entre sapata e bloco, com 1, 2, 3 ou 4 estacas. **É um esquema conceitual de apresentação, sem cálculo de rigidez, recalque ou capacidade de carga.** Os detalhes técnicos e a integração com o aplicativo serão acrescentados posteriormente.
 
