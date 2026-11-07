@@ -27,7 +27,12 @@ try {
   previous = emptyGithubSnapshot();
 }
 const cache = await readJson(cacheFile, {}, 2_000_000);
-const result = await collectGithub({ previous, cache, token: process.env.GH_READ_TOKEN || '' });
+const result = await collectGithub({
+  previous,
+  cache,
+  includeDiscussions: true,
+  token: process.env.GH_READ_TOKEN || '',
+});
 await mkdir(resolve(output, '..'), { recursive: true });
 await mkdir(resolve(cacheFile, '..'), { recursive: true });
 const json = JSON.stringify(validateGithubSnapshot(result.snapshot)) + '\n';

@@ -14,7 +14,7 @@ Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não subst
 
 O agendamento do GitHub é aproximado, pode atrasar e pode ser desativado após inatividade em repositórios públicos. Confira a aba Actions e reative/execute manualmente quando necessário. O primeiro push da implementação na master inicia a coleta. Branch inexistente na primeira execução usa estado vazio explícito, nunca números inventados.
 
-## Fronteira pública e contrato v4 (compatível com v1/v2/v3)
+## Fronteira pública e contrato v5 (compatível com v1/v2/v3/v4)
 
 Allowlist fixa em `src/lib/github-snapshot.ts`:
 openstruct-front, consolo-struct, mola-struct, armadura-struct e openstruct-catalog, todos de ricardocorsini.
@@ -26,7 +26,7 @@ Após confirmação pública atual, falhas de uma lista preservam somente o últ
 
 Não se consulta launcher-struct. Distribuição e informações públicas do Launcher continuam no openstruct-catalog e no fluxo existente do catálogo assinado; atividade do hub não é atividade do código privado do Launcher.
 
-O contrato rejeita campos inesperados, IDs duplicados, fontes externas, e-mails em textos, estados incoerentes e JSON maior que 1.000.000 bytes. Não exporta bodies, comentários, perfis completos, e-mails, nomes pessoais, mensagens de erro remotas ou tokens. Títulos e descrições públicos têm tamanho limitado, caracteres de controle removidos e padrões de e-mail substituídos. As URLs são verificadas contra as fontes autorizadas. O frontend trata textos como texto React, sem HTML remoto.
+O contrato rejeita campos inesperados, IDs duplicados, fontes externas, e-mails em textos, estados incoerentes e JSON maior que 1.000.000 bytes. Os resumos não exportam bodies ou comentários. A OSF-21 acrescenta somente amostras limitadas de descrição e comentários públicos, conforme o contrato de detalhes. Não exporta perfis completos, e-mails, nomes pessoais, mensagens de erro remotas ou tokens. Títulos e descrições públicos têm tamanho limitado, caracteres de controle removidos e padrões de e-mail substituídos. As URLs são verificadas contra as fontes autorizadas. O frontend trata textos como texto React, sem HTML remoto.
 
 Cada repositório registra visibilidade confirmada, horário, última coleta totalmente bem-sucedida, resumo, problema e estado das quatro listas. O snapshot registra versão do contrato, geração e eventual `retryAt`. O horário da geração não torna uma lista antiga atual: `checkedAt` e `state` pertencem a cada lista.
 
@@ -41,7 +41,7 @@ Cada repositório registra visibilidade confirmada, horário, última coleta tot
 
 `truncated=true` significa que havia próxima página além do teto. `false` significa que o endpoint filtrado terminou, nunca que todo o histórico do projeto foi coletado. `items[].updatedAt` aplica-se a issues/PRs; é null nas outras listas. `id` é número ou login; `title` é título ou login. O resumo `openIssuesAndPullRequests` é a contagem combinada oficial do GitHub, não uma contagem separada de issues.
 
-Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **60 GETs por execução** (5 × [1 metadado + 3 listas × 2 páginas + 2 estados de issues × 2 páginas + 1 release]); caso usual mínimo: 35. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
+Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **60 GETs de resumos por execução** (5 × [1 metadado + 3 listas × 2 páginas + 2 estados de issues × 2 páginas + 1 release]); caso usual mínimo: 35. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
 
 ETags persistem via Actions cache em `.cache/github/pages.json`, com apenas páginas já normalizadas. Um 304 reaproveita os dados e a paginação sanitizados, após nova confirmação pública; sem corpo em cache não produz lista vazia fictícia.
 403/429 suspendem novos pedidos, respeitando Retry-After (segundos/data), reset quando esgotado e mínimo de um minuto. Não há retentativa imediata nem runner dormindo: `retryAt` atravessa execuções e impede chamadas antes do prazo.
@@ -102,3 +102,11 @@ O contrato v4 coleta PRs de todos os estados no mesmo limite de duas páginas,
 preservando o orçamento de chamadas. Registra evidência de draft/merge e metadados
 públicos, com migração conservadora da antiga prévia apenas aberta. O cache e o
 endereço do leitor usam v4. Veja [estados, filtros e cobertura](PULL-REQUESTS-CENTRAL.md).
+
+## Evolução na OSF-21
+
+O contrato v5 acrescenta descrição e amostras separadas de conversa e revisão
+para até dois itens recentes por repositório. O runner habilita essa coleta sem
+requisições por visitante. O teto passa a 90 GETs e os textos antigos não são
+reutilizados quando sua atualização falha. Leitor e cache de páginas usam v5.
+Veja [limites, remoção, privacidade e renderização](DETALHES-COMENTARIOS.md).

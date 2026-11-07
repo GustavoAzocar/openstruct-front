@@ -5,6 +5,7 @@ import type { DevelopmentSource } from '../lib/development';
 import type { GithubSnapshot } from '../lib/github-snapshot';
 import { pullLabels, pullState, readPullFilters, selectPulls } from '../lib/pulls';
 import './issues-list.css';
+import { DiscussionDetails } from './DiscussionDetails';
 
 export function PullRequestsList({
   snapshot,
@@ -119,6 +120,14 @@ export function PullRequestsList({
                   {item.pull.base ?? 'não informado'}
                 </p>
               )}
+              <DiscussionDetails
+                discussion={snapshot?.repositories
+                  .find(
+                    (repo) => repo.repository === source.repository && repo.visibility === 'public',
+                  )
+                  ?.discussions.find((d) => d.url === item.url)}
+                url={item.url}
+              />
             </li>
           ))}
         </ul>

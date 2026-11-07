@@ -1,3 +1,5 @@
+import { DISCUSSION_LIMIT, validateDiscussion } from './discussion-contract.ts';
+import type { PublicDiscussion } from './discussion-contract.ts';
 /** Public activity is independent of the signed installer catalog. */
 export const GITHUB_REPOSITORIES = [
   'ricardocorsini/openstruct-front',
@@ -14,7 +16,7 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=4';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=5';
 export type PullMetadata = {
   state: 'open' | 'closed';
   draft: boolean | null;
@@ -83,9 +85,10 @@ export type RepositorySnapshot = {
   lists: Record<ActivityKind, ActivityList>;
   release: ReleaseSnapshot;
   issueDetails: Record<IssueState, IssueCollection>;
+  discussions: PublicDiscussion[];
 };
 export type GithubSnapshot = {
-  schemaVersion: 4;
+  schemaVersion: 5;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -107,6 +110,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
     problem: 'visibility',
     summary: null,
     release: emptyRelease(),
+    discussions: [],
     issueDetails: { open: emptyIssueCollection(), closed: emptyIssueCollection() },
     lists: {
       issues: { state: 'unavailable', checkedAt: null, truncated: false, items: [] },
@@ -118,7 +122,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 4,
+    schemaVersion: 5,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -162,7 +166,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3, 4].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4, 5].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -181,6 +185,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'summary',
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
+      ...(root.schemaVersion === 5 ? ['discussions'] : []),
       ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
     if (
@@ -261,6 +266,20 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           decodeURIComponent(item.url.slice(prefix.length)) !== item.tag
         )
           throw new Error('Invalid release source');
+      }
+    }
+    if (root.schemaVersion === 5) {
+      if (
+        !Array.isArray(repo.discussions) ||
+        repo.discussions.length > DISCUSSION_LIMIT ||
+        (repo.visibility !== 'public' && repo.discussions.length)
+      )
+        throw new Error('Invalid discussion coverage');
+      const urls = new Set<string>();
+      for (const discussion of repo.discussions) {
+        validateDiscussion(discussion, String(repo.repository));
+        if (urls.has(discussion.url)) throw new Error('Duplicate discussion');
+        urls.add(discussion.url);
       }
     }
     const lists = object(repo.lists, [...ACTIVITY_KINDS]);
@@ -431,25 +450,37 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
   const validated = value as GithubSnapshot;
   // Older contracts collected only open issues. Missing metadata stays unknown, never zero/empty.
   return (root.schemaVersion as number) >= 3
-    ? root.schemaVersion === 4
+    ? root.schemaVersion === 5
       ? validated
       : {
           ...validated,
-          schemaVersion: 4,
+          schemaVersion: 5,
           repositories: validated.repositories.map((repo) => ({
             ...repo,
-            status: repo.status === 'ready' ? 'partial' : repo.status,
-            lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
+            status:
+              (root.schemaVersion as number) < 4 && repo.status === 'ready'
+                ? 'partial'
+                : repo.status,
+            discussions: [],
+            lists:
+              (root.schemaVersion as number) < 4
+                ? { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls }
+                : repo.lists,
           })),
         }
     : {
         ...validated,
-        schemaVersion: 4,
+        schemaVersion: 5,
         repositories: validated.repositories.map((repo) => ({
           ...repo,
-          status: repo.status === 'ready' ? 'partial' : repo.status,
+          status:
+            (root.schemaVersion as number) < 4 && repo.status === 'ready' ? 'partial' : repo.status,
+          discussions: [],
           release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
-          lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
+          lists:
+            (root.schemaVersion as number) < 4
+              ? { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls }
+              : repo.lists,
           issueDetails: {
             open: {
               ...repo.lists.issues,

@@ -14,15 +14,19 @@ import {
 } from '../lib/issues';
 import type { IssueFilters } from '../lib/issues';
 import './issues-list.css';
+import { DiscussionDetails } from './DiscussionDetails';
+import type { PublicDiscussion } from '../lib/discussion-contract';
 
 function IssueRow({
   issue,
   source,
   stale,
+  discussion,
 }: {
   issue: PublicIssue;
   source: DevelopmentSource;
   stale: boolean;
+  discussion?: PublicDiscussion;
 }) {
   return (
     <li className="issue-row">
@@ -72,6 +76,7 @@ function IssueRow({
         </span>
         {stale && <span>Recorte desatualizado</span>}
       </div>
+      <DiscussionDetails discussion={discussion} url={issue.url} />
     </li>
   );
 }
@@ -284,7 +289,16 @@ export function IssuesList({
       {view.rows.length ? (
         <ul className="issues-list">
           {view.rows.map((row) => (
-            <IssueRow key={row.issue.url} {...row} />
+            <IssueRow
+              key={row.issue.url}
+              {...row}
+              discussion={snapshot?.repositories
+                .find(
+                  (repo) =>
+                    repo.repository === row.source.repository && repo.visibility === 'public',
+                )
+                ?.discussions.find((item) => item.url === row.issue.url)}
+            />
           ))}
         </ul>
       ) : (

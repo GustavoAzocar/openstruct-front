@@ -1,3 +1,4 @@
+import { collectDiscussions } from './github-discussions.mjs';
 import {
   GITHUB_REPOSITORIES,
   ACTIVITY_KINDS,
@@ -193,6 +194,7 @@ export async function collectGithub({
   cache = {},
   now = () => Date.now(),
   timeoutMs = 10_000,
+  includeDiscussions = false,
 } = {}) {
   previous = validateGithubSnapshot(previous);
   if (previous.retryAt && Date.parse(previous.retryAt) > now())
@@ -206,8 +208,9 @@ export async function collectGithub({
     if (!GITHUB_REPOSITORIES.some((repository) => key.startsWith(API + repository + '/')))
       delete pages[key];
   }
-  async function request(url, old) {
-    if (retryAt || requests >= REQUEST_LIMIT) throw new RequestError('rate-limit');
+  async function request(url, old, sample = false) {
+    if (retryAt || requests >= REQUEST_LIMIT + (includeDiscussions ? 30 : 0))
+      throw new RequestError('rate-limit');
     requests++;
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -254,7 +257,11 @@ export async function collectGithub({
       if (!response.ok) throw new RequestError('request');
       const body = await boundedJson(response);
       const etag = response.headers.get('etag');
-      const next = nextPage(response.headers.get('link'), url);
+      const next = sample
+        ? /rel="next"/.test(response.headers.get('link') ?? '')
+          ? 'sample-limit'
+          : null
+        : nextPage(response.headers.get('link'), url);
       if (response.headers.get('x-ratelimit-remaining') === '0') {
         const reset = Number(response.headers.get('x-ratelimit-reset')) * 1000;
         retryAt = new Date(Math.max(now() + 60_000, reset || 0)).toISOString();
@@ -330,7 +337,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 4,
+            schemaVersion: 5,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -381,7 +388,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 4,
+            schemaVersion: 5,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -455,7 +462,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 4,
+          schemaVersion: 5,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -472,6 +479,7 @@ export async function collectGithub({
         entry.status = 'partial';
         entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
       }
+      if (includeDiscussions) entry.discussions = await collectDiscussions(entry, request, at);
       if (entry.status === 'ready') entry.lastSuccessAt = at;
     } catch (error) {
       // Fail closed: inability to reconfirm visibility removes even the previous public data.
@@ -480,8 +488,20 @@ export async function collectGithub({
     }
     repositories.push(entry);
   }
+  // Withdraw detail text first if the combined snapshot reaches the public size cap.
+  while (
+    Buffer.byteLength(
+      JSON.stringify({ schemaVersion: 5, generatedAt: at, retryAt, repositories }),
+    ) > 1_000_000
+  ) {
+    const repo = [...repositories].reverse().find((repo) => repo.discussions.length);
+    if (!repo) break;
+    repo.discussions.pop();
+    repo.status = 'partial';
+    repo.problem = 'request';
+  }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 4,
+    schemaVersion: 5,
     generatedAt: at,
     retryAt,
     repositories,

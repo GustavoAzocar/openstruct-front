@@ -156,6 +156,7 @@ test('304 reuses normalized PR evidence; failure retains stale public data and p
 test('legacy v3 open-only preview never becomes confirmed history for all PR states', async () => {
   const { snapshot } = await collectGithub({ fetchImpl: api(), now });
   snapshot.schemaVersion = 3;
+  for (const repo of snapshot.repositories) delete repo.discussions;
   for (const repo of snapshot.repositories)
     repo.lists.pulls.items = repo.lists.pulls.items
       .filter((item) => item.pull.state === 'open')
@@ -165,7 +166,7 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
   assert.equal(migrated.repositories[0].status, 'partial');
   const restored = await collectGithub({ previous: migrated, now, fetchImpl: api() });
   assert.equal(restored.snapshot.repositories[0].status, 'ready');
-  assert.equal(migrated.schemaVersion, 4);
+  assert.equal(migrated.schemaVersion, 5);
   assert.equal(migrated.repositories[0].lists.pulls.state, 'unavailable');
   assert.equal(
     selectPulls(migrated, developmentSources, 'all', now()).coverage.some((row) => row.known),

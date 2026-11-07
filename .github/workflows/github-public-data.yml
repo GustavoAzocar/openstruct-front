@@ -9,6 +9,7 @@ on:
       - '.github/workflows/github-public-data.yml'
       - 'scripts/*github*.mjs'
       - 'src/lib/github-snapshot.ts'
+      - 'src/lib/discussion-contract.ts'
 permissions:
   contents: read
 concurrency:
@@ -41,9 +42,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .cache/github
-          key: public-github-etag-v4-${{ github.run_id }}-${{ github.run_attempt }}
+          key: public-github-etag-v5-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            public-github-etag-v4-
+            public-github-etag-v5-
       - name: Collect authorized public repositories
         run: npm run sync:github
         env:

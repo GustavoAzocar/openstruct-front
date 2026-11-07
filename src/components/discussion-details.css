@@ -1,0 +1,51 @@
+.discussion-details {
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+}
+.discussion-details > summary {
+  padding: 14px;
+  min-height: 44px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--accent);
+}
+.discussion-content {
+  padding: 0 16px 20px;
+  min-width: 0;
+}
+.discussion-content h4 {
+  font-size: 15px;
+  margin: 24px 0 12px;
+}
+.discussion-text {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.75;
+}
+.discussion-context {
+  overflow-wrap: anywhere;
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+}
+.discussion-comments {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+}
+.discussion-comments > ol {
+  list-style: none;
+  padding: 0;
+}
+.discussion-comments li {
+  border-top: 1px solid var(--line);
+  padding: 14px 0;
+  min-width: 0;
+}
+.discussion-content .button {
+  max-width: 100%;
+  white-space: normal;
+  text-align: center;
+}
