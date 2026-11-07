@@ -91,6 +91,29 @@ mais novo não promove automaticamente uma capacidade para um instalador anterio
 As integrações `VITE_*_DOWNLOAD_URL` foram removidas do frontend: não podem
 contornar a validação dos instaladores. As integrações opcionais web continuam.
 
+## Instalação no site — OSF-06
+
+O Launcher é o caminho recomendado e recebe o botão principal nas três páginas.
+`ProductInstallation` compõe esse botão com uma explicação curta e uma seção
+**Instalação manual e versões anteriores**, fechada inicialmente. Não há detecção
+de protocolo nem tentativa de abrir um aplicativo local a partir do navegador.
+
+A área manual usa o mesmo estado validado da OSF-05 e os próprios assets de cada
+release. Mostra versão/data, SO, arquitetura, formato, tamanho em MiB e SHA-256
+oficial, além das notas e do histórico de releases. Só existe sugestão de sistema
+quando a detecção e um pacote x86_64 publicado coincidem. A falta de sugestão não
+esconde os arquivos: o visitante pode estar no celular e precisar de outro computador.
+
+O hash pode ser copiado, com confirmação acessível ou orientação de cópia manual
+se a área de transferência for recusada. As instruções explicam a comparação local
+do SHA-256; não alegam verificação do binário no navegador. Nenhum clique para abrir
+a seção inicia download. O fallback do ArmaduraStruct usa o repositório publicador
+`openstruct-catalog`, e não a página de releases do repositório de código.
+
+Os testes adicionais verificam publicação por produto, dispositivo sem pacote
+compatível identificado, alvos ausentes, mudança de versão/URL/hash e erro de cópia.
+A validação de assinatura continua exclusivamente no leitor compartilhado.
+
 ## Manutenção
 
 1. Para uma nova release de produto conhecido, publique e sincronize o hub usando

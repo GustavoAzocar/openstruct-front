@@ -19,7 +19,8 @@ import {
 } from 'lucide-react';
 import { getCurrentApp } from '../lib/apps';
 import { ProductAvailability } from '../components/CatalogAvailability';
-import { useProductAvailability } from '../components/CatalogProvider';
+import { ProductInstallation } from '../components/ProductInstallation';
+import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 
 const app = getCurrentApp('armadurastruct');
 const release = app.distribution;
@@ -63,8 +64,6 @@ const features = [
 ];
 
 export function Armadura() {
-  const availability = useProductAvailability(app.id);
-  const availableRelease = availability?.release;
   return (
     <>
       <section className="container arm-hero">
@@ -88,7 +87,7 @@ export function Armadura() {
           </p>
           <div className="button-row">
             <Link className="button button-primary" to="/launcher">
-              <Download size={18} /> Instalar pelo Launcher
+              <Download size={18} /> {LAUNCHER_INSTALL_LABEL}
             </Link>
             <a className="text-link" href="#editor">
               Explore o editor <ArrowDown size={17} />
@@ -310,54 +309,18 @@ export function Armadura() {
       </section>
       <section className="section container arm-downloads" id="downloads">
         <div>
-          <span className="eyebrow">04 / VERSÃO DISTRIBUÍDA</span>
+          <span className="eyebrow">04 / COMECE PELO LAUNCHER</span>
           <h2>
             Pronto para
             <br />
             começar um traço.
           </h2>
           <p>
-            Instale pelo Struct Launcher para acompanhar as próximas versões, ou baixe diretamente o
-            pacote do seu sistema.
+            Encontre o ArmaduraStruct na biblioteca do Struct Launcher. Instale o aplicativo e
+            acompanhe as próximas versões em um só lugar.
           </p>
-          <Link className="button button-primary" to="/launcher">
-            Conheça o Launcher <ArrowUpRight size={17} />
-          </Link>
         </div>
-        <div className="arm-download-card">
-          <span className="eyebrow">
-            {app.name.toUpperCase()} {availableRelease?.version ?? ' / SEM PACOTE CONFIRMADO'}
-          </span>
-          {availability?.stale && (
-            <p className="catalog-product-meta">Último dado válido, desatualizado.</p>
-          )}
-          {availableRelease?.assets.map((asset) => (
-            <a
-              className={`button ${asset.platform === 'windows' ? 'button-ink' : 'button-outline'}`}
-              href={asset.url}
-              key={`${asset.platform}-${asset.arch}`}
-            >
-              <Download size={18} /> {asset.platform === 'windows' ? 'Windows' : 'Linux'}
-              <span>
-                .{asset.kind === 'nsis' ? 'exe' : 'AppImage'} · {asset.arch}
-              </span>
-            </a>
-          ))}
-          {!availableRelease && (
-            <p>Download indisponível até a confirmação de um pacote válido no canal estável.</p>
-          )}
-          <a
-            className="text-link"
-            href={
-              availableRelease?.releaseUrl ||
-              'https://github.com/ricardocorsini/openstruct-catalog/releases'
-            }
-            target="_blank"
-            rel="noreferrer"
-          >
-            Notas da versão e checksums <ArrowUpRight size={15} />
-          </a>
-        </div>
+        <ProductInstallation app={app} />
       </section>
       <section className="section container faq-section arm-faq">
         <div>

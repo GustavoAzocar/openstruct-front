@@ -14,7 +14,7 @@ const articles = [
     id: 'launcher',
     n: '01',
     title: 'Struct Launcher: instalação e atualizações',
-    body: 'Baixe o launcher para Windows ou Linux x86_64. No Windows, execute o instalador; no Linux, permita a execução do AppImage e abra o arquivo. A biblioteca apresenta os aplicativos disponíveis para instalar e avisa sobre novas versões. Você escolhe quando atualizar.',
+    body: 'O Struct Launcher é o caminho recomendado para instalar os aplicativos OpenStruct e acompanhar suas atualizações. Baixe para Windows ou Linux x86_64, abra o Launcher e escolha o aplicativo na biblioteca. Nas páginas de cada produto, a seção recolhida Instalação manual e versões anteriores oferece os pacotes avulsos como alternativa, com os dados do catálogo verificado. Você escolhe quando atualizar.',
     action: 'Baixar e conhecer o launcher',
     to: '/launcher',
   },

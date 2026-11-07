@@ -201,37 +201,11 @@
   display: grid;
   grid-template-columns: 1fr 0.85fr;
   gap: 100px;
-  align-items: center;
+  align-items: start;
 }
 .arm-downloads p {
   max-width: 460px;
   margin-bottom: 25px;
-}
-.arm-download-card {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 36px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--surface);
-}
-.arm-download-card .eyebrow {
-  margin-bottom: 8px;
-}
-.arm-download-card .button {
-  justify-content: flex-start;
-}
-.arm-download-card .button > span {
-  margin-left: auto;
-  font:
-    11px 'IBM Plex Mono',
-    monospace;
-  opacity: 0.7;
-}
-.arm-download-card .text-link {
-  font-size: 12px;
-  margin-top: 6px;
 }
 .arm-files-grid {
   display: grid;
@@ -380,9 +354,6 @@
   .arm-downloads {
     grid-template-columns: 1fr;
     gap: 32px;
-  }
-  .arm-download-card {
-    padding: 25px;
   }
   .arm-files-grid {
     grid-template-columns: 1fr;

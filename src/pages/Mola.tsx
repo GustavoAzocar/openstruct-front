@@ -18,7 +18,8 @@ import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
 import { AppStatus } from '../components/AppStatus';
 import { ProductAvailability } from '../components/CatalogAvailability';
-import { useProductAvailability } from '../components/CatalogProvider';
+import { ProductInstallation } from '../components/ProductInstallation';
+import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 
 const app = getCurrentApp('molastruct');
 const release = app.distribution;
@@ -127,7 +128,6 @@ const methods = [
 ];
 
 export function Mola() {
-  const availableRelease = useProductAvailability(app.id)?.release;
   return (
     <>
       <section className="product-hero container mola-product-hero">
@@ -158,7 +158,7 @@ export function Mola() {
             </p>
             <div className="button-row">
               <Link className="button button-primary" to="/launcher">
-                <Download size={17} /> Instalar pelo Launcher
+                <Download size={17} /> {LAUNCHER_INSTALL_LABEL}
               </Link>
               <a
                 className="button button-outline"
@@ -505,19 +505,7 @@ export function Mola() {
               Abra o Struct Launcher e escolha o aplicativo na biblioteca. Consulte os exemplos, os
               métodos e as pendências antes de interpretar os resultados.
             </p>
-            <Link className="button button-primary" to="/launcher">
-              Instalar pelo Launcher <Download size={17} />
-            </Link>
-            {availableRelease && (
-              <a
-                className="text-link mola-source-link"
-                href={availableRelease.releaseUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Release e instaladores {availableRelease.version} <ArrowUpRight size={15} />
-              </a>
-            )}
+            <ProductInstallation app={app} />
           </article>
           <article className="access-secondary">
             <BookOpen size={27} strokeWidth={1.5} />

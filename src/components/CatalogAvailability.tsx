@@ -2,6 +2,7 @@ import { ArrowUpRight, RefreshCw } from 'lucide-react';
 import type { CurrentApp } from '../lib/app-registry';
 import { CATALOG_MAX_ATTEMPTS, availabilityLabel } from '../lib/catalog-store';
 import { useProductAvailability, usePublicCatalog } from './CatalogProvider';
+import { productReleasesUrl } from '../lib/installation';
 
 const formatDate = (value: string) =>
   new Intl.DateTimeFormat('pt-BR', { dateStyle: 'short', timeStyle: 'short' }).format(
@@ -91,7 +92,7 @@ export function ProductAvailability({ app }: { app: CurrentApp }) {
       <div className="product-availability-actions">
         <a
           className="text-link"
-          href={release?.releaseUrl ?? `${app.repository.url}/releases`}
+          href={release?.releaseUrl ?? productReleasesUrl(app.id)}
           target="_blank"
           rel="noreferrer"
         >

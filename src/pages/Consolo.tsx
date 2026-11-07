@@ -16,7 +16,8 @@ import {
 import { ModelPreview } from '../components/ModelPreview';
 import { AppStatus } from '../components/AppStatus';
 import { ProductAvailability } from '../components/CatalogAvailability';
-import { useProductAvailability } from '../components/CatalogProvider';
+import { ProductInstallation } from '../components/ProductInstallation';
+import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 import { appIntegrations } from '../lib/config';
 import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
@@ -81,7 +82,6 @@ const features = [
 ];
 
 export function Consolo() {
-  const availableRelease = useProductAvailability(app.id)?.release;
   return (
     <>
       <section className="product-hero container">
@@ -112,8 +112,7 @@ export function Consolo() {
             </p>
             <div className="button-row">
               <Link className="button button-primary" to="/launcher">
-                <Download size={17} />{' '}
-                {release ? 'Instalar pelo Launcher' : 'Consultar a biblioteca'}
+                <Download size={17} /> {LAUNCHER_INSTALL_LABEL}
               </Link>
               <a
                 className="button button-outline"
@@ -317,19 +316,7 @@ export function Consolo() {
               Instale pelo Struct Launcher e consulte o guia para abrir os exemplos incluídos,
               conferir as entradas e acompanhar o resultado.
             </p>
-            <Link className="button button-primary" to="/launcher">
-              <Download size={17} /> Instalar pelo Launcher
-            </Link>
-            {availableRelease && (
-              <a
-                className="text-link consolo-release-link"
-                href={availableRelease.releaseUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Notas e instaladores {availableRelease.version} <ArrowUpRight size={15} />
-              </a>
-            )}
+            <ProductInstallation app={app} />
           </article>
           <article className="access-secondary">
             <BookOpen size={27} strokeWidth={1.5} />

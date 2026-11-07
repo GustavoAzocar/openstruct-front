@@ -101,6 +101,33 @@ fonte não autorizada, falha parcial, cache e limites de consulta. Consulte
 
 ![Catálogo com versões e data da consulta por aplicativo](docs/catalogo-publico.png)
 
+## Instalação dos aplicativos
+
+O caminho principal em ConsoloStruct, MolaStruct e ArmaduraStruct é **Instalar pelo
+Struct Launcher**. A página encaminha a `/launcher`; quem já instalou o gerenciador
+pode abri-lo no computador e escolher o aplicativo na biblioteca. O site não tenta
+abrir protocolos locais nem inicia downloads automaticamente.
+
+O componente compartilhado `ProductInstallation` mantém **Instalação manual e
+versões anteriores** recolhida por padrão. Ao abrir, apresenta somente os pacotes
+do catálogo validado: versão, data, sistema, arquitetura, formato, tamanho e SHA-256,
+com cópia do hash e links às notas e ao histórico oficial. Os mesmos arquivos ficam
+disponíveis no celular para transferência ao computador de destino. A sugestão de
+sistema é apenas visual; não cria suporte a uma plataforma ausente.
+
+Sem pacote confirmado, a alternativa manual mantém acesso às releases oficiais,
+incluindo o hub correto do ArmaduraStruct. Dados de contingência conservam o aviso
+de desatualização da OSF-05. A cópia de hash informa sucesso ou falha; ela não verifica
+os bytes do instalador. O usuário pode calcular o SHA-256 localmente, enquanto o
+Launcher faz a verificação do pacote durante a instalação.
+
+A OSF-06 segue o escopo aprovado de priorizar o Launcher e manter a instalação
+manual em segundo plano. `tests/installation.test.mjs` protege a apresentação dos
+pacotes reais, dispositivos sem sugestão, alvos ausentes, troca de release e cópia
+do checksum. A infraestrutura de publicação e os motores dos apps não mudaram.
+
+![Launcher como caminho principal e alternativa manual recolhida](docs/instalacao-launcher.png)
+
 ## Links e integrações opcionais
 
 Copie `.env.example` para `.env.local` e preencha os endereços que estiverem disponíveis:

@@ -76,6 +76,107 @@
 .arm-product-name {
   flex-wrap: wrap;
 }
+.product-installation {
+  min-width: 0;
+  margin-top: 22px;
+}
+.product-installation .installation-guidance,
+.product-installation .manual-installation-content p {
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--muted);
+  margin: 12px 0 0;
+  max-width: 100%;
+}
+.manual-installation {
+  margin-top: 22px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  scroll-margin-top: 110px;
+}
+.manual-installation > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 17px 0;
+  font-size: 12px;
+  color: var(--muted);
+  cursor: pointer;
+  list-style: none;
+}
+.manual-installation > summary::-webkit-details-marker {
+  display: none;
+}
+.manual-installation > summary svg {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.manual-installation[open] > summary svg {
+  transform: rotate(180deg);
+}
+.manual-installation-content {
+  padding-bottom: 20px;
+}
+.manual-installation-content .text-link {
+  font-size: 12px;
+  white-space: normal;
+  text-align: left;
+  margin-top: 10px;
+}
+.manual-package-list {
+  list-style: none;
+  margin: 18px 0;
+  padding: 0;
+}
+.manual-package-list li {
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+}
+.manual-package-header {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px 15px;
+  font-size: 13px;
+}
+.manual-package-header > span {
+  font:
+    8px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+}
+.manual-checksum {
+  margin-top: 16px;
+  color: var(--muted);
+}
+.manual-checksum > span {
+  display: block;
+  font-size: 10px;
+  line-height: 1.7;
+  margin-top: 6px;
+}
+.manual-checksum > code {
+  display: block;
+  overflow-wrap: anywhere;
+  font:
+    10px/1.7 'IBM Plex Mono',
+    monospace;
+  margin-top: 6px;
+}
+.manual-installation-content .manual-integrity-note {
+  font-size: 11px;
+  border-left: 2px solid var(--line);
+  padding-left: 12px;
+  margin-bottom: 14px;
+}
+.manual-integrity-note code {
+  overflow-wrap: anywhere;
+}
+.manual-installation-content .manual-release-history {
+  display: flex;
+  width: fit-content;
+}
 @media (max-width: 700px) {
   .catalog-sync-status {
     grid-template-columns: 1fr;

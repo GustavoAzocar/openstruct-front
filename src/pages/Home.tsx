@@ -18,6 +18,7 @@ import { site } from '../lib/config';
 import { currentApps, currentAppNames, getCurrentApp } from '../lib/apps';
 import { AppStatus } from '../components/AppStatus';
 import { CatalogSyncStatus } from '../components/CatalogAvailability';
+import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
@@ -141,7 +142,7 @@ export function Home() {
                 aplicativo para trabalhar com seus projetos.
               </p>
               <Link className="button button-ink" to="/launcher">
-                Instalar pelo Launcher <Download size={17} />
+                {LAUNCHER_INSTALL_LABEL} <Download size={17} />
               </Link>
               <span className="spotlight-note">
                 <AppStatus app={consolo} />
