@@ -10,8 +10,14 @@ import {
 } from 'lucide-react';
 import { Mark } from '../components/Brand';
 import { LauncherDownloads } from '../components/LauncherDownloads';
-import { apps } from '../lib/config';
+import { currentApps, getCurrentApp } from '../lib/apps';
+import { getAppStatus } from '../lib/app-registry';
 import { LAUNCHER_RELEASES_URL } from '../lib/launcher';
+
+const consolo = getCurrentApp('consolostruct');
+const availableNames = new Intl.ListFormat('pt-BR').format(
+  currentApps.filter((app) => app.distribution?.platforms.length).map((app) => app.name),
+);
 
 export function Launcher() {
   return (
@@ -62,22 +68,16 @@ export function Launcher() {
               <span className="blue-text">Novas possibilidades.</span>
             </h2>
             <div className="launcher-preview-apps">
-              {apps
-                .filter((app) => app.route)
-                .map((app) => (
-                  <div className="launcher-preview-app" key={app.id}>
-                    <img src={app.image} alt="" width="68" height="68" />
-                    <div>
-                      <strong>{app.name}</strong>
-                      <span>{app.category}</span>
-                    </div>
-                    <span className="launcher-preview-status">
-                      {app.status === 'Disponível para desktop'
-                        ? 'Disponível'
-                        : 'Em desenvolvimento'}
-                    </span>
+              {currentApps.map((app) => (
+                <div className="launcher-preview-app" key={app.id}>
+                  <img src={app.image} alt="" width="68" height="68" />
+                  <div>
+                    <strong>{app.name}</strong>
+                    <span>{app.category}</span>
                   </div>
-                ))}
+                  <span className="launcher-preview-status">{getAppStatus(app)}</span>
+                </div>
+              ))}
             </div>
             <div className="launcher-preview-bottom">
               <Grid2X2 size={15} /> Uma biblioteca para construir suas ideias{' '}
@@ -158,9 +158,8 @@ export function Launcher() {
             ponto de partida.
           </h2>
           <p>
-            Depois de abrir o launcher, use a biblioteca para instalar os aplicativos. MolaStruct e
-            ArmaduraStruct estão disponíveis para Windows e Linux; o ConsoloStruct está em
-            preparação.
+            Depois de abrir o launcher, consulte a biblioteca para instalar os aplicativos.
+            {availableNames && ` Disponíveis para desktop: ${availableNames}.`}
           </p>
           <Link className="text-link" to="/apps">
             Conheça os aplicativos <ArrowRight size={16} />
@@ -225,15 +224,15 @@ export function Launcher() {
           </details>
           <details>
             <summary>
-              Quando o ConsoloStruct fica disponível?<span>+</span>
+              Como instalar o {consolo.name}?<span>+</span>
             </summary>
             <p>
-              O aplicativo está na revisão da sua primeira versão desktop. Ele aparecerá para
-              instalação na biblioteca depois da publicação dos instaladores. Enquanto isso, conheça
-              sua página e a prévia visual.
+              {consolo.distribution
+                ? `${consolo.name} ${consolo.distribution.version} já está disponível na biblioteca do Struct Launcher. Consulte a página do aplicativo para conhecer as formas de acesso e seus limites.`
+                : 'Consulte a página do aplicativo para acompanhar sua disponibilidade e explorar a prévia visual.'}
             </p>
-            <Link className="text-link" to="/apps/consolostruct">
-              Conhecer o ConsoloStruct <ArrowRight size={15} />
+            <Link className="text-link" to={consolo.route}>
+              Conhecer o {consolo.name} <ArrowRight size={15} />
             </Link>
           </details>
         </div>

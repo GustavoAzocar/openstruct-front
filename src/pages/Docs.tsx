@@ -2,6 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
+import { currentAppNames, getCurrentApp } from '../lib/apps';
+
+const consolo = getCurrentApp('consolostruct');
+const mola = getCurrentApp('molastruct');
+const armadura = getCurrentApp('armadurastruct');
 
 const articles = [
   {
@@ -16,7 +21,7 @@ const articles = [
     id: 'primeiros-passos',
     n: '02',
     title: 'Primeiros passos',
-    body: 'Comece pelo catálogo de aplicativos. ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.',
+    body: `Comece pelo catálogo de aplicativos. ${currentAppNames} possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.`,
     action: 'Explore os aplicativos',
     to: '/apps',
   },
@@ -26,7 +31,7 @@ const articles = [
     title: 'Explore a prévia visual',
     body: 'Na demonstração do ConsoloStruct, alterne entre Modelo, Armaduras e Detalhe. Ajuste a projeção do consolo e separe as camadas para entender a organização da peça. Esta demonstração altera apenas o desenho: não realiza cálculo, dimensionamento ou verificação estrutural.',
     action: 'Abrir a demonstração',
-    to: '/apps/consolostruct#demonstracao',
+    to: `${consolo.route}${consolo.previewAnchor}`,
   },
   {
     id: 'principios',
@@ -40,25 +45,25 @@ const articles = [
     id: 'unidades',
     n: '05',
     title: 'Unidades e representação',
-    body: 'A prévia do ConsoloStruct apresenta dimensões em centímetros. O modelo é uma representação esquemática, sem escala de impressão. O aplicativo definitivo terá sua própria documentação técnica, com convenções, modelos de cálculo e exemplos de uso.',
+    body: `A prévia do ${consolo.name} apresenta dimensões em centímetros. O modelo é uma representação esquemática, sem escala de impressão. As convenções, os modelos de cálculo e os exemplos do aplicativo estão na documentação da versão distribuída.`,
     action: 'Explore a prévia',
-    to: '/apps/consolostruct#demonstracao',
+    to: `${consolo.route}${consolo.previewAnchor}`,
   },
   {
     id: 'molastruct',
     n: '06',
-    title: 'MolaStruct: fundação + solo',
+    title: `${mola.name}: fundação + solo`,
     body: 'O MolaStruct está sendo desenvolvido para auxiliar na estimativa da rigidez à translação e à rotação do conjunto fundação + solo. O escopo inicial reúne geometria da fundação, perfil de sondagem e características do solo, contemplando sapatas e blocos com 1, 2, 3 ou 4 estacas. A página apresenta os métodos previstos e um esquema conceitual que não executa cálculos.',
-    action: 'Conheça o MolaStruct',
-    to: '/apps/molastruct',
+    action: `Conheça o ${mola.name}`,
+    to: mola.route,
   },
   {
     id: 'armadurastruct',
     n: '07',
-    title: 'ArmaduraStruct: desenho e quadro de aço',
+    title: `${armadura.name}: desenho e quadro de aço`,
     body: 'Importe DXF ou DWG como máscara, confira as unidades e desenhe barras e estribos com as ferramentas CAD. Vistas rebatidas e quantitativos permanecem vinculados às posições. Salve o projeto editável e exporte DXF, PDF ou CSV. A primeira versão trabalha com comprimentos geométricos, sem dimensionamento ou verificações normativas.',
-    action: 'Conheça o ArmaduraStruct e seu guia',
-    to: '/apps/armadurastruct',
+    action: `Conheça o ${armadura.name} e seu guia`,
+    to: armadura.route,
   },
   {
     id: 'contribuir',
@@ -93,8 +98,8 @@ export function Docs() {
           começar.
         </h1>
         <p>
-          Uma introdução ao ecossistema, ao ConsoloStruct, ao MolaStruct, ao ArmaduraStruct e aos
-          princípios que orientam o projeto.
+          Uma introdução ao ecossistema, aos aplicativos {currentAppNames} e aos princípios que
+          orientam o projeto.
         </p>
         <label className="search-box">
           <Search size={18} />

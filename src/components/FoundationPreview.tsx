@@ -149,7 +149,7 @@ export function FoundationPreview() {
             ? 'Sapata'
             : `Bloco com ${piles} ${piles === 1 ? 'estaca' : 'estacas'}`}
         </span>
-        <span>Escopo inicial · Em desenvolvimento</span>
+        <span>Prévia conceitual · Sem cálculo</span>
       </div>
     </section>
   );

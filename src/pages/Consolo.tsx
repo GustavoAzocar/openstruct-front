@@ -15,7 +15,14 @@ import {
 } from 'lucide-react';
 import { ModelPreview } from '../components/ModelPreview';
 import { useExperience } from '../components/Experience';
-import { site } from '../lib/config';
+import { appIntegrations } from '../lib/config';
+import { getCurrentApp } from '../lib/apps';
+import { getMaturityLabel } from '../lib/app-registry';
+import { AppStatus } from '../components/AppStatus';
+
+const app = getCurrentApp('consolostruct');
+const integration = appIntegrations[app.id];
+const downloadUrl = integration.downloadUrl || app.distribution?.releaseUrl;
 
 const features = [
   {
@@ -59,19 +66,14 @@ export function Consolo() {
           <ArrowLeft size={15} /> Todos os aplicativos
         </Link>
         <div className="product-identity">
-          <img
-            src="/assets/consolostruct-atlas.webp"
-            alt="Ícone do ConsoloStruct, Atlas em gravura sobre fundo laranja"
-            width="90"
-            height="90"
-          />
+          <img src={app.image} alt={app.imageAlt} width="90" height="90" />
           <div>
-            <span className="eyebrow">01 / CONCRETO ARMADO</span>
-            <h1>ConsoloStruct</h1>
+            <span className="eyebrow">
+              {app.number} / {app.category.toUpperCase()}
+            </span>
+            <h1>{app.name}</h1>
           </div>
-          <span className="status status-active">
-            <i /> Em desenvolvimento
-          </span>
+          <AppStatus app={app} />
         </div>
         <div className="product-intro">
           <h2>
@@ -90,14 +92,16 @@ export function Consolo() {
               </a>
               <a
                 className="button button-outline"
-                href={site.appRepository || site.repository}
+                href={app.repository.url}
                 target="_blank"
                 rel="noreferrer"
               >
                 <GitFork size={17} /> Acompanhe o projeto
               </a>
             </div>
-            <span className="product-meta">Web · Código aberto · Um aplicativo OpenStruct</span>
+            <span className="product-meta">
+              {getMaturityLabel(app)} · Código aberto · Um aplicativo OpenStruct
+            </span>
           </div>
         </div>
       </section>
@@ -183,7 +187,7 @@ export function Consolo() {
       <section className="section container" id="acesso">
         <div className="section-kicker">
           <span>03 / COMECE POR AQUI</span>
-          <span>CONSOLOSTRUCT</span>
+          <span>{app.name.toUpperCase()}</span>
         </div>
         <div className="access-grid">
           <article className="access-main">
@@ -200,19 +204,21 @@ export function Consolo() {
               definir os próximos passos.
             </p>
             <button className="button button-primary" onClick={launch}>
-              {site.appUrl ? 'Abrir ConsoloStruct' : 'Explorar a prévia'} <ArrowUpRight size={17} />
+              {integration.webUrl ? `Abrir ${app.name}` : 'Explorar a prévia'}{' '}
+              <ArrowUpRight size={17} />
             </button>
           </article>
           <article className="access-secondary">
             <Download size={27} strokeWidth={1.5} />
             <h3>Um lugar para seus aplicativos.</h3>
             <p>
-              O Struct Launcher reúne os aplicativos OpenStruct para Windows e Linux. O
-              ConsoloStruct aparecerá na biblioteca para instalar quando sua primeira versão for
-              publicada.
+              O Struct Launcher reúne os aplicativos OpenStruct.{' '}
+              {app.distribution
+                ? `${app.name} ${app.distribution.version} já está disponível para instalar pela biblioteca.`
+                : `Acompanhe a disponibilidade do ${app.name} pela biblioteca.`}
             </p>
-            {site.downloadUrl ? (
-              <a href={site.downloadUrl} className="text-link" target="_blank" rel="noreferrer">
+            {downloadUrl ? (
+              <a href={downloadUrl} className="text-link" target="_blank" rel="noreferrer">
                 Baixar aplicativo <ArrowUpRight size={16} />
               </a>
             ) : (
@@ -222,7 +228,7 @@ export function Consolo() {
             )}
             <div className="source-note">
               <GitFork size={18} />
-              <a href={site.appRepository || site.repository} target="_blank" rel="noreferrer">
+              <a href={app.repository.url} target="_blank" rel="noreferrer">
                 Veja o projeto no GitHub <ArrowUpRight size={14} />
               </a>
             </div>

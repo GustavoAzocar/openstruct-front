@@ -11,6 +11,7 @@ import { Launcher } from './pages/Launcher';
 import { Catalog } from './pages/Catalog';
 import { Docs } from './pages/Docs';
 import { Community, NotFound } from './pages/Community';
+import { getCurrentApp } from './lib/apps';
 import './styles.css';
 import './molastruct.css';
 import './armadurastruct.css';
@@ -24,9 +25,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="apps" element={<Catalog />} />
-            <Route path="apps/consolostruct" element={<Consolo />} />
-            <Route path="apps/molastruct" element={<Mola />} />
-            <Route path="apps/armadurastruct" element={<Armadura />} />
+            <Route path={getCurrentApp('consolostruct').route} element={<Consolo />} />
+            <Route path={getCurrentApp('molastruct').route} element={<Mola />} />
+            <Route path={getCurrentApp('armadurastruct').route} element={<Armadura />} />
             <Route path="launcher" element={<Launcher />} />
             <Route path="docs" element={<Docs />} />
             <Route path="community" element={<Community />} />

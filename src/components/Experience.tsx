@@ -2,7 +2,9 @@ import { createContext, useContext, useRef, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, ArrowRight, GitFork, X, ExternalLink, Download } from 'lucide-react';
-import { apps, site } from '../lib/config';
+import { appIntegrations, site } from '../lib/config';
+import { currentApps } from '../lib/apps';
+import { getAppStatus } from '../lib/app-registry';
 
 type ExperienceState = { launch: () => void; community: () => void };
 const ExperienceContext = createContext<ExperienceState | null>(null);
@@ -72,20 +74,20 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
               </Link>
             </div>
             <div className="launch-app-list">
-              {apps
-                .filter((app) => app.route)
-                .map((app) => (
+              {currentApps.map((app) => {
+                const externalUrl = appIntegrations[app.id]?.webUrl;
+                return (
                   <div className="launch-app" key={app.id}>
                     <img src={app.image} alt="" width="76" height="76" />
                     <div className="launch-app-info">
                       <strong>{app.name}</strong>
                       <span>
-                        {app.category} · {app.status}
+                        {app.category} · {getAppStatus(app)}
                       </span>
                     </div>
-                    {app.externalUrl ? (
+                    {externalUrl ? (
                       <a
-                        href={app.externalUrl}
+                        href={externalUrl}
                         className="button button-primary launch-app-link"
                         target="_blank"
                         rel="noreferrer"
@@ -105,7 +107,8 @@ export function ExperienceProvider({ children }: { children: ReactNode }) {
                       </Link>
                     )}
                   </div>
-                ))}
+                );
+              })}
             </div>
             <small>A disponibilidade de cada aplicativo acompanha suas versões publicadas.</small>
           </>

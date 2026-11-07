@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Search, ArrowUpRight } from 'lucide-react';
 import { AppCard } from '../components/AppCard';
-import { apps, site } from '../lib/config';
+import { site } from '../lib/config';
+import { apps } from '../lib/apps';
 
-const categories = ['Todos', 'Concreto armado', 'Fundações', 'Visualização', 'Detalhamento'];
+const categories = ['Todos', ...new Set(apps.map((app) => app.category))];
 export function Catalog() {
   const [category, setCategory] = useState('Todos');
   const [query, setQuery] = useState('');

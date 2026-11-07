@@ -4,6 +4,7 @@ import { ArrowUpRight, GitFork, Menu, Moon, Sun, X, ArrowRight, Download } from 
 import { Brand, Mark } from './Brand';
 import { useExperience } from './Experience';
 import { site } from '../lib/config';
+import { currentApps } from '../lib/apps';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -20,21 +21,16 @@ export function Layout() {
     const page =
       location.pathname === '/'
         ? 'Engenharia aberta.'
-        : location.pathname.startsWith('/apps/consolostruct')
-          ? 'ConsoloStruct'
-          : location.pathname.startsWith('/apps/molastruct')
-            ? 'MolaStruct'
-            : location.pathname.startsWith('/apps/armadurastruct')
-              ? 'ArmaduraStruct'
-              : location.pathname === '/apps'
-                ? 'Aplicativos'
-                : location.pathname === '/launcher'
-                  ? 'Struct Launcher'
-                  : location.pathname === '/docs'
-                    ? 'Documentação'
-                    : location.pathname === '/community'
-                      ? 'Comunidade'
-                      : 'Página não encontrada';
+        : (currentApps.find((app) => app.route === location.pathname)?.name ??
+          (location.pathname === '/apps'
+            ? 'Aplicativos'
+            : location.pathname === '/launcher'
+              ? 'Struct Launcher'
+              : location.pathname === '/docs'
+                ? 'Documentação'
+                : location.pathname === '/community'
+                  ? 'Comunidade'
+                  : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -129,9 +125,11 @@ export function Layout() {
             <div>
               <span className="footer-heading">ECOSSISTEMA</span>
               <Link to="/apps">Todos os aplicativos</Link>
-              <Link to="/apps/consolostruct">ConsoloStruct</Link>
-              <Link to="/apps/molastruct">MolaStruct</Link>
-              <Link to="/apps/armadurastruct">ArmaduraStruct</Link>
+              {currentApps.map((app) => (
+                <Link to={app.route} key={app.id}>
+                  {app.name}
+                </Link>
+              ))}
               <Link to="/launcher">Baixar o Struct Launcher</Link>
               <button onClick={launch}>
                 Abrir aplicativos <ArrowUpRight size={13} />

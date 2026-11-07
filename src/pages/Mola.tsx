@@ -14,7 +14,14 @@ import {
 } from 'lucide-react';
 import { FoundationPreview } from '../components/FoundationPreview';
 import { useExperience } from '../components/Experience';
-import { site } from '../lib/config';
+import { appIntegrations } from '../lib/config';
+import { getCurrentApp } from '../lib/apps';
+import { getMaturityLabel } from '../lib/app-registry';
+import { AppStatus } from '../components/AppStatus';
+
+const app = getCurrentApp('molastruct');
+const integration = appIntegrations[app.id];
+const downloadUrl = integration.downloadUrl || app.distribution?.releaseUrl;
 
 const features = [
   {
@@ -58,19 +65,14 @@ export function Mola() {
           <ArrowLeft size={15} /> Todos os aplicativos
         </Link>
         <div className="product-identity">
-          <img
-            src="/assets/molastruct-gaia.webp"
-            alt="Ícone do MolaStruct: figura da Terra sustentando uma mola e uma fundação em gravura sobre fundo cobalto"
-            width="90"
-            height="90"
-          />
+          <img src={app.image} alt={app.imageAlt} width="90" height="90" />
           <div>
-            <span className="eyebrow">02 / FUNDAÇÕES</span>
-            <h1>MolaStruct</h1>
+            <span className="eyebrow">
+              {app.number} / {app.category.toUpperCase()}
+            </span>
+            <h1>{app.name}</h1>
           </div>
-          <span className="status status-active">
-            <i /> Disponível para desktop
-          </span>
+          <AppStatus app={app} />
         </div>
         <div className="product-intro">
           <h2>
@@ -86,22 +88,24 @@ export function Mola() {
             <div className="button-row">
               <a
                 className="button button-primary"
-                href={site.molaAppUrl || '#visao-geral'}
-                {...(site.molaAppUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
+                href={integration.webUrl || app.previewAnchor}
+                {...(integration.webUrl ? { target: '_blank', rel: 'noreferrer' } : {})}
               >
-                {site.molaAppUrl ? 'Abrir MolaStruct' : 'Conheça a proposta'}{' '}
+                {integration.webUrl ? `Abrir ${app.name}` : 'Conheça a proposta'}{' '}
                 <ArrowUpRight size={17} />
               </a>
               <a
                 className="button button-outline"
-                href={site.molaAppRepository || site.repository}
+                href={app.repository.url}
                 target="_blank"
                 rel="noreferrer"
               >
                 <GitFork size={17} /> Acompanhe o projeto
               </a>
             </div>
-            <span className="product-meta">Fundações · Rigidez · Interação solo-estrutura</span>
+            <span className="product-meta">
+              {getMaturityLabel(app)} · {app.category} · Interação solo-estrutura
+            </span>
           </div>
         </div>
       </section>
@@ -262,7 +266,7 @@ export function Mola() {
       <section className="section container">
         <div className="section-kicker">
           <span>05 / ACOMPANHE A CONSTRUÇÃO</span>
-          <span>MOLASTRUCT / OPENSTRUCT</span>
+          <span>{app.name.toUpperCase()} / OPENSTRUCT</span>
         </div>
         <div className="access-grid">
           <article className="access-main">
@@ -273,17 +277,19 @@ export function Mola() {
               para novas possibilidades.
             </h2>
             <p>
-              O MolaStruct já tem sua primeira versão desktop publicada. Use o Struct Launcher para
-              instalar o aplicativo e acompanhar as próximas versões.
+              {app.distribution
+                ? `${app.name} ${app.distribution.version} está disponível para desktop.`
+                : `Acompanhe o desenvolvimento do ${app.name}.`}{' '}
+              Use o Struct Launcher para consultar os aplicativos disponíveis.
             </p>
-            {site.molaAppUrl ? (
+            {integration.webUrl ? (
               <a
                 className="button button-primary"
-                href={site.molaAppUrl}
+                href={integration.webUrl}
                 target="_blank"
                 rel="noreferrer"
               >
-                Abrir MolaStruct <ArrowUpRight size={17} />
+                Abrir {app.name} <ArrowUpRight size={17} />
               </a>
             ) : (
               <Link className="button button-primary" to="/launcher">
@@ -298,9 +304,9 @@ export function Mola() {
               Prefere instalar somente o MolaStruct? Os instaladores de cada versão e a documentação
               estão disponíveis no repositório do aplicativo.
             </p>
-            {site.molaDownloadUrl ? (
-              <a className="text-link" href={site.molaDownloadUrl} target="_blank" rel="noreferrer">
-                Baixar MolaStruct <ArrowUpRight size={16} />
+            {downloadUrl ? (
+              <a className="text-link" href={downloadUrl} target="_blank" rel="noreferrer">
+                Baixar {app.name} <ArrowUpRight size={16} />
               </a>
             ) : (
               <button className="text-link" onClick={community}>
@@ -309,7 +315,7 @@ export function Mola() {
             )}
             <div className="source-note">
               <GitFork size={18} />
-              <a href={site.molaAppRepository || site.repository} target="_blank" rel="noreferrer">
+              <a href={app.repository.url} target="_blank" rel="noreferrer">
                 Veja o projeto no GitHub <ArrowUpRight size={14} />
               </a>
             </div>

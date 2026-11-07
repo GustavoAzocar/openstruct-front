@@ -1,6 +1,6 @@
 # OpenStruct
 
-Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct e do MolaStruct.
+Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct, MolaStruct e ArmaduraStruct.
 
 ## Desenvolvimento
 
@@ -58,7 +58,9 @@ validação de formato do feed como uma verificação criptográfica.
 Os downloads não exigem login GitHub. A sugestão de sistema é apenas visual: os dois formatos
 ficam visíveis, inclusive no celular. macOS/ARM não são anunciados como alvos nativos.
 
-O MolaStruct já tem release desktop; o ConsoloStruct aguarda sua primeira publicação.
+ConsoloStruct, MolaStruct e ArmaduraStruct têm pacotes desktop públicos registrados
+em `src/lib/apps.ts`. A disponibilidade dos produtos é separada da maturidade de
+seus métodos e da versão mais recente de seus códigos.
 Os endereços e o leitor estão em `src/lib/launcher.ts`. Execute `npm test` para verificar
 seleção de arquivos, publicações incompletas, origens inválidas e estados de rede.
 
@@ -76,10 +78,8 @@ Copie `.env.example` para `.env.local` e preencha os endereços que estiverem di
 
 ```dotenv
 VITE_CONSOLOSTRUCT_URL=https://seu-aplicativo.example
-VITE_CONSOLOSTRUCT_REPOSITORY=https://github.com/seu-usuario/seu-repositorio
 VITE_CONSOLOSTRUCT_DOWNLOAD_URL=https://seu-download.example
 VITE_MOLASTRUCT_URL=https://seu-molastruct.example
-VITE_MOLASTRUCT_REPOSITORY=https://github.com/seu-usuario/seu-molastruct
 VITE_MOLASTRUCT_DOWNLOAD_URL=https://seu-download-molastruct.example
 VITE_DISCORD_URL=https://discord.gg/seu-convite
 ```
@@ -90,7 +90,21 @@ e prévias. Os repositórios de ConsoloStruct e MolaStruct e os lançamentos do 
 endereços oficiais por padrão. O Discord exibe um aviso de preparação e oferece o GitHub como
 alternativa enquanto o convite não for configurado.
 
-Os outros links e os dados do catálogo ficam em `src/lib/config.ts`.
+Os links gerais e as integrações opcionais ficam em `src/lib/config.ts`. Os dados
+oficiais dos produtos ficam em `src/lib/apps.ts`, com tipos e validação em
+`src/lib/app-registry.ts`. As antigas variáveis `VITE_*_REPOSITORY` não sobrescrevem
+mais os repositórios oficiais.
+
+## Registro editorial dos produtos
+
+Os sete itens do catálogo usam uma fonte tipada e validada, incluindo os quatro
+produtos em planejamento. Versão de código, versão distribuída, maturidade,
+plataformas e proveniência são campos independentes. Home, catálogo, diálogo e
+páginas de produto compartilham identidade e rótulo de disponibilidade.
+
+Consulte [como atualizar um produto e reconciliar README, tag e catálogo](docs/CATALOGO-EDITORIAL.md).
+O registro é uma revisão editorial estática; ainda não sincroniza automaticamente
+as releases dos aplicativos. O feed do próprio Launcher continua dinâmico.
 
 ## Prévia do ConsoloStruct
 

@@ -14,7 +14,10 @@ import {
   PanelRight,
   SquareDashed,
 } from 'lucide-react';
-import { site } from '../lib/config';
+import { getCurrentApp } from '../lib/apps';
+
+const app = getCurrentApp('armadurastruct');
+const release = app.distribution;
 
 const features = [
   {
@@ -58,9 +61,9 @@ export function Armadura() {
             Aplicativos <ArrowRight size={15} /> Detalhamento
           </Link>
           <div className="arm-product-name">
-            <img src="/assets/armadurastruct-hephaestus.webp" alt="" width="56" height="56" />
-            <strong>ArmaduraStruct</strong>
-            <span>v{site.armVersion}</span>
+            <img src={app.image} alt="" width="56" height="56" />
+            <strong>{app.name}</strong>
+            {release && <span>v{release.version}</span>}
           </div>
           <h1>
             Da fôrma
@@ -81,13 +84,13 @@ export function Armadura() {
           </div>
           <div className="arm-hero-meta">
             <span>Windows + Linux</span>
-            <span>Código aberto · GPLv3</span>
+            <span>Código aberto · {app.license.spdx}</span>
             <span>Arquivos locais</span>
           </div>
         </div>
         <figure className="arm-identity-art">
           <img
-            src="/assets/armadurastruct-hephaestus.webp"
+            src={app.image}
             alt="Hefesto em gravura trabalhando uma armadura de aço sobre fundo âmbar, ícone do ArmaduraStruct"
             width="768"
             height="768"
@@ -137,7 +140,7 @@ export function Armadura() {
           />
           <figcaption>
             <span>CAPTURA DO APLICATIVO · EXEMPLO DE DETALHAMENTO</span>
-            <span>v{site.armVersion}</span>
+            {release && <span>v{release.version}</span>}
           </figcaption>
         </figure>
         <div className="arm-feature-grid">
@@ -204,20 +207,27 @@ export function Armadura() {
           </Link>
         </div>
         <div className="arm-download-card">
-          <span className="eyebrow">ARMADURASTRUCT {site.armVersion} · X86_64</span>
+          <span className="eyebrow">
+            {app.name.toUpperCase()} {release?.version}
+          </span>
+          {release?.platforms.map((asset) => (
+            <a
+              className={`button ${asset.os === 'windows' ? 'button-ink' : 'button-outline'}`}
+              href={asset.url}
+              key={asset.os}
+            >
+              <Download size={18} /> {asset.os === 'windows' ? 'Windows' : 'Linux'}
+              <span>
+                .{asset.format} · {asset.arch}
+              </span>
+            </a>
+          ))}
           <a
-            className="button button-ink"
-            href={`${site.armReleaseAssets}/armadurastruct-${site.armVersion}-windows-x86_64.exe`}
+            className="text-link"
+            href={release?.releaseUrl || app.repository.url}
+            target="_blank"
+            rel="noreferrer"
           >
-            <Download size={18} /> Windows <span>.exe</span>
-          </a>
-          <a
-            className="button button-outline"
-            href={`${site.armReleaseAssets}/armadurastruct-${site.armVersion}-linux-x86_64.AppImage`}
-          >
-            <Download size={18} /> Linux <span>.AppImage</span>
-          </a>
-          <a className="text-link" href={site.armReleaseUrl} target="_blank" rel="noreferrer">
             Notas da versão e checksums <ArrowUpRight size={15} />
           </a>
         </div>
@@ -226,12 +236,7 @@ export function Armadura() {
         <div>
           <span className="eyebrow">ANTES DE DETALHAR</span>
           <h2>Bom saber.</h2>
-          <a
-            className="text-link"
-            href={`${site.armRepository}/blob/master/docs/GUIA.md`}
-            target="_blank"
-            rel="noreferrer"
-          >
+          <a className="text-link" href={app.documentation.url} target="_blank" rel="noreferrer">
             <FileStack size={16} /> Guia do aplicativo <ArrowUpRight size={15} />
           </a>
         </div>
@@ -272,10 +277,10 @@ export function Armadura() {
               Posso estudar e modificar o código?<span>+</span>
             </summary>
             <p>
-              Sim. O ArmaduraStruct é distribuído sob GPL-3.0-or-later, com instruções de
+              Sim. O {app.name} é distribuído sob {app.license.spdx}, com instruções de
               desenvolvimento e testes no repositório.
             </p>
-            <a className="text-link" href={site.armRepository} target="_blank" rel="noreferrer">
+            <a className="text-link" href={app.repository.url} target="_blank" rel="noreferrer">
               Código no GitHub <ArrowUpRight size={15} />
             </a>
           </details>

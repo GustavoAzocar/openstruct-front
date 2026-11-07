@@ -14,7 +14,12 @@ import { AppCard } from '../components/AppCard';
 import { CorbelModel } from '../components/CorbelModel';
 import { ModelPreview } from '../components/ModelPreview';
 import { useExperience } from '../components/Experience';
-import { apps, site } from '../lib/config';
+import { site } from '../lib/config';
+import { currentApps, currentAppNames, getCurrentApp } from '../lib/apps';
+import { getAppStatus } from '../lib/app-registry';
+
+const consolo = getCurrentApp('consolostruct');
+const mola = getCurrentApp('molastruct');
 
 export function Home() {
   const { launch, community } = useExperience();
@@ -61,16 +66,11 @@ export function Home() {
             <CorbelModel />
           </div>
           <div className="hero-app-stamp">
-            <img
-              src="/assets/consolostruct-atlas.webp"
-              alt="Ilustração do ConsoloStruct: Atlas sustentando uma peça de pedra"
-              width="110"
-              height="110"
-            />
+            <img src={consolo.image} alt={consolo.imageAlt} width="110" height="110" />
             <div>
               <span>PRIMEIRO APLICATIVO</span>
-              <strong>ConsoloStruct</strong>
-              <Link to="/apps/consolostruct">
+              <strong>{consolo.name}</strong>
+              <Link to={consolo.route}>
                 Conheça <ArrowUpRight size={14} />
               </Link>
             </div>
@@ -111,20 +111,19 @@ export function Home() {
           </div>
         </div>
         <div className="home-app-grid">
-          {apps.slice(0, 3).map((app, i) => (
+          {currentApps.map((app, i) => (
             <AppCard key={app.id} app={app} featured={i === 0} />
           ))}
         </div>
         <p className="catalog-note">
-          <Sparkles size={15} /> Um ecossistema em construção. Conheça o ConsoloStruct, o MolaStruct
-          e o ArmaduraStruct.
+          <Sparkles size={15} /> Um ecossistema em construção. Conheça {currentAppNames}.
         </p>
       </section>
       <section className="consolo-spotlight">
         <div className="container">
           <div className="section-kicker">
             <span>02 / EM DESTAQUE</span>
-            <span>CONSOLOSTRUCT</span>
+            <span>{consolo.name.toUpperCase()}</span>
           </div>
           <div className="spotlight-layout">
             <div className="spotlight-copy">
@@ -138,10 +137,10 @@ export function Home() {
                 Geometria, armadura e desenho contam a mesma história. O ConsoloStruct está sendo
                 desenvolvido para conectar essas etapas em um fluxo visual.
               </p>
-              <Link className="button button-ink" to="/apps/consolostruct">
-                Conheça o ConsoloStruct <ArrowUpRight size={17} />
+              <Link className="button button-ink" to={consolo.route}>
+                Conheça o {consolo.name} <ArrowUpRight size={17} />
               </Link>
-              <span className="spotlight-note">Primeiro aplicativo · Em desenvolvimento</span>
+              <span className="spotlight-note">Primeiro aplicativo · {getAppStatus(consolo)}</span>
             </div>
             <div className="spotlight-preview">
               <ModelPreview simple />
@@ -150,23 +149,19 @@ export function Home() {
         </div>
       </section>
       <section className="mola-discovery container" aria-labelledby="mola-discovery-title">
-        <img
-          src="/assets/molastruct-gaia.webp"
-          alt="Figura da Terra sustentando uma mola e uma fundação, ícone do MolaStruct"
-          width="112"
-          height="112"
-          loading="lazy"
-        />
+        <img src={mola.image} alt={mola.imageAlt} width="112" height="112" loading="lazy" />
         <div>
-          <span className="eyebrow">MOLASTRUCT / FUNDAÇÕES</span>
+          <span className="eyebrow">
+            {mola.name.toUpperCase()} / {mola.category.toUpperCase()}
+          </span>
           <h2 id="mola-discovery-title">Da fundação ao modelo estrutural.</h2>
           <p>
             Geometria, sondagem e características do solo como ponto de partida para estimar a
             rigidez do apoio.
           </p>
         </div>
-        <Link className="text-link" to="/apps/molastruct">
-          Conheça o MolaStruct <ArrowUpRight size={17} />
+        <Link className="text-link" to={mola.route}>
+          Conheça o {mola.name} <ArrowUpRight size={17} />
         </Link>
       </section>
       <section className="container home-launcher" aria-labelledby="home-launcher-title">
@@ -282,11 +277,13 @@ export function Home() {
               Por qual aplicativo posso começar?<span>+</span>
             </summary>
             <p>
-              Comece pelas páginas do ConsoloStruct, do MolaStruct e do ArmaduraStruct. Conheça as
-              propostas, explore as representações visuais e acompanhe o desenvolvimento.{' '}
-              <Link to="/apps/consolostruct">Conhecer o ConsoloStruct.</Link>{' '}
-              <Link to="/apps/molastruct">Conhecer o MolaStruct.</Link>{' '}
-              <Link to="/apps/armadurastruct">Conhecer o ArmaduraStruct.</Link>
+              Comece pelas páginas de {currentAppNames}. Conheça as propostas, explore as
+              representações visuais e acompanhe o desenvolvimento.{' '}
+              {currentApps.map((app) => (
+                <span key={app.id}>
+                  <Link to={app.route}>Conhecer o {app.name}.</Link>{' '}
+                </span>
+              ))}
             </p>
           </details>
           <details>
