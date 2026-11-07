@@ -1333,6 +1333,74 @@ body {
   color: var(--muted);
   margin-top: 19px;
 }
+.consolo-demo-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.consolo-demo-heading h2 {
+  font-size: 22px;
+}
+.consolo-feature-source {
+  margin-top: 16px;
+  font-size: 12px;
+}
+.consolo-release-link {
+  display: flex;
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  margin-top: 18px;
+}
+.consolo-scope-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 25px;
+}
+.consolo-scope-grid article {
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+.consolo-scope-grid h3 {
+  font-size: 21px;
+}
+.consolo-scope-grid p,
+.consolo-scope-grid ul {
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.consolo-scope-grid ul {
+  padding-left: 20px;
+}
+.consolo-scope-grid .text-link {
+  margin-top: 18px;
+}
+.consolo-scope-note {
+  margin-top: 25px;
+  padding: 20px;
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.consolo-scope-note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+@media (max-width: 760px) {
+  .consolo-scope-grid {
+    grid-template-columns: 1fr;
+  }
+  .consolo-scope-grid article {
+    padding: 22px;
+  }
+}
 .product-demo {
   scroll-margin-top: 110px;
 }

@@ -76,7 +76,7 @@ export function Home() {
             </div>
           </div>
           <div className="hero-art-caption">
-            <span>01 / UM NOVO PONTO DE APOIO</span>
+            <span>01 / PRÉVIA SVG · SEM CÁLCULO</span>
             <MoveUpRight size={18} />
           </div>
         </div>
@@ -134,13 +134,20 @@ export function Home() {
                 Muitas possibilidades.
               </h2>
               <p>
-                Geometria, armadura e desenho contam a mesma história. O ConsoloStruct está sendo
-                desenvolvido para conectar essas etapas em um fluxo visual.
+                O {consolo.name} reúne geometria, verificações de ELU, memória de cálculo e
+                detalhamento com quadro de aço. Explore o escopo da versão publicada e instale o
+                aplicativo para trabalhar com seus projetos.
               </p>
-              <Link className="button button-ink" to={consolo.route}>
-                Conheça o {consolo.name} <ArrowUpRight size={17} />
+              <Link className="button button-ink" to="/launcher">
+                Instalar pelo Launcher <Download size={17} />
               </Link>
-              <span className="spotlight-note">Primeiro aplicativo · {getAppStatus(consolo)}</span>
+              <span className="spotlight-note">
+                {consolo.distribution && <>Aplicativo {consolo.distribution.version} · </>}
+                {getAppStatus(consolo)}
+              </span>
+              <Link className="text-link consolo-release-link" to={consolo.route}>
+                Recursos, documentação e limites <ArrowRight size={16} />
+              </Link>
             </div>
             <div className="spotlight-preview">
               <ModelPreview simple />
@@ -277,8 +284,8 @@ export function Home() {
               Por qual aplicativo posso começar?<span>+</span>
             </summary>
             <p>
-              Comece pelas páginas de {currentAppNames}. Conheça as propostas, explore as
-              representações visuais e acompanhe o desenvolvimento.{' '}
+              Conheça {currentAppNames}. Os produtos publicados podem ser instalados pelo Launcher;
+              cada página apresenta os recursos, a documentação e os limites de uso.{' '}
               {currentApps.map((app) => (
                 <span key={app.id}>
                   <Link to={app.route}>Conhecer o {app.name}.</Link>{' '}

@@ -90,6 +90,32 @@ test('uma fonte posterior à tag não pode fundamentar a descrição do instalad
   assert.throws(() => validateAppRegistry(data), /fonte da versão distribuída/);
 });
 
+test('motor tem versão própria e fonte técnica vinculada à distribuição', () => {
+  const consolo = getCurrentApp('consolostruct');
+  assert.equal(consolo.engine.version, '0.3.0');
+  assert.notEqual(consolo.engine.version, consolo.distribution.version);
+  assert.equal(consolo.engine.ref, consolo.distribution.sourceCommit);
+  for (const modify of [
+    (app) => {
+      delete app.engine.policy;
+    },
+    (app) => {
+      app.engine.version = 'master';
+    },
+    (app) => {
+      app.engine.ref = app.code.ref;
+      app.engine.url = app.engine.url.replace(app.distribution.sourceCommit, app.code.ref);
+    },
+  ]) {
+    const data = copy();
+    modify(data[0]);
+    assert.throws(() => validateAppRegistry(data));
+  }
+  const planned = copy();
+  planned[3].engine = structuredClone(consolo.engine);
+  assert.throws(() => validateAppRegistry(planned));
+});
+
 test('exige evidências fixadas, data de revisão e repositório declarado público', () => {
   for (const modify of [
     (app) => {

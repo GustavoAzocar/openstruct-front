@@ -42,6 +42,10 @@ versão em `package.json`. Por isso o registro mantém os dois commits. VigasStr
 PilarStruct, SapataStruct e 3DStruct permanecem em planejamento: não têm versão,
 repositório, rota de produto ou download inventados.
 
+O campo opcional `engine` registra versão, política e documento de critérios do motor
+na ref da distribuição. Ele é independente de `code.version` e `distribution.version`.
+Quando presente, sua fonte precisa pertencer à versão distribuída.
+
 ## Atualizar um produto
 
 1. Confirme a visibilidade pública do repositório e sua branch padrão. Registre o

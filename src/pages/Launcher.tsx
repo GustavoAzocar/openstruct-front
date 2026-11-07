@@ -228,12 +228,20 @@ export function Launcher() {
             </summary>
             <p>
               {consolo.distribution
-                ? `${consolo.name} ${consolo.distribution.version} já está disponível na biblioteca do Struct Launcher. Consulte a página do aplicativo para conhecer as formas de acesso e seus limites.`
+                ? `${consolo.name} ${consolo.distribution.version} já está disponível na biblioteca. Abra o Struct Launcher, escolha o aplicativo e instale o pacote do seu sistema. O cálculo e o detalhamento são executados no aplicativo; a prévia SVG do site é apenas ilustrativa.`
                 : 'Consulte a página do aplicativo para acompanhar sua disponibilidade e explorar a prévia visual.'}
             </p>
             <Link className="text-link" to={consolo.route}>
               Conhecer o {consolo.name} <ArrowRight size={15} />
             </Link>
+            <a
+              className="text-link consolo-release-link"
+              href={consolo.documentation.url}
+              target="_blank"
+              rel="noreferrer"
+            >
+              Guia de uso da versão <ArrowUpRight size={15} />
+            </a>
           </details>
         </div>
       </section>

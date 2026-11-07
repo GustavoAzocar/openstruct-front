@@ -7,7 +7,8 @@ export const apps: AppEntry[] = [
     id: 'consolostruct',
     name: 'ConsoloStruct',
     category: 'Concreto armado',
-    description: 'Do modelo ao detalhe. Um espaço para trabalhar com consolos de concreto armado.',
+    description:
+      'Cálculo de consolos curtos e muito curtos, memória de ELU e detalhamento com quadro de aço.',
     color: 'orange',
     symbol: 'corbel',
     number: '01',
@@ -35,6 +36,12 @@ export const apps: AppEntry[] = [
       version: '0.6.0',
       url: 'https://github.com/ricardocorsini/consolo-struct/blob/479fcadcce28e967df26a9defa6f32ea8924792f/package.json',
       ref: '479fcadcce28e967df26a9defa6f32ea8924792f',
+    },
+    engine: {
+      version: '0.3.0',
+      policy: 'LC-ELU-2026.1',
+      url: 'https://github.com/ricardocorsini/consolo-struct/blob/1ca7d3f057ac43de432d07ca474eb1f95bbb4e6c/docs/CRITERIOS-DE-CALCULO.md',
+      ref: '1ca7d3f057ac43de432d07ca474eb1f95bbb4e6c',
     },
     distribution: {
       version: '0.6.0',

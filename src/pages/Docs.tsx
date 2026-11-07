@@ -21,13 +21,22 @@ const articles = [
     id: 'primeiros-passos',
     n: '02',
     title: 'Primeiros passos',
-    body: `Comece pelo catálogo de aplicativos. ${currentAppNames} possuem páginas próprias, com suas propostas, representações visuais, recursos em desenvolvimento e formas de acompanhar os projetos.`,
+    body: `Comece pelo catálogo de aplicativos. ${currentAppNames} possuem páginas próprias com versões publicadas, escopo, documentação e formas de acompanhar os projetos. As prévias do site são representações de apresentação, separadas dos aplicativos.`,
     action: 'Explore os aplicativos',
     to: '/apps',
   },
   {
-    id: 'previa',
+    id: 'consolostruct',
     n: '03',
+    title: `${consolo.name}: cálculo e detalhamento`,
+    body: `${consolo.name}${consolo.distribution ? ' ' + consolo.distribution.version : ''} reúne geometria paramétrica, memória de ELU e detalhamento com quadro de aço. ${consolo.engine ? 'O motor ' + consolo.engine.version + ' trata o ELU estático local de consolos simples curtos e muito curtos. ' : ''}Salve projetos .consolo.json e consulte as convenções de exportação e as pendências no guia da versão. A prévia SVG deste site não executa esses cálculos.`,
+    action: 'Guia da versão publicada',
+    to: consolo.documentation.url,
+    external: true,
+  },
+  {
+    id: 'previa',
+    n: '04',
     title: 'Explore a prévia visual',
     body: 'Na demonstração do ConsoloStruct, alterne entre Modelo, Armaduras e Detalhe. Ajuste a projeção do consolo e separe as camadas para entender a organização da peça. Esta demonstração altera apenas o desenho: não realiza cálculo, dimensionamento ou verificação estrutural.',
     action: 'Abrir a demonstração',
@@ -35,7 +44,7 @@ const articles = [
   },
   {
     id: 'principios',
-    n: '04',
+    n: '05',
     title: 'Princípios do ecossistema',
     body: 'O OpenStruct propõe ferramentas transparentes, com métodos, hipóteses, unidades e limites de aplicação apresentados junto aos resultados. Documentação, exemplos de referência e revisão fazem parte do desenvolvimento, assim como a interface e o código.',
     action: 'Participe da construção',
@@ -43,7 +52,7 @@ const articles = [
   },
   {
     id: 'unidades',
-    n: '05',
+    n: '06',
     title: 'Unidades e representação',
     body: `A prévia do ${consolo.name} apresenta dimensões em centímetros. O modelo é uma representação esquemática, sem escala de impressão. As convenções, os modelos de cálculo e os exemplos do aplicativo estão na documentação da versão distribuída.`,
     action: 'Explore a prévia',
@@ -51,7 +60,7 @@ const articles = [
   },
   {
     id: 'molastruct',
-    n: '06',
+    n: '07',
     title: `${mola.name}: fundação + solo`,
     body: 'O MolaStruct está sendo desenvolvido para auxiliar na estimativa da rigidez à translação e à rotação do conjunto fundação + solo. O escopo inicial reúne geometria da fundação, perfil de sondagem e características do solo, contemplando sapatas e blocos com 1, 2, 3 ou 4 estacas. A página apresenta os métodos previstos e um esquema conceitual que não executa cálculos.',
     action: `Conheça o ${mola.name}`,
@@ -59,7 +68,7 @@ const articles = [
   },
   {
     id: 'armadurastruct',
-    n: '07',
+    n: '08',
     title: `${armadura.name}: desenho e quadro de aço`,
     body: 'Importe DXF ou DWG como máscara, confira as unidades e desenhe barras e estribos com as ferramentas CAD. Vistas rebatidas e quantitativos permanecem vinculados às posições. Salve o projeto editável e exporte DXF, PDF ou CSV. A primeira versão trabalha com comprimentos geométricos, sem dimensionamento ou verificações normativas.',
     action: `Conheça o ${armadura.name} e seu guia`,
@@ -67,7 +76,7 @@ const articles = [
   },
   {
     id: 'contribuir',
-    n: '08',
+    n: '09',
     title: 'Como contribuir',
     body: 'Descreva o contexto da sua ideia ou problema, o comportamento esperado e, quando possível, um exemplo que ajude a reproduzir a situação. Sugestões sobre clareza, documentação, acessibilidade e fluxo de trabalho também são contribuições importantes.',
     action: 'Veja as formas de participar',
@@ -138,9 +147,15 @@ export function Docs() {
               <span className="eyebrow">GUIA / {a.n}</span>
               <h2>{a.title}</h2>
               <p>{a.body}</p>
-              <Link className="text-link" to={a.to}>
-                {a.action} <ArrowRight size={16} />
-              </Link>
+              {a.external ? (
+                <a className="text-link" href={a.to} target="_blank" rel="noreferrer">
+                  {a.action} <ArrowUpRight size={16} />
+                </a>
+              ) : (
+                <Link className="text-link" to={a.to}>
+                  {a.action} <ArrowRight size={16} />
+                </Link>
+              )}
             </article>
           ))}
           {!filtered.length && (

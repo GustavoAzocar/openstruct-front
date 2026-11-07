@@ -20,16 +20,16 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 
 ## Páginas
 
-| Endereço              | Conteúdo                                                                          |
-| --------------------- | --------------------------------------------------------------------------------- |
-| `/`                   | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ            |
-| `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento |
-| `/apps/consolostruct` | Página do aplicativo, prévia interativa, recursos em desenvolvimento e acesso     |
-| `/apps/molastruct`    | Página do MolaStruct, esquema de fundações, escopo inicial e métodos previstos    |
-| `/launcher`           | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação     |
-| `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação             |
-| `/community`          | Formas de contribuir e acompanhar o projeto                                       |
-| Outros endereços      | Página 404 com navegação de retorno                                               |
+| Endereço              | Conteúdo                                                                            |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| `/`                   | Apresentação, aplicativos, ConsoloStruct em destaque, princípios e FAQ              |
+| `/apps`               | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
+| `/apps/consolostruct` | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
+| `/apps/molastruct`    | Página do MolaStruct, esquema de fundações, escopo inicial e métodos previstos      |
+| `/launcher`           | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
+| `/docs`               | Guia inicial com busca, unidades, limitações da prévia e participação               |
+| `/community`          | Formas de contribuir e acompanhar o projeto                                         |
+| Outros endereços      | Página 404 com navegação de retorno                                                 |
 
 ConsoloStruct e MolaStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
 
@@ -108,7 +108,16 @@ as releases dos aplicativos. O feed do próprio Launcher continua dinâmico.
 
 ## Prévia do ConsoloStruct
 
-A demonstração é uma representação esquemática em SVG. Permite alternar entre modelo, armadura e detalhe, ajustar a projeção de 25 a 60 cm, separar camadas e restaurar o exemplo. **Não executa cálculo, dimensionamento, verificação normativa ou geração de desenho para obra.** Os recursos de cálculo descritos na página são identificados como objetivos de um aplicativo em desenvolvimento.
+A demonstração é uma representação esquemática em SVG. Permite alternar entre modelo, armadura e detalhe, ajustar a projeção de 25 a 60 cm, separar camadas e restaurar o exemplo. **Não executa cálculo, dimensionamento, verificação normativa ou geração de desenho para obra.** A página separa essa prévia do aplicativo desktop publicado.
+
+A apresentação do ConsoloStruct descreve o aplicativo **0.6.0**, com motor **0.3.0**,
+política **LC-ELU-2026.1**, conforme os documentos da tag distribuída. Inclui recursos,
+fluxo de uso, arquivos, limites e links para instalação pelo Launcher e documentação
+oficial. As duas versões são identificações independentes; atendimento às verificações
+implementadas não equivale a aprovação executiva.
+
+O [mapa de fontes da apresentação](docs/CONSOLOSTRUCT-PUBLICADO.md) registra a origem
+de cada grupo de afirmações e distingue as saídas de geometria das de detalhamento.
 
 ## MolaStruct
 

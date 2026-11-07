@@ -21,7 +21,7 @@ export function ModelPreview({ simple = false }: { simple?: boolean }) {
         <span>
           CONSOLOSTRUCT <span className="preview-filename">/ exemplo-01</span>
         </span>
-        <span className="preview-label">Prévia ilustrativa</span>
+        <span className="preview-label">SVG · sem cálculo</span>
       </div>
       <div className="preview-toolbar">
         <div className="preview-tabs" role="group" aria-label="Vista do modelo">

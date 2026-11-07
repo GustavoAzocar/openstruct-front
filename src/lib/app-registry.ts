@@ -40,6 +40,7 @@ export type CurrentApp = AppIdentity & {
   documentation: SourceReference;
   license: SourceReference & { spdx: 'MIT' | 'GPL-3.0-or-later' };
   code: SourceReference & { version: string };
+  engine?: SourceReference & { version: string; policy: string };
   distribution?: AppDistribution;
 };
 export type PlannedApp = AppIdentity & {
@@ -53,6 +54,7 @@ export type PlannedApp = AppIdentity & {
   documentation?: never;
   license?: never;
   code?: never;
+  engine?: never;
   distribution?: never;
 };
 export type AppEntry = CurrentApp | PlannedApp;
@@ -138,6 +140,7 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
             'documentation',
             'license',
             'code',
+            'engine',
             'distribution',
           ]),
     ];
@@ -180,6 +183,7 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
         'documentation',
         'license',
         'code',
+        'engine',
         'distribution',
       ]) {
         requireValue(app[key] === undefined, `${id}: planejamento sem ${key}`);
@@ -216,6 +220,15 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
       `${id}.code.version`,
     );
     requireValue(commitPattern.test(String(code.ref)), `${id}.code.ref`);
+    if (app.engine !== undefined) {
+      source(app.engine, `${id}.engine`, repoUrl.href);
+      const engine = record(app.engine, `${id}.engine`);
+      requireValue(
+        versionPattern.test(text(engine.version, `${id}.engine.version`)),
+        `${id}.engine.version`,
+      );
+      text(engine.policy, `${id}.engine.policy`);
+    }
     requireValue(kinds.has('description'), `${id}.description source`);
     const description = editorial.sources.find((entry) => entry.kind === 'description');
     source(description, `${id}.description source`, repoUrl.href);
@@ -230,6 +243,12 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
     );
     // A newer README (even with the same package version) does not describe an older binary.
     const releaseRefs = [release.sourceTag, release.sourceCommit];
+    if (app.engine !== undefined) {
+      requireValue(
+        releaseRefs.includes(record(app.engine, `${id}.engine`).ref),
+        `${id}.engine: fonte da versão distribuída`,
+      );
+    }
     requireValue(
       releaseRefs.includes(description.ref),
       `${id}.description: fonte da versão distribuída`,
