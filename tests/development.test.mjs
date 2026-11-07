@@ -173,7 +173,7 @@ test('v1 snapshots migrate without fabricating release evidence; v2 rejects fore
     delete repo.issueDetails;
   }
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 3);
+  assert.equal(migrated.schemaVersion, 4);
   assert.equal(migrated.repositories[0].release.state, 'unavailable');
   assert.equal(migrated.repositories[0].release.item, null);
   assert.equal(legacy.schemaVersion, 1);

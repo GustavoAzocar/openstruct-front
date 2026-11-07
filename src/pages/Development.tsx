@@ -2,6 +2,7 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowUpRight, CircleDot, GitPullRequest, GitBranch, RefreshCw, Tag } from 'lucide-react';
 import { usePublicCatalog } from '../components/CatalogProvider';
 import { useGithubActivity } from '../components/useGithubActivity';
+import { PullRequestsList } from '../components/PullRequestsList';
 import { IssuesList } from '../components/IssuesList';
 import { issueRepositoryParams } from '../lib/issues';
 import {
@@ -19,7 +20,6 @@ import { SNAPSHOT_STALE_MS } from '../lib/github-snapshot';
 import '../development.css';
 
 type RepoView = ReturnType<typeof developmentView>['repositories'][number];
-type Aggregate = ReturnType<typeof developmentView>['issues'];
 
 function ListCount({ list }: { list: ActivityList }) {
   return (
@@ -149,112 +149,6 @@ function RepositoryCard({
         {source.appRoute && <Link to={source.appRoute}>Conhecer o aplicativo</Link>}
       </nav>
     </article>
-  );
-}
-
-function ActivityOverview({
-  kind,
-  data,
-  sources,
-  loading,
-}: {
-  kind: 'issues' | 'pulls';
-  data: Aggregate;
-  sources: typeof developmentSources;
-  loading: boolean;
-}) {
-  const issues = kind === 'issues';
-  const title = issues ? 'Issues abertas' : 'Pull requests abertos';
-  return (
-    <section
-      className="development-activity"
-      id={issues ? 'issues' : 'pull-requests'}
-      aria-labelledby={'title-' + kind}
-    >
-      <div className="development-section-heading">
-        <h2 id={'title-' + kind}>
-          {issues ? <CircleDot size={24} /> : <GitPullRequest size={24} />}
-          {title}
-        </h2>
-        <span>RECORTE PÚBLICO · MAIS RECENTES</span>
-      </div>
-      <p>
-        {data.count === null
-          ? 'Sem contagem confirmada nesta seleção.'
-          : data.count +
-            ' no recorte de ' +
-            data.knownSources +
-            (data.knownSources === 1 ? ' fonte com dados.' : ' fontes com dados.')}{' '}
-        Até 60 itens por repositório; não inclui o histórico fechado.
-      </p>
-      {data.truncatedSources > 0 && (
-        <p className="development-warning">
-          Há mais itens além do limite coletado. Consulte o GitHub para ver todos os itens.
-        </p>
-      )}
-      {data.staleSources > 0 && (
-        <p className="development-warning">
-          Há listas desatualizadas; as contagens são do último recorte conhecido.
-        </p>
-      )}
-      {data.unavailableSources > 0 && !loading && (
-        <p className="development-warning">
-          {data.unavailableSources}{' '}
-          {data.unavailableSources === 1
-            ? 'fonte sem lista confirmada.'
-            : 'fontes sem lista confirmada.'}{' '}
-          Ausência de dados não é zero.
-        </p>
-      )}
-      {data.items.length > 0 ? (
-        <>
-          <ul className="development-item-list">
-            {data.items.slice(0, 12).map(({ item, source, state }) => (
-              <li key={item.url}>
-                <span className="development-item-source">
-                  {source.name} · #{item.url.slice(item.url.lastIndexOf('/') + 1)}
-                </span>
-                <a href={item.url} target="_blank" rel="noreferrer">
-                  {item.title} <ArrowUpRight size={14} />
-                </a>
-                <span className="development-check">
-                  Atualização: {githubDate(item.updatedAt)}
-                  {state === 'stale' ? ' · dado desatualizado' : ''}
-                </span>
-              </li>
-            ))}
-          </ul>
-          <p>
-            Mostrando {Math.min(12, data.items.length)} de {data.items.length} itens coletados, por
-            atualização. As listas completas estão no GitHub.
-          </p>
-        </>
-      ) : (
-        <div className="development-empty">
-          <p>
-            {loading
-              ? 'Carregando a atividade pública…'
-              : data.count === null
-                ? 'Não foi possível confirmar esta lista. Acompanhe o trabalho pelos links oficiais abaixo.'
-                : issues
-                  ? 'Nenhuma issue aberta neste recorte. Você pode propor uma melhoria ou relatar um problema no repositório correspondente.'
-                  : 'Nenhum PR aberto neste recorte. Consulte o GitHub para acompanhar também os PRs fechados e mesclados.'}
-          </p>
-        </div>
-      )}
-      <div className="development-source-links">
-        {sources.map((source) => (
-          <a
-            key={source.repository}
-            href={githubListUrl(source, kind)}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {title} · {source.name} <ArrowUpRight size={13} />
-          </a>
-        ))}
-      </div>
-    </section>
   );
 }
 
@@ -427,7 +321,13 @@ export function Development() {
         now={now}
         offline={Boolean(result && result.source !== 'public')}
       />
-      <ActivityOverview kind="pulls" data={view.pulls} sources={sources} loading={loading} />
+      <PullRequestsList
+        snapshot={result?.snapshot}
+        sources={sources}
+        loading={loading}
+        now={now}
+        offline={Boolean(result && result.source !== 'public')}
+      />
       <aside className="development-launcher">
         <h2>Distribuição pelo Struct Launcher</h2>
         <p>

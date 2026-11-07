@@ -204,7 +204,7 @@ test('legacy open issues migrate without inventing labels, authors, comments or 
       if (schemaVersion === 1) delete entry.release;
     }
     const migrated = validateGithubSnapshot(snapshot);
-    assert.equal(migrated.schemaVersion, 3);
+    assert.equal(migrated.schemaVersion, 4);
     const item = migrated.repositories[0].issueDetails.open.items[0];
     assert.equal(item.state, 'open');
     assert.equal(item.number, 3);

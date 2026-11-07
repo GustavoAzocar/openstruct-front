@@ -304,7 +304,7 @@ test('collects only public stable releases, including conditional 304 and confir
         : null,
     ),
   });
-  assert.equal(first.snapshot.schemaVersion, 3);
+  assert.equal(first.snapshot.schemaVersion, 4);
   assert.equal(first.snapshot.repositories[0].release.item.tag, 'v1.2.3');
   assert.ok(!JSON.stringify(first.snapshot).includes('not exported'));
   const second = await collectGithub({

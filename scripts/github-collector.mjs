@@ -66,6 +66,7 @@ function normalizeItems(kind, body) {
       title: safeText(kind === 'contributors' ? item.login : item.title, 200),
       url: item.html_url,
       updatedAt: kind === 'issues' || kind === 'pulls' ? timestamp(item.updated_at) : null,
+      ...(kind === 'pulls' ? { pull: normalizePull(item) } : {}),
       count:
         kind === 'contributors'
           ? count(item.contributions)
@@ -73,6 +74,26 @@ function normalizeItems(kind, body) {
             ? count(item.open_issues)
             : null,
     }));
+}
+function normalizePull(item) {
+  if (item.state !== 'open' && item.state !== 'closed') throw new RequestError('pull');
+  const author = item.user?.login;
+  const mergedAt = timestamp(item.merged_at);
+  if (item.merged_at != null && !mergedAt) throw new RequestError('pull');
+  return {
+    state: item.state,
+    draft: typeof item.draft === 'boolean' ? item.draft : null,
+    mergeKnown: Object.hasOwn(item, 'merged_at'),
+    mergedAt,
+    createdAt: timestamp(item.created_at),
+    closedAt: timestamp(item.closed_at),
+    author:
+      typeof author === 'string' && /^[a-z\d][a-z\d-]{0,38}(?:\[bot\])?$/i.test(author)
+        ? author
+        : null,
+    head: typeof item.head?.ref === 'string' ? safeText(item.head.ref, 100) : null,
+    base: typeof item.base?.ref === 'string' ? safeText(item.base.ref, 100) : null,
+  };
 }
 function normalizeIssues(body, scope) {
   if (!Array.isArray(body) || body.length > PAGE_SIZE) throw new RequestError('shape');
@@ -283,7 +304,7 @@ export async function collectGithub({
               ? 'anon=false'
               : kind === 'milestones'
                 ? 'state=open&sort=due_on&direction=asc'
-                : 'state=open&sort=updated&direction=desc';
+                : 'state=all&sort=updated&direction=desc';
           let url = prefix + '/' + kind + '?per_page=' + PAGE_SIZE + '&page=1&' + query;
           const items = [];
           const seenPages = new Set();
@@ -309,7 +330,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 3,
+            schemaVersion: 4,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -360,7 +381,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 3,
+            schemaVersion: 4,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -434,7 +455,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 3,
+          schemaVersion: 4,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -460,7 +481,7 @@ export async function collectGithub({
     repositories.push(entry);
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 3,
+    schemaVersion: 4,
     generatedAt: at,
     retryAt,
     repositories,

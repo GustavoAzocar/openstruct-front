@@ -11,7 +11,7 @@ A OSF-17 está implementada e sua branch pública já serve dados reais. A lacun
 - `#issues`: lista da OSF-19 com filtros e páginas de dez itens. `#pull-requests`: prévia de PRs abertos, até 12 itens, ordenados por atualização. Os cartões levam a essas seções já com o repositório selecionado.
 - Menu, rodapé e Comunidade dão acesso à central. Ideias e problemas agora passam pela escolha do repositório, sem aplicar labels supostamente existentes.
 
-Na entrega da OSF-18, as listas eram prévias abertas. A OSF-19 evoluiu a seção de issues com estado, labels, autor, comentários, busca e paginação. OSF-20 permanece para a evolução dos PRs, sem antecipar reviews ou checks. Os links externos continuam levando às listagens oficiais completas.
+Na entrega da OSF-18, as listas eram prévias abertas. A OSF-19 evoluiu a seção de issues. A OSF-20 acrescenta estados reais, autor, datas, branches, filtros e paginação de PRs, sem antecipar reviews ou checks. Veja [a definição da coleta e cobertura dos PRs](PULL-REQUESTS-CENTRAL.md).
 
 ## Contagens e cobertura
 
@@ -43,4 +43,4 @@ Verificação local: 71 testes aprovados e build concluído. No Chromium, foram 
 
 ## Evolução na OSF-19
 
-A seção de issues agora tem filtros por repositório/estado/label, busca local e paginação em URL. A coleção detalhada contempla abertas e fechadas; as métricas superiores e os cartões mantêm a definição de issues abertas. O contrato v3 preserva a leitura v1/v2 e as releases da OSF-18. OSF-20 permanece para a evolução dos PRs. Consulte [a documentação das issues](ISSUES-CENTRAL.md).
+A seção de issues agora tem filtros por repositório/estado/label, busca local e paginação em URL. A coleção detalhada contempla abertas e fechadas; as métricas superiores e os cartões mantêm a definição de issues abertas. O contrato v3 preserva a leitura v1/v2 e as releases da OSF-18. A OSF-20 está descrita em [Pull requests na central](PULL-REQUESTS-CENTRAL.md). Consulte [a documentação das issues](ISSUES-CENTRAL.md).

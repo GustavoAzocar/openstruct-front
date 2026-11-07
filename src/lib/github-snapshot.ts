@@ -14,8 +14,20 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=3';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=4';
+export type PullMetadata = {
+  state: 'open' | 'closed';
+  draft: boolean | null;
+  mergeKnown: boolean;
+  mergedAt: string | null;
+  createdAt: string | null;
+  closedAt: string | null;
+  author: string | null;
+  head: string | null;
+  base: string | null;
+};
 export type ActivityItem = {
+  pull?: PullMetadata;
   id: string;
   title: string;
   url: string;
@@ -73,7 +85,7 @@ export type RepositorySnapshot = {
   issueDetails: Record<IssueState, IssueCollection>;
 };
 export type GithubSnapshot = {
-  schemaVersion: 3;
+  schemaVersion: 4;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -106,7 +118,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 3,
+    schemaVersion: 4,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -150,7 +162,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -169,7 +181,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'summary',
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
-      ...(root.schemaVersion === 3 ? ['issueDetails'] : []),
+      ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
     if (
       !GITHUB_REPOSITORIES.includes(repo.repository as PublicRepository) ||
@@ -252,7 +264,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       }
     }
     const lists = object(repo.lists, [...ACTIVITY_KINDS]);
-    if (root.schemaVersion === 3) {
+    if ((root.schemaVersion as number) >= 3) {
       const details = object(repo.issueDetails, [...ISSUE_STATES]);
       const issueNumbers = new Set<number>();
       for (const scope of ISSUE_STATES) {
@@ -343,7 +355,51 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       if (repo.status === 'ready' && list.state !== 'fresh') throw new Error('Invalid ready state');
       const ids = new Set<string>();
       for (const rawItem of list.items) {
-        const item = object(rawItem, ['id', 'title', 'url', 'updatedAt', 'count']);
+        const item = object(rawItem, [
+          'id',
+          'title',
+          'url',
+          'updatedAt',
+          'count',
+          ...(kind === 'pulls' &&
+          rawItem &&
+          typeof rawItem === 'object' &&
+          Object.hasOwn(rawItem, 'pull')
+            ? ['pull']
+            : []),
+        ]);
+        if (item.pull !== undefined) {
+          const pull = object(item.pull, [
+            'state',
+            'draft',
+            'mergeKnown',
+            'mergedAt',
+            'createdAt',
+            'closedAt',
+            'author',
+            'head',
+            'base',
+          ]);
+          if (
+            !['open', 'closed'].includes(String(pull.state)) ||
+            ![null, true, false].includes(pull.draft as boolean | null) ||
+            typeof pull.mergeKnown !== 'boolean'
+          )
+            throw new Error('Invalid PR state');
+          for (const field of ['mergedAt', 'createdAt', 'closedAt']) date(pull[field]);
+          if (
+            (!pull.mergeKnown && pull.mergedAt !== null) ||
+            (pull.state === 'open' && (pull.mergedAt !== null || pull.closedAt !== null))
+          )
+            throw new Error('Incoherent PR state');
+          if (
+            pull.author !== null &&
+            (typeof pull.author !== 'string' ||
+              !/^[a-z\d][a-z\d-]{0,38}(?:\[bot\])?$/i.test(pull.author))
+          )
+            throw new Error('Invalid PR author');
+          for (const field of ['head', 'base']) if (pull[field] !== null) text(pull[field], 100);
+        }
         text(item.id, 100);
         text(item.title, 200);
         if (!item.id || ids.has(item.id)) throw new Error('Duplicate item');
@@ -374,14 +430,24 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
   }
   const validated = value as GithubSnapshot;
   // Older contracts collected only open issues. Missing metadata stays unknown, never zero/empty.
-  return root.schemaVersion === 3
-    ? validated
+  return (root.schemaVersion as number) >= 3
+    ? root.schemaVersion === 4
+      ? validated
+      : {
+          ...validated,
+          schemaVersion: 4,
+          repositories: validated.repositories.map((repo) => ({
+            ...repo,
+            lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
+          })),
+        }
     : {
         ...validated,
-        schemaVersion: 3,
+        schemaVersion: 4,
         repositories: validated.repositories.map((repo) => ({
           ...repo,
           release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
+          lists: { ...repo.lists, pulls: emptyRepository(repo.repository).lists.pulls },
           issueDetails: {
             open: {
               ...repo.lists.issues,

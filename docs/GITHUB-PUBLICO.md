@@ -14,7 +14,7 @@ Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não subst
 
 O agendamento do GitHub é aproximado, pode atrasar e pode ser desativado após inatividade em repositórios públicos. Confira a aba Actions e reative/execute manualmente quando necessário. O primeiro push da implementação na master inicia a coleta. Branch inexistente na primeira execução usa estado vazio explícito, nunca números inventados.
 
-## Fronteira pública e contrato v3 (compatível com v1/v2)
+## Fronteira pública e contrato v4 (compatível com v1/v2/v3)
 
 Allowlist fixa em `src/lib/github-snapshot.ts`:
 openstruct-front, consolo-struct, mola-struct, armadura-struct e openstruct-catalog, todos de ricardocorsini.
@@ -95,3 +95,10 @@ O contrato v2 acrescenta a última release estável por repositório. O leitor m
 ## Evolução na OSF-19
 
 O contrato v3 acrescenta `issueDetails` com coleções independentes de abertas/fechadas, labels exatas, login/URL pública do autor e contagem de comentários. O resumo aberto existente é derivado sem nova chamada e não é somado às coleções detalhadas. Limite do snapshot: 1 MB, saída compacta; cache e endereço de leitura usam v3. Veja [as definições de cobertura e filtros](ISSUES-CENTRAL.md).
+
+## Evolução na OSF-20
+
+O contrato v4 coleta PRs de todos os estados no mesmo limite de duas páginas,
+preservando o orçamento de chamadas. Registra evidência de draft/merge e metadados
+públicos, com migração conservadora da antiga prévia apenas aberta. O cache e o
+endereço do leitor usam v4. Veja [estados, filtros e cobertura](PULL-REQUESTS-CENTRAL.md).

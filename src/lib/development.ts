@@ -91,7 +91,7 @@ export function developmentView(
             ? items.filter(
                 (item) => !pullNumbers.has(item.url.slice(item.url.lastIndexOf('/') + 1)),
               )
-            : items,
+            : items.filter((item) => !item.pull || item.pull.state === 'open'),
         state:
           offline || value.state === 'stale' || isOld(value.checkedAt, now) ? 'stale' : 'fresh',
       };
