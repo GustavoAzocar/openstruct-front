@@ -8,8 +8,8 @@ Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não subst
 1. `Public GitHub data` roda por `workflow_dispatch`, no minuto 23 de cada hora e em mudanças relevantes na master.
 2. O job `collect`, com `contents: read`, testa e compila o site, restaura o snapshot anterior e o cache de ETags, e executa `npm run sync:github`.
 3. Somente `out/snapshot.json`, validado, segue como artifact de um dia para o job `publish`.
-4. O publicador, separado e com `contents: write`, revalida esse arquivo e cria um commit na branch `github-data`. A árvore contém **somente snapshot.json**, sem fonte, credencial ou cache de respostas.
-5. O frontend lê [o JSON estático](https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json). Não é necessário redeploy horário do Vite/Vercel: o endereço acompanha a branch pública, sujeito ao cache do CDN. O deploy do código só ocorre quando a master muda.
+4. O publicador, separado e com `contents: write`, revalida esse arquivo e cria um commit na branch `github-data`. A árvore contém **somente snapshot.json e vercel.json**: dados validados e uma configuração fixa que desabilita o deploy dessa branch. Não há fonte, credencial ou cache de respostas.
+5. O frontend lê [o JSON estático](https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json). Não é necessário redeploy horário do Vite/Vercel: o endereço acompanha a branch pública, sujeito ao cache do CDN. A master continua originando o deploy de produção; branches de código podem ter previews. A branch de dados não deve criar deploys.
 6. `/community` apresenta horário, indisponibilidade e resumos mínimos. As listas ficam prontas para futuros consumidores; a central `/development` da OSF-18 apresenta o mesmo snapshot por projeto e com prévias de atividade.
 
 O agendamento do GitHub é aproximado, pode atrasar e pode ser desativado após inatividade em repositórios públicos. Confira a aba Actions e reative/execute manualmente quando necessário. O primeiro push da implementação na master inicia a coleta. Branch inexistente na primeira execução usa estado vazio explícito, nunca números inventados.
@@ -54,12 +54,39 @@ O navegador compartilha uma promessa por janela de cinco minutos, com timeout de
 - Alterar a allowlist exige revisão do contrato, fontes públicas, testes e documentação; não basta acrescentar uma URL ao workflow.
 - Execute `npm test` e `npm run build`. Para coleta local, Node 24 e `npm run sync:github`; GH_READ_TOKEN opcional somente no processo.
 - Cache corrompido pode ser removido pela aba Actions/cache; a coleta seguinte reconstrói as páginas.
-- Mantenha a branch github-data fora da origem do deploy do site. Ela contém só dados. Não altere a branch de produção da Vercel para github-data.
+- Mantenha a branch github-data fora da origem do deploy do site. Não altere a branch de produção da Vercel para github-data. O publicador precisa manter o `vercel.json` próprio da branch em toda atualização; ajustar apenas a master não protege uma árvore de dados recriada do zero.
 - Alterar schema exige novo versionamento, migração dos consumidores e invalidação do cache.
 - Testes simulam privacidade, paginação/limite, 304, timeout, origem inválida, falha parcial, 403/429 e fallback do frontend.
 - Nesta execução, testes e build foram verificados em Actions; o ambiente local e o navegador estão indisponíveis. Não houve inspeção visual desktop/mobile ou dos temas.
 
 Referências: [boas práticas REST](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api), [limites REST](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) e [agendamentos Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+## Correção de previews indevidos na Vercel — 07/11/2026
+
+A Vercel tentou compilar `github-data` no commit `9b4d4a8` e falhou com
+`vite: command not found`. Essa branch não é um aplicativo e não contém
+`package.json` ou dependências; instalar Vite nela não é necessário.
+
+- Na master, `vercel.json` desabilita apenas `github-data` via
+  `git.deploymentEnabled`, preservando a produção e os previews de código.
+- Na branch de dados, o publicador grava uma configuração fixa
+  `{"git":{"deploymentEnabled":false}}`, com referência ao schema oficial.
+  A Vercel consulta a configuração da branch recebida.
+- A publicação não é pulada só porque o snapshot não mudou: a configuração
+  também precisa estar presente e corresponder à política fixa. Assim a próxima
+  sincronização repara uma branch antiga sem a regra de exclusão.
+- A árvore continua restrita a dois arquivos permitidos. A publicação lê ambos
+  na mesma ref e atualiza a branch sem force-push.
+
+Testes de publicação simulam criação da branch, reparo de configuração ausente,
+atualizações sucessivas, idempotência, snapshot inválido, erro de consulta e conflito
+de ref. A configuração usa o mecanismo
+[oficial da Vercel para desabilitar deploys por branch](https://vercel.com/docs/project-configuration/git-configuration).
+
+O publicador faz até três GETs e cinco escritas por atualização; se os dois arquivos
+já estiverem iguais, faz apenas três GETs. Não são necessários token adicional,
+backend ou dependência do Vite na branch de dados. Validação local desta correção:
+`npm test` (99 testes) e `npm run build` aprovados. Não há alteração de interface.
 
 ## Evolução na OSF-18
 

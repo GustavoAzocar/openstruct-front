@@ -71,7 +71,7 @@ jobs:
         with:
           name: public-github-snapshot
           path: out
-      - name: Validate and publish static JSON only
+      - name: Validate and publish snapshot with data-branch deployment disabled
         run: node --experimental-strip-types scripts/publish-github-snapshot.mjs
         env:
           GH_WRITE_TOKEN: ${{ github.token }}

@@ -307,7 +307,8 @@ o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma
 
 A página de comunidade lê um snapshot público de atividade, sem token no navegador.
 A coleta por Actions confirma a visibilidade dos cinco repositórios autorizados, normaliza os dados,
-usa ETag e limites de paginação, e publica somente JSON validado na branch `github-data`.
+usa ETag e limites de paginação, e publica JSON validado na branch `github-data`,
+acompanhado de uma configuração fixa que impede deploys dessa branch na Vercel.
 Leitura e escrita usam jobs com permissões separadas. O catálogo assinado de downloads permanece independente.
 
 Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md).
