@@ -4,6 +4,7 @@ import { ArrowRight, MessageCircle, GitPullRequest, BookOpen, Lightbulb } from '
 import { Mark } from '../components/Brand';
 import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
+import { FirstContributions } from '../components/FirstContributions';
 
 export function Community() {
   const { community } = useExperience();
@@ -21,6 +22,9 @@ export function Community() {
           construir o próximo capítulo.
         </p>
         <div className="button-row">
+          <a href="#para-comecar" className="button button-outline">
+            Para começar <ArrowRight size={17} />
+          </a>
           <Link to={site.developmentPath} className="button button-primary">
             Acompanhar desenvolvimento <ArrowRight size={17} />
           </Link>
@@ -30,6 +34,7 @@ export function Community() {
         </div>
         <Mark className="community-hero-mark" monochrome />
       </section>
+      <FirstContributions />
       <section className="contribution-grid">
         {[
           {

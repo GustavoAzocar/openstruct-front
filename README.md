@@ -305,6 +305,10 @@ o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma
 
 ## Dados públicos do GitHub
 
+A Comunidade tem a seção **Para começar**, com issues abertas selecionadas por
+labels configuradas em cada repositório e caminhos reais de documentação, exemplos
+e revisão visual quando não há oportunidades. Veja [critérios, fontes e manutenção](docs/PRIMEIRAS-CONTRIBUICOES.md).
+
 A página de comunidade lê um snapshot público de atividade, sem token no navegador.
 A coleta por Actions confirma a visibilidade dos cinco repositórios autorizados, normaliza os dados,
 usa ETag e limites de paginação, e publica JSON validado na branch `github-data`,
