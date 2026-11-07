@@ -6,3 +6,8 @@ dist/
 *.tsbuildinfo
 .DS_Store
 .openai/
+
+# Collector working files (only validated snapshots are published)
+.cache/
+out/
+previous/

@@ -10,11 +10,11 @@ Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não subst
 3. Somente `out/snapshot.json`, validado, segue como artifact de um dia para o job `publish`.
 4. O publicador, separado e com `contents: write`, revalida esse arquivo e cria um commit na branch `github-data`. A árvore contém **somente snapshot.json**, sem fonte, credencial ou cache de respostas.
 5. O frontend lê [o JSON estático](https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json). Não é necessário redeploy horário do Vite/Vercel: o endereço acompanha a branch pública, sujeito ao cache do CDN. O deploy do código só ocorre quando a master muda.
-6. `/community` apresenta horário, indisponibilidade e resumos mínimos. As listas ficam prontas para futuros consumidores; esta tarefa não implementa uma central completa de issues.
+6. `/community` apresenta horário, indisponibilidade e resumos mínimos. As listas ficam prontas para futuros consumidores; a central `/development` da OSF-18 apresenta o mesmo snapshot por projeto e com prévias de atividade.
 
 O agendamento do GitHub é aproximado, pode atrasar e pode ser desativado após inatividade em repositórios públicos. Confira a aba Actions e reative/execute manualmente quando necessário. O primeiro push da implementação na master inicia a coleta. Branch inexistente na primeira execução usa estado vazio explícito, nunca números inventados.
 
-## Fronteira pública e contrato v1
+## Fronteira pública e contrato v2 (compatível com v1)
 
 Allowlist fixa em `src/lib/github-snapshot.ts`:
 openstruct-front, consolo-struct, mola-struct, armadura-struct e openstruct-catalog, todos de ricardocorsini.
@@ -32,16 +32,16 @@ Cada repositório registra visibilidade confirmada, horário, última coleta tot
 
 ## Listas e limites
 
-| Lista | Seleção e ordem | Limite e interpretação |
-| --- | --- | --- |
-| Issues | Abertas, atualizadas recentemente | Até 2 páginas de 30 entradas REST; o endpoint inclui PRs, que são removidos. Podem restar menos de 60 issues. |
-| PRs | Abertos, atualizados recentemente | Até 60; não inclui PRs fechados ou mesclados. |
-| Milestones | Abertos, prazo crescente | Até 60; `count` é número de issues ainda abertas no milestone. |
-| Contribuidores | Ordem do endpoint GitHub | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
+| Lista          | Seleção e ordem                   | Limite e interpretação                                                                                               |
+| -------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Issues         | Abertas, atualizadas recentemente | Até 2 páginas de 30 entradas REST; o endpoint inclui PRs, que são removidos. Podem restar menos de 60 issues.        |
+| PRs            | Abertos, atualizados recentemente | Até 60; não inclui PRs fechados ou mesclados.                                                                        |
+| Milestones     | Abertos, prazo crescente          | Até 60; `count` é número de issues ainda abertas no milestone.                                                       |
+| Contribuidores | Ordem do endpoint GitHub          | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
 
 `truncated=true` significa que havia próxima página além do teto. `false` significa que o endpoint filtrado terminou, nunca que todo o histórico do projeto foi coletado. `items[].updatedAt` aplica-se a issues/PRs; é null nas outras listas. `id` é número ou login; `title` é título ou login. O resumo `openIssuesAndPullRequests` é a contagem combinada oficial do GitHub, não uma contagem separada de issues.
 
-Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **45 GETs por execução** (5 × [1 metadado + 4 listas × 2 páginas]); caso usual mínimo: 25. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
+Paginação segue o Link retornado, restringindo origem, caminho, parâmetros e número de páginas. Links inválidos falham isoladamente. Limite: **50 GETs por execução** (5 × [1 metadado + 4 listas × 2 páginas + 1 release]); caso usual mínimo: 30. Pedidos são sequenciais, com timeout de 10 s e corpo de até 2 MB. Não há GraphQL, busca nem consulta por visitante à API REST.
 
 ETags persistem via Actions cache em `.cache/github/pages.json`, com apenas páginas já normalizadas. Um 304 reaproveita os dados e a paginação sanitizados, após nova confirmação pública; sem corpo em cache não produz lista vazia fictícia.
 403/429 suspendem novos pedidos, respeitando Retry-After (segundos/data), reset quando esgotado e mínimo de um minuto. Não há retentativa imediata nem runner dormindo: `retryAt` atravessa execuções e impede chamadas antes do prazo.
@@ -60,3 +60,7 @@ O navegador compartilha uma promessa por janela de cinco minutos, com timeout de
 - Nesta execução, testes e build foram verificados em Actions; o ambiente local e o navegador estão indisponíveis. Não houve inspeção visual desktop/mobile ou dos temas.
 
 Referências: [boas práticas REST](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api), [limites REST](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) e [agendamentos Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
+
+## Evolução na OSF-18
+
+O contrato v2 acrescenta a última release estável por repositório. O leitor migra v1 sem inventar releases; o cache Actions usa a chave v2. Ausência de release (404) é um resultado confirmado; falhas preservam a última release pública como desatualizada. A versão distribuída dos aplicativos continua no catálogo assinado, separada da release do repositório. Veja [a documentação da central](CENTRAL-DESENVOLVIMENTO.md).

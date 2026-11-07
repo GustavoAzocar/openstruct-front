@@ -11,6 +11,8 @@ import { Launcher } from './pages/Launcher';
 import { Catalog } from './pages/Catalog';
 import { Docs } from './pages/Docs';
 import { Community, NotFound } from './pages/Community';
+import { Development } from './pages/Development';
+import { site } from './lib/config';
 import { getCurrentApp } from './lib/apps';
 import { CatalogProvider } from './components/CatalogProvider';
 import './styles.css';
@@ -36,6 +38,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="launcher" element={<Launcher />} />
               <Route path="docs" element={<Docs />} />
               <Route path="community" element={<Community />} />
+              <Route path={site.developmentPath} element={<Development />} />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>

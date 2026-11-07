@@ -30,7 +30,9 @@ export function Layout() {
                 ? 'Documentação'
                 : location.pathname === '/community'
                   ? 'Comunidade'
-                  : 'Página não encontrada'));
+                  : location.pathname === site.developmentPath
+                    ? 'Central de desenvolvimento'
+                    : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -72,6 +74,9 @@ export function Layout() {
             </NavLink>
             <NavLink to="/community" onClick={close}>
               Comunidade
+            </NavLink>
+            <NavLink to={site.developmentPath} onClick={close}>
+              Desenvolvimento
             </NavLink>
             <a href={site.repository} target="_blank" rel="noreferrer" onClick={close}>
               GitHub <ArrowUpRight size={13} />
@@ -138,6 +143,7 @@ export function Layout() {
             <div>
               <span className="footer-heading">EXPLORE</span>
               <Link to="/docs">Documentação</Link>
+              <Link to={site.developmentPath}>Central de desenvolvimento</Link>
               <Link to="/docs#principios">Princípios</Link>
               <a href="/assets/openstruct-mark.svg" download>
                 Marca em SVG <ArrowUpRight size={13} />

@@ -306,3 +306,9 @@ usa ETag e limites de paginação, e publica somente JSON validado na branch `gi
 Leitura e escrita usam jobs com permissões separadas. O catálogo assinado de downloads permanece independente.
 
 Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md).
+
+## Central de desenvolvimento
+
+A rota `/development` reúne os cinco repositórios públicos, com seleção por repositório na URL, contagens de itens únicos no recorte de issues/PRs, releases estáveis e datas por fonte. Falhas e dados antigos são identificados sem esconder a navegação. As versões de instalação continuam vindo do catálogo assinado, separadas das publicações do código.
+
+Veja [cobertura, contrato v2 e validação](docs/CENTRAL-DESENVOLVIMENTO.md).

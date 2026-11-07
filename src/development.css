@@ -1,0 +1,352 @@
+.development-page {
+  padding-bottom: 72px;
+}
+.development-hero {
+  padding-bottom: 40px;
+}
+.development-hero .button-row {
+  margin-top: 28px;
+}
+.development-sync {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 22px 26px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+.development-sync p {
+  font-size: 12px;
+}
+.development-sync p[role='status'] {
+  color: var(--ink);
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+.development-sync button {
+  flex-shrink: 0;
+}
+.development-filter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 18px;
+  margin: 32px 0 24px;
+}
+.development-filter label {
+  font-size: 13px;
+  font-weight: 600;
+}
+.development-filter select {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 36px 10px 12px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  font: inherit;
+  font-size: 13px;
+}
+.development-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+.development-metrics > a {
+  display: grid;
+  gap: 7px;
+  padding: 22px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 7px;
+}
+.development-metrics > a:hover {
+  border-color: var(--accent);
+}
+.development-metrics svg {
+  color: var(--accent);
+}
+.development-metrics strong {
+  font:
+    600 36px Sora,
+    sans-serif;
+}
+.development-metrics span {
+  font-size: 14px;
+}
+.development-metrics small,
+.development-check {
+  font-size: 11px;
+  color: var(--muted);
+}
+.development-definitions {
+  border-block: 1px solid var(--line);
+  margin: 24px 0 48px;
+  padding: 16px 0;
+  font-size: 13px;
+}
+.development-definitions summary {
+  cursor: pointer;
+  padding: 6px 0;
+}
+.development-definitions p {
+  max-width: 90ch;
+  margin-top: 12px;
+}
+.development-section-heading {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px 24px;
+  margin-bottom: 22px;
+}
+.development-section-heading h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  letter-spacing: -0.04em;
+}
+.development-section-heading > span {
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+}
+.development-repository-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.development-repository {
+  padding: 26px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  min-width: 0;
+}
+.development-repo-kicker {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+.development-repository h3 {
+  font-size: 23px;
+}
+.development-repo-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font:
+    11px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+  margin: 9px 0 14px;
+}
+.development-repository > p {
+  font-size: 13px;
+}
+.development-repository p,
+.development-repository a,
+.development-item-list a {
+  overflow-wrap: anywhere;
+}
+.development-repo-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-block: 1px solid var(--line);
+  padding: 16px 0;
+  margin: 20px 0;
+  gap: 12px;
+}
+.development-repo-counts dt {
+  font-size: 11px;
+  color: var(--muted);
+}
+.development-repo-counts dd {
+  margin: 5px 0 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.development-repo-counts small {
+  font-size: 11px;
+  font-weight: 400;
+}
+.development-label {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.development-release > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--accent);
+  font-weight: 600;
+}
+.development-release p,
+.development-installation p {
+  font-size: 12px;
+  margin-top: 6px;
+}
+.development-installation {
+  margin: 16px 0;
+  border-left: 2px solid var(--brand);
+  padding-left: 12px;
+}
+.development-installation a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.development-repository > .development-check {
+  margin-top: 16px;
+  font-size: 11px;
+}
+.development-card-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  margin-top: 20px;
+  font-size: 11px;
+}
+.development-card-links a,
+.development-source-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--accent);
+}
+.development-activity {
+  border-top: 1px solid var(--line);
+  padding-top: 36px;
+  margin-top: 48px;
+}
+.development-activity > p {
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+.development-empty {
+  background: var(--surface-2);
+  padding: 24px;
+  border-radius: 6px;
+  margin-top: 22px;
+  font-size: 14px;
+}
+.development-source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-top: 22px;
+  font-size: 12px;
+}
+.development-item-list {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0;
+}
+.development-item-list li {
+  display: grid;
+  gap: 8px;
+  padding: 18px 0;
+  border-block-start: 1px solid var(--line);
+}
+.development-item-list li > a {
+  color: var(--ink);
+  font-weight: 500;
+}
+.development-item-list li > a svg {
+  display: inline;
+  vertical-align: middle;
+  color: var(--accent);
+}
+.development-item-source {
+  font:
+    10px 'IBM Plex Mono',
+    monospace;
+  color: var(--muted);
+}
+.development-warning {
+  color: var(--ink);
+  border-left: 2px solid var(--amber);
+  padding-left: 10px;
+}
+.development-launcher {
+  border: 1px solid var(--line);
+  padding: 28px;
+  border-radius: 8px;
+  margin-top: 48px;
+}
+.development-launcher h2 {
+  font-size: 22px;
+  margin-bottom: 14px;
+}
+.development-launcher p {
+  max-width: 80ch;
+  font-size: 14px;
+}
+.development-launcher .button-row {
+  margin-top: 24px;
+}
+@media (max-width: 700px) {
+  .development-card-links a,
+  .development-source-links a,
+  .development-filter > button,
+  .development-definitions summary {
+    min-height: 44px;
+  }
+  .development-sync {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 20px;
+  }
+  .development-metrics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .development-metrics > a {
+    padding: 18px;
+    grid-template-columns: auto 1fr;
+    column-gap: 14px;
+    align-items: center;
+  }
+  .development-metrics > a strong {
+    grid-row: span 2;
+    font-size: 30px;
+  }
+  .development-metrics > a svg {
+    display: none;
+  }
+  .development-metrics > a small {
+    grid-column: 2;
+  }
+  .development-repository-grid {
+    grid-template-columns: 1fr;
+  }
+  .development-repository {
+    padding: 20px;
+  }
+  .development-filter select {
+    width: 100%;
+    min-width: 0;
+  }
+  .development-section-heading h2 {
+    font-size: 24px;
+  }
+  .development-launcher {
+    padding: 22px;
+  }
+}

@@ -29,11 +29,14 @@ export function Community() {
           construir o próximo capítulo.
         </p>
         <div className="button-row">
+          <Link to={site.developmentPath} className="button button-primary">
+            Acompanhar desenvolvimento <ArrowRight size={17} />
+          </Link>
           <a
             href={site.repository}
             target="_blank"
             rel="noreferrer"
-            className="button button-primary"
+            className="button button-outline"
           >
             <GitFork size={18} /> Encontre o projeto <ArrowUpRight size={16} />
           </a>
@@ -48,23 +51,23 @@ export function Community() {
           {
             Icon: Lightbulb,
             title: 'Compartilhe uma ideia.',
-            copy: 'Conte o que faz falta no seu fluxo de trabalho. Um caso real ajuda a dar direção ao projeto.',
+            copy: 'Escolha o aplicativo na central e conte o que faz falta no seu fluxo de trabalho. Um caso real ajuda a dar direção ao projeto.',
             label: 'Propor uma melhoria',
-            url: `${site.repository}/issues/new?labels=enhancement`,
+            to: `${site.developmentPath}#repositories`,
           },
           {
             Icon: MessageCircle,
             title: 'Ajude a enxergar melhor.',
-            copy: 'Encontrou um problema? Descreva como aconteceu e o que você esperava encontrar.',
+            copy: 'Encontre o repositório do aplicativo na central e descreva como o problema aconteceu e o que você esperava encontrar.',
             label: 'Relatar um problema',
-            url: `${site.repository}/issues/new?labels=bug`,
+            to: `${site.developmentPath}#repositories`,
           },
           {
             Icon: GitPullRequest,
             title: 'Construa uma parte.',
             copy: 'Código, testes, interface ou acessibilidade: contribuições de diferentes tamanhos são bem-vindas.',
             label: 'Conhecer o código',
-            url: site.repository,
+            to: `${site.developmentPath}#repositories`,
           },
           {
             Icon: BookOpen,
@@ -73,20 +76,14 @@ export function Community() {
             label: 'Explorar a documentação',
             to: '/docs',
           },
-        ].map(({ Icon, title, copy, label, url, to }) => (
+        ].map(({ Icon, title, copy, label, to }) => (
           <article key={title}>
             <Icon size={28} strokeWidth={1.5} />
             <h2>{title}</h2>
             <p>{copy}</p>
-            {to ? (
-              <Link className="text-link" to={to}>
-                {label} <ArrowRight size={16} />
-              </Link>
-            ) : (
-              <a className="text-link" href={url} target="_blank" rel="noreferrer">
-                {label} <ArrowUpRight size={16} />
-              </a>
-            )}
+            <Link className="text-link" to={to}>
+              {label} <ArrowRight size={16} />
+            </Link>
           </article>
         ))}
       </section>

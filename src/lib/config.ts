@@ -3,6 +3,7 @@ export const site = {
   name: 'OpenStruct',
   repository: 'https://github.com/ricardocorsini/openstruct-front',
   organization: 'https://github.com/ricardocorsini',
+  developmentPath: '/development',
   discord: import.meta.env.VITE_DISCORD_URL || '',
 };
 

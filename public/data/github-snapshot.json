@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "generatedAt": null,
   "retryAt": null,
   "repositories": [
@@ -36,6 +36,11 @@
           "truncated": false,
           "items": []
         }
+      },
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
       }
     },
     {
@@ -71,6 +76,11 @@
           "truncated": false,
           "items": []
         }
+      },
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
       }
     },
     {
@@ -106,6 +116,11 @@
           "truncated": false,
           "items": []
         }
+      },
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
       }
     },
     {
@@ -141,6 +156,11 @@
           "truncated": false,
           "items": []
         }
+      },
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
       }
     },
     {
@@ -176,6 +196,11 @@
           "truncated": false,
           "items": []
         }
+      },
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
       }
     }
   ]
