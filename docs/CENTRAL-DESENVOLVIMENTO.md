@@ -36,3 +36,7 @@ A **versão para instalar** é exibida à parte, a partir do catálogo assinado 
 Testes protegem contagem separada de issues/PRs, duplicatas, repositórios distintos com número igual, fonte indisponível versus vazia, recortes limitados, ordenação, expiração, proteção de visibilidade, migração v1/v2 e releases estáveis/404/304/draft/prerelease/origem inválida. Execute `npm test` e `npm run build`.
 
 A revisão visual deve cobrir seleção por URL, voltar/avançar, links das seções, desktop/mobile, ambos os temas e menu móvel. Dados vazios reais não são preenchidos com trabalho inventado. Estados com itens e falhas são protegidos pelas fixtures dos testes.
+
+O endereço do leitor inclui o parâmetro fixo `?schema=2` para separar o cache HTTP do contrato anterior durante a migração. Não é um parâmetro aleatório por visitante: todos compartilham a mesma origem estática, com a janela de cinco minutos do loader preservada.
+
+Verificação local: 71 testes aprovados e build concluído. No Chromium, foram conferidos a seleção por sistema e a navegação voltar/avançar, acesso a partir da Comunidade, âncoras das listas, menu móvel e ambos os temas. Larguras conferidas: 1348 px e 337 px (simulada por zoom), sem rolagem horizontal. Não houve teste em aparelho físico. A primeira coleta v2 em Actions confirmou os cinco repositórios; as listas abertas estavam vazias e as releases/ausências foram preservadas como dados reais.
