@@ -1,13 +1,13 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-11-07T17:04:05.153Z",
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-07T17:38:00.227Z",
   "retryAt": null,
   "repositories": [
     {
       "repository": "ricardocorsini/openstruct-front",
       "visibility": "public",
-      "verifiedPublicAt": "2026-11-07T17:04:05.153Z",
-      "lastSuccessAt": "2026-11-07T17:04:05.153Z",
+      "verifiedPublicAt": "2026-11-07T17:38:00.227Z",
+      "lastSuccessAt": "2026-11-07T17:38:00.227Z",
       "status": "ready",
       "problem": null,
       "summary": {
@@ -19,28 +19,33 @@
         "openIssuesAndPullRequests": 0,
         "defaultBranch": "master"
       },
+      "release": {
+        "state": "fresh",
+        "checkedAt": "2026-11-07T17:38:00.227Z",
+        "item": null
+      },
       "lists": {
         "issues": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "pulls": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "milestones": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "contributors": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": [
             {
@@ -57,8 +62,8 @@
     {
       "repository": "ricardocorsini/consolo-struct",
       "visibility": "public",
-      "verifiedPublicAt": "2026-11-07T17:04:05.153Z",
-      "lastSuccessAt": "2026-11-07T17:04:05.153Z",
+      "verifiedPublicAt": "2026-11-07T17:38:00.227Z",
+      "lastSuccessAt": "2026-11-07T17:38:00.227Z",
       "status": "ready",
       "problem": null,
       "summary": {
@@ -70,28 +75,38 @@
         "openIssuesAndPullRequests": 0,
         "defaultBranch": "master"
       },
+      "release": {
+        "state": "fresh",
+        "checkedAt": "2026-11-07T17:38:00.227Z",
+        "item": {
+          "tag": "v0.7.1",
+          "name": "ConsoloStruct 0.7.1",
+          "url": "https://github.com/ricardocorsini/consolo-struct/releases/tag/v0.7.1",
+          "publishedAt": "2026-11-07T12:22:31.000Z"
+        }
+      },
       "lists": {
         "issues": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "pulls": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "milestones": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "contributors": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": [
             {
@@ -108,8 +123,8 @@
     {
       "repository": "ricardocorsini/mola-struct",
       "visibility": "public",
-      "verifiedPublicAt": "2026-11-07T17:04:05.153Z",
-      "lastSuccessAt": "2026-11-07T17:04:05.153Z",
+      "verifiedPublicAt": "2026-11-07T17:38:00.227Z",
+      "lastSuccessAt": "2026-11-07T17:38:00.227Z",
       "status": "ready",
       "problem": null,
       "summary": {
@@ -121,28 +136,38 @@
         "openIssuesAndPullRequests": 0,
         "defaultBranch": "master"
       },
+      "release": {
+        "state": "fresh",
+        "checkedAt": "2026-11-07T17:38:00.227Z",
+        "item": {
+          "tag": "v0.5.1",
+          "name": "MolaStruct 0.5.1",
+          "url": "https://github.com/ricardocorsini/mola-struct/releases/tag/v0.5.1",
+          "publishedAt": "2026-11-06T20:19:19.000Z"
+        }
+      },
       "lists": {
         "issues": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "pulls": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "milestones": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "contributors": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": [
             {
@@ -159,8 +184,8 @@
     {
       "repository": "ricardocorsini/armadura-struct",
       "visibility": "public",
-      "verifiedPublicAt": "2026-11-07T17:04:05.153Z",
-      "lastSuccessAt": "2026-11-07T17:04:05.153Z",
+      "verifiedPublicAt": "2026-11-07T17:38:00.227Z",
+      "lastSuccessAt": "2026-11-07T17:38:00.227Z",
       "status": "ready",
       "problem": null,
       "summary": {
@@ -172,28 +197,33 @@
         "openIssuesAndPullRequests": 0,
         "defaultBranch": "master"
       },
+      "release": {
+        "state": "fresh",
+        "checkedAt": "2026-11-07T17:38:00.227Z",
+        "item": null
+      },
       "lists": {
         "issues": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "pulls": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "milestones": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "contributors": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": [
             {
@@ -210,8 +240,8 @@
     {
       "repository": "ricardocorsini/openstruct-catalog",
       "visibility": "public",
-      "verifiedPublicAt": "2026-11-07T17:04:05.153Z",
-      "lastSuccessAt": "2026-11-07T17:04:05.153Z",
+      "verifiedPublicAt": "2026-11-07T17:38:00.227Z",
+      "lastSuccessAt": "2026-11-07T17:38:00.227Z",
       "status": "ready",
       "problem": null,
       "summary": {
@@ -223,28 +253,38 @@
         "openIssuesAndPullRequests": 0,
         "defaultBranch": "main"
       },
+      "release": {
+        "state": "fresh",
+        "checkedAt": "2026-11-07T17:38:00.227Z",
+        "item": {
+          "tag": "armadurastruct-v0.2.0",
+          "name": "ArmaduraStruct 0.2.0",
+          "url": "https://github.com/ricardocorsini/openstruct-catalog/releases/tag/armadurastruct-v0.2.0",
+          "publishedAt": "2026-11-06T22:43:29.000Z"
+        }
+      },
       "lists": {
         "issues": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "pulls": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "milestones": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": []
         },
         "contributors": {
           "state": "fresh",
-          "checkedAt": "2026-11-07T17:04:05.153Z",
+          "checkedAt": "2026-11-07T17:38:00.227Z",
           "truncated": false,
           "items": [
             {
