@@ -9,7 +9,9 @@ import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
-  const [dark, setDark] = useState(() => document.documentElement.dataset.theme === 'dark');
+  const [dark, setDark] = useState(
+    () => typeof document !== 'undefined' && document.documentElement.dataset.theme === 'dark',
+  );
   const { launch, community } = useExperience();
   const location = useLocation();
   useEffect(() => {

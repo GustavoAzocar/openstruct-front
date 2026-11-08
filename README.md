@@ -343,3 +343,10 @@ Veja [cobertura, contrato v2 e validação](docs/CENTRAL-DESENVOLVIMENTO.md).
 A central `/development#issues` permite filtrar issues por repositório, estado e labels reais, buscar no recorte carregado e navegar em páginas de dez itens. A URL preserva a seleção, com histórico voltar/avançar. As contagens distinguem o recorte do total do repositório e excluem PRs; o snapshot v3 conserva abertas/fechadas e sua cobertura separadamente.
 
 Veja [contrato, filtros e validação da OSF-19](docs/ISSUES-CENTRAL.md).
+
+## Auditoria de links e atualização editorial
+
+Execute `npm run audit:content` para rotas, âncoras, artigos e mídia local. A CI executa
+essa checagem e guarda o relatório. `npm run audit:external` acrescenta sondagens externas
+e alertas de versão; também roda diariamente em uma Action separada, sem bloquear o deploy
+por quota/timeout e sem abrir issues. Veja [cobertura, relatórios e manutenção](docs/AUDITORIA-CONTEUDO.md).

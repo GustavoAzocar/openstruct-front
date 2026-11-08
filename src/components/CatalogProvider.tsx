@@ -23,7 +23,7 @@ export function CatalogProvider({ children }: { children: ReactNode }) {
 export function usePublicCatalog() {
   const store = useContext(CatalogContext);
   if (!store) throw new Error('CatalogProvider ausente');
-  const state = useSyncExternalStore(store.subscribe, store.getSnapshot);
+  const state = useSyncExternalStore(store.subscribe, store.getSnapshot, store.getSnapshot);
   return { ...state, refresh: store.refresh };
 }
 export function useProductAvailability(id: string) {
