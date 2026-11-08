@@ -159,6 +159,7 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
   for (const repo of snapshot.repositories) {
     delete repo.discussions;
     delete repo.releaseHistory;
+    delete repo.codeRelations;
   }
   for (const repo of snapshot.repositories)
     repo.lists.pulls.items = repo.lists.pulls.items
@@ -169,7 +170,7 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
   assert.equal(migrated.repositories[0].status, 'partial');
   const restored = await collectGithub({ previous: migrated, now, fetchImpl: api() });
   assert.equal(restored.snapshot.repositories[0].status, 'ready');
-  assert.equal(migrated.schemaVersion, 7);
+  assert.equal(migrated.schemaVersion, 8);
   assert.equal(migrated.repositories[0].lists.pulls.state, 'unavailable');
   assert.equal(
     selectPulls(migrated, developmentSources, 'all', now()).coverage.some((row) => row.known),

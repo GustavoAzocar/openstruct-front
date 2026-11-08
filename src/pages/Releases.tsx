@@ -1,3 +1,5 @@
+import { CodeRelations } from '../components/CodeRelations';
+import { CATALOG_IDS } from '../lib/catalog-trust';
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { usePublicCatalog } from '../components/CatalogProvider';
@@ -119,6 +121,15 @@ export function Releases() {
           </button>
         )}
       </div>
+      <CodeRelations
+        snapshot={activity.result?.snapshot}
+        products={catalog.products}
+        now={activity.now}
+        offline={Boolean(activity.result && activity.result.source !== 'public')}
+        loading={loading}
+        ids={CATALOG_IDS.filter((id) => !filters.product || filters.product === id)}
+        launcher={!filters.product || filters.product === 'launcher'}
+      />
       <p role="status" className="releases-note">
         {loading ? 'Conferindo as fontes públicas… ' : ''}
         {rows.length} publicações no recorte selecionado · ordem cronológica, mais recentes

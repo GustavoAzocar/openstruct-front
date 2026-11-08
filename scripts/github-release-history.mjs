@@ -24,6 +24,7 @@ export function normalizeReleaseHistory(body, repository) {
     const source = RELEASE_PRODUCTS[identity.productId].sourceRepo;
     const sourceUrl = source ? `https://github.com/${source}/tree/v${identity.version}` : null;
     const rawNotes = String(release.body ?? '');
+    const noteUrls = rawNotes.match(/https:\/\/github\.com\/[^\s<>"'\)\]]+/g) ?? [];
     const notes =
       identity.productId === 'launcher'
         ? rawNotes.replace(/^.*https:\/\/github\.com\/ricardocorsini\/launcher-struct\S*.*$/gm, '')
@@ -38,7 +39,7 @@ export function normalizeReleaseHistory(body, repository) {
       notes: clean(notes, 2000).trim(),
       notesTruncated: notes.length > 2000,
       codeUrl:
-        sourceUrl && (repository === source || rawNotes.includes(sourceUrl)) ? sourceUrl : null,
+        sourceUrl && (repository === source || noteUrls.includes(sourceUrl)) ? sourceUrl : null,
     });
   }
   validateReleaseHistory(

@@ -125,3 +125,68 @@ coleta de perfis: [regras de créditos](CONTRIBUIDORES.md). O snapshot v7 acresc
 histórico público de releases, excluindo drafts antes do cache e preservando as
 fontes por produto. São até seis GETs adicionais, sem mudar a lista de repositórios
 públicos ou as permissões: [contrato, confiança e cobertura](RELEASES-PUBLICAS.md).
+
+## Relação entre distribuição e código — OSF-52 (08/11/2026)
+
+O esquema atual é **v8**; o leitor aceita v1–v7, migra para v8 e inicia
+`codeRelations: []` sem inventar comparações. A migração de v7 preserva seu histórico
+de releases e os dados públicos anteriores. URL do leitor usa `?schema=8` para
+separar caches. A branch `github-data` continua publicando apenas JSON validado e
+configuração inerte; a interface não consulta REST nem precisa de token.
+
+`sync-github.mjs` consulta o catálogo assinado uma vez com o leitor da OSF-05. A seleção
+é verificada por produto, separadamente nos canais stable e beta; uma pré-release mais
+recente não substitui stable. Sem pacote válido, há estado sem distribuição ou
+indisponível, nunca uma tag promovida a download. A interface atual mostra a relação
+do canal stable para instalar; beta permanece separado no snapshot e histórico.
+
+Para Consolo/Mola, a associação é a release pública do próprio repositório e a tag
+`v<versão>`. Armadura distribui no hub com `armadurastruct-v<versão>`, mas só resolve
+`v<versão>` em **armadura-struct** quando a release pública do hub declara o link
+correspondente. Ausência do vínculo gera fonte não confirmada. Não se usa
+`target_commitish`, `/releases/latest` do hub, package.json nem datas para escolher
+SHAs ou determinar ancestralidade. A branch comparada é a default branch pública,
+confirmada pelos metadados do repositório em cada coleta; não se presume master.
+
+Cada relação registra produto/canal/versão, data do catálogo, hashes dos pacotes,
+release usada como fonte, repositório de código, tag, SHA-base e SHA fixado, branch e
+SHA-head, estado, relação, ahead/behind, checkedAt, evidência e URL com SHAs da
+comparação. Somente os totais e status do endpoint são usados. `?per_page=1` limita
+a resposta: a lista recebida não é contada nem exportada, e arquivos/diffs/mensagens,
+autores e e-mails de commits nunca entram no snapshot/cache de comparação. Totais
+acima de 250 continuam sendo totais; não são tratados como tamanho de uma página.
+
+Tags leves são resolvidas por `git/ref/tags`; tags anotadas são seguidas por
+`git/tags` até commit, no máximo três objetos, com detecção de ciclo. A branch é
+resolvida por `git/ref/heads` com ref codificada. A comparação usa os SHAs resolvidos,
+confere `base_commit`, merge-base, status e coerência dos contadores. Links publicados
+fixam os SHAs, permitindo inspecionar o histórico efetivamente consultado.
+
+O primeiro SHA observado é preservado em `pinnedBaseSha` nas próximas coletas da mesma
+versão/canal. Quando o registro editorial tem proveniência fixa para aquela versão,
+ela também deve coincidir. Tag movida, ausente, vínculo removido ou resposta incoerente
+não conserva contadores como atuais. Sem proveniência fixa anterior, a primeira
+observação não demonstra que a tag nunca mudou no passado. A declaração de fonte
+**não é atestação de que o binário foi construído daquele SHA**.
+
+Estados de coleta: fresh, stale, unavailable, unconfirmed e no-distribution.
+Relações confirmadas: identical, ahead, behind e diverged. Ahead exige ancestralidade
+a partir da base; behind representa a branch em um ancestral da tag; 6/1 é diverged,
+nunca “6 commits atrasada”. Cherry-picks, backports e branches de manutenção podem
+divergir legitimamente. Sem dado não há zero nem mensagem de atualizado.
+
+A visibilidade pública dos repositórios fonte **e distribuidor** precisa ser
+reconfirmada antes dessa etapa; falha elimina as relações exportadas, inclusive as
+anteriores. Launcher privado não é consultado e não recebe comparação por proxy do
+hub. Se o catálogo falhar mas a visibilidade continuar confirmada, só se conserva o
+último dado conhecido marcado como antigo. Se versão/canal/URL ou hashes não coincidirem
+com o catálogo mostrado no navegador, os contadores são ocultados até coleta compatível.
+
+A coleta usa o request compartilhado: timeout, ETag/304, limite de corpo, 403/429,
+Retry-After e reset já existentes. O cache armazena somente metadados normalizados.
+Cada produto/canal acrescenta no máximo sete chamadas (release exata se fora do recorte,
+tag, até três objetos anotados, branch, comparação); a reserva é **48 chamadas** para
+seis seleções. Sem beta publicado, não há chamadas Git adicionais para esse canal.
+O teto global passa de 66+30 para **66+30+48 = 144** requisições GitHub por execução,
+mais uma leitura limitada do catálogo; na prática ETags e canais vazios reduzem isso.
+As falhas ficam isoladas por produto/canal, com estado parcial no repositório.

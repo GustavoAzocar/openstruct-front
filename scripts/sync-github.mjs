@@ -1,3 +1,4 @@
+import { loadPublicCatalog } from '../src/lib/catalog.ts';
 import { readFile, mkdir, writeFile, rename } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { collectGithub } from './github-collector.mjs';
@@ -27,7 +28,15 @@ try {
   previous = emptyGithubSnapshot();
 }
 const cache = await readJson(cacheFile, {}, 2_000_000);
+let envelope = null;
+try {
+  envelope = (await loadPublicCatalog()).envelope;
+} catch {
+  /* Retain only marked stale comparisons, if visibility is confirmed. */
+}
 const result = await collectGithub({
+  includeCodeRelations: true,
+  catalogEnvelope: envelope,
   previous,
   cache,
   includeDiscussions: true,

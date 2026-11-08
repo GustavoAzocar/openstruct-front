@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/github-public-data.yml'
       - 'scripts/*github*.mjs'
+      - 'src/lib/code-relation.ts'
       - 'src/lib/github-snapshot.ts'
       - 'src/lib/discussion-contract.ts'
       - 'src/lib/release-history-contract.ts'
@@ -43,9 +44,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .cache/github
-          key: public-github-etag-v7-${{ github.run_id }}-${{ github.run_attempt }}
+          key: public-github-etag-v8-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            public-github-etag-v7-
+            public-github-etag-v8-
       - name: Collect authorized public repositories
         run: npm run sync:github
         env:

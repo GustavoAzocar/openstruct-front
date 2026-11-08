@@ -1,3 +1,7 @@
+import { collectCodeRelation } from './github-code-relation.mjs';
+import { verifySignedCatalog } from '../src/lib/catalog.ts';
+import { PRODUCT_POLICIES } from '../src/lib/catalog-trust.ts';
+import { currentApps } from '../src/lib/apps.ts';
 import { normalizeReleaseHistory } from './github-release-history.mjs';
 import { RELEASE_PRODUCTS, validateReleaseHistory } from '../src/lib/release-history-contract.ts';
 import { collectDiscussions } from './github-discussions.mjs';
@@ -219,10 +223,25 @@ export async function collectGithub({
   now = () => Date.now(),
   timeoutMs = 10_000,
   includeDiscussions = false,
+  includeCodeRelations = false,
+  catalogEnvelope = null,
 } = {}) {
   previous = validateGithubSnapshot(previous);
-  if (previous.retryAt && Date.parse(previous.retryAt) > now())
-    return { snapshot: previous, cache, requests: 0 };
+  if (previous.retryAt && Date.parse(previous.retryAt) > now()) {
+    if (!previous.repositories.some((repo) => repo.codeRelations.some((row) => row.relation)))
+      return { snapshot: previous, cache, requests: 0 };
+    const snapshot = structuredClone(previous);
+    for (const repo of snapshot.repositories) {
+      repo.codeRelations = repo.codeRelations.map((row) =>
+        row.relation ? { ...row, state: 'stale' } : row,
+      );
+      if (repo.codeRelations.some((row) => row.relation)) {
+        repo.status = 'partial';
+        repo.problem = 'rate-limit';
+      }
+    }
+    return { snapshot, cache, requests: 0 };
+  }
   const at = new Date(now()).toISOString();
   let retryAt = null;
   let requests = 0;
@@ -233,7 +252,10 @@ export async function collectGithub({
       delete pages[key];
   }
   async function request(url, old, sample = false) {
-    if (retryAt || requests >= REQUEST_LIMIT + (includeDiscussions ? 30 : 0))
+    if (
+      retryAt ||
+      requests >= REQUEST_LIMIT + (includeDiscussions ? 30 : 0) + (includeCodeRelations ? 48 : 0)
+    )
       throw new RequestError('rate-limit');
     requests++;
     const controller = new AbortController();
@@ -278,6 +300,7 @@ export async function collectGithub({
       }
       if (response.status === 404 && url.endsWith('/releases/latest'))
         return { body: null, etag: null, next: null };
+      if (response.status === 404) throw new RequestError('not-found');
       if (!response.ok) throw new RequestError('request');
       const body = await boundedJson(response);
       const etag = response.headers.get('etag');
@@ -361,7 +384,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 7,
+            schemaVersion: 8,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -412,7 +435,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 7,
+            schemaVersion: 8,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -486,7 +509,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 7,
+          schemaVersion: 8,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -546,10 +569,49 @@ export async function collectGithub({
     }
     repositories.push(entry);
   }
+  if (includeCodeRelations) {
+    let catalog, betaCatalog;
+    try {
+      catalog = await verifySignedCatalog(catalogEnvelope);
+      betaCatalog = await verifySignedCatalog(catalogEnvelope, undefined, undefined, 'beta');
+    } catch {
+      /* No unverified version selection. */
+    }
+    for (const [id, policy] of Object.entries(PRODUCT_POLICIES)) {
+      const entry = repositories.find((r) => r.repository === policy.sourceRepo);
+      const distributor = repositories.find((r) => r.repository === policy.releaseRepo);
+      if (entry.visibility !== 'public' || distributor?.visibility !== 'public') continue;
+      const old = previous.repositories.find((r) => r.repository === policy.sourceRepo);
+      entry.codeRelations = [];
+      for (const channel of ['stable', 'beta']) {
+        const selected = channel === 'stable' ? catalog : betaCatalog;
+        entry.codeRelations.push(
+          await collectCodeRelation({
+            id,
+            channel,
+            product: selected?.products[id],
+            catalogPublishedAt: selected?.publishedAt ?? null,
+            repository: entry,
+            distributor,
+            request,
+            cache: pages,
+            previous: old?.codeRelations.find((r) => r.productId === id && r.channel === channel),
+            at,
+            fixedSource: currentApps.find((a) => a.id === id)?.distribution,
+          }),
+        );
+      }
+      if (entry.codeRelations.some((r) => !['fresh', 'no-distribution'].includes(r.state))) {
+        entry.status = 'partial';
+        entry.problem = retryAt ? 'rate-limit' : 'request';
+        entry.lastSuccessAt = old?.lastSuccessAt ?? null;
+      }
+    }
+  }
   // Withdraw detail text first if the combined snapshot reaches the public size cap.
   while (
     Buffer.byteLength(
-      JSON.stringify({ schemaVersion: 7, generatedAt: at, retryAt, repositories }),
+      JSON.stringify({ schemaVersion: 8, generatedAt: at, retryAt, repositories }),
     ) > 1_000_000
   ) {
     const repo = [...repositories].reverse().find((repo) => repo.discussions.length);
@@ -568,7 +630,7 @@ export async function collectGithub({
     }
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 7,
+    schemaVersion: 8,
     generatedAt: at,
     retryAt,
     repositories,

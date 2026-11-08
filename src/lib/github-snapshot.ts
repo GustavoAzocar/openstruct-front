@@ -1,3 +1,5 @@
+import { validateCodeRelation } from './code-relation.ts';
+import type { CodeRelation } from './code-relation.ts';
 import { emptyReleaseHistory, validateReleaseHistory } from './release-history-contract.ts';
 import type { ReleaseHistory } from './release-history-contract.ts';
 import { DISCUSSION_LIMIT, validateDiscussion } from './discussion-contract.ts';
@@ -18,7 +20,7 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=7';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=8';
 export type MilestoneMetadata = {
   state: 'open' | 'closed';
   openItems: number;
@@ -95,11 +97,12 @@ export type RepositorySnapshot = {
   lists: Record<ActivityKind, ActivityList>;
   release: ReleaseSnapshot;
   releaseHistory: ReleaseHistory;
+  codeRelations: CodeRelation[];
   issueDetails: Record<IssueState, IssueCollection>;
   discussions: PublicDiscussion[];
 };
 export type GithubSnapshot = {
-  schemaVersion: 7;
+  schemaVersion: 8;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -122,6 +125,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
     summary: null,
     release: emptyRelease(),
     releaseHistory: emptyReleaseHistory(),
+    codeRelations: [],
     discussions: [],
     issueDetails: { open: emptyIssueCollection(), closed: emptyIssueCollection() },
     lists: {
@@ -134,7 +138,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 7,
+    schemaVersion: 8,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -178,7 +182,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3, 4, 5, 6, 7].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4, 5, 6, 7, 8].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -197,7 +201,8 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'summary',
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
-      ...(root.schemaVersion === 7 ? ['releaseHistory'] : []),
+      ...((root.schemaVersion as number) >= 7 ? ['releaseHistory'] : []),
+      ...(root.schemaVersion === 8 ? ['codeRelations'] : []),
       ...((root.schemaVersion as number) >= 5 ? ['discussions'] : []),
       ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
@@ -281,12 +286,22 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           throw new Error('Invalid release source');
       }
     }
-    if (root.schemaVersion === 7)
+    if ((root.schemaVersion as number) >= 7)
       validateReleaseHistory(
         repo.releaseHistory,
         String(repo.repository),
         repo.visibility === 'public',
       );
+    if (root.schemaVersion === 8) {
+      if (!Array.isArray(repo.codeRelations) || repo.codeRelations.length > 2)
+        throw new Error('Invalid relation list');
+      const channels = new Set<string>();
+      for (const relation of repo.codeRelations) {
+        validateCodeRelation(relation, String(repo.repository), repo.visibility === 'public');
+        if (channels.has(relation.channel)) throw new Error('Duplicate code channel');
+        channels.add(relation.channel);
+      }
+    }
     if ((root.schemaVersion as number) >= 5) {
       if (
         !Array.isArray(repo.discussions) ||
@@ -488,21 +503,23 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     }
   }
   const validated = value as GithubSnapshot;
-  if (root.schemaVersion === 7) return validated;
+  if (root.schemaVersion === 8) return validated;
   // Earlier milestones were open-only and lacked closed counters/state. Unknown is not zero.
   return {
     ...validated,
-    schemaVersion: 7,
+    schemaVersion: 8,
     repositories: validated.repositories.map((repo) => ({
       ...repo,
       status: repo.status === 'ready' ? 'partial' : repo.status,
       discussions: (root.schemaVersion as number) >= 5 ? repo.discussions : [],
       release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
-      releaseHistory: emptyReleaseHistory(),
+      releaseHistory:
+        (root.schemaVersion as number) >= 7 ? repo.releaseHistory : emptyReleaseHistory(),
+      codeRelations: [],
       lists: {
         ...repo.lists,
         milestones:
-          root.schemaVersion === 6
+          (root.schemaVersion as number) >= 6
             ? repo.lists.milestones
             : emptyRepository(repo.repository).lists.milestones,
         ...((root.schemaVersion as number) < 4

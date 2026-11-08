@@ -1,3 +1,5 @@
+import { CodeRelations } from '../components/CodeRelations';
+import { PRODUCT_POLICIES } from '../lib/catalog-trust';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowUpRight, CircleDot, GitPullRequest, GitBranch, RefreshCw, Tag } from 'lucide-react';
 import { usePublicCatalog } from '../components/CatalogProvider';
@@ -261,6 +263,17 @@ export function Development() {
           </button>
         )}
       </div>
+      <CodeRelations
+        snapshot={result?.snapshot}
+        products={products}
+        now={now}
+        offline={Boolean(result && result.source !== 'public')}
+        loading={loading}
+        ids={(Object.keys(PRODUCT_POLICIES) as CatalogProductId[]).filter((id) =>
+          sources.some((s) => s.repository === PRODUCT_POLICIES[id].sourceRepo),
+        )}
+        launcher={sources.some((s) => s.slug === 'openstruct-catalog')}
+      />
       <div className="development-metrics" aria-label="Resumo da seleção">
         <a href="#issues">
           <CircleDot size={20} />

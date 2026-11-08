@@ -85,3 +85,39 @@ Fontes: [GitHub Releases](https://docs.github.com/en/rest/releases/releases),
 [catálogo assinado](https://github.com/ricardocorsini/openstruct-catalog/blob/main/catalog.signed.json),
 [distribuidores](https://github.com/ricardocorsini/openstruct-catalog/blob/main/distribution.json),
 [feed do Launcher](https://github.com/ricardocorsini/openstruct-catalog/blob/main/launcher/latest.json).
+
+## Contexto de desenvolvimento público — OSF-52
+
+Em 08/11/2026, `/releases` e `/development` passaram a usar o componente comum
+`CodeRelations`, alimentado pelo snapshot v8. Os filtros existentes restringem o
+contexto por produto/repositório. A instalação pelo Struct Launcher permanece como
+chamada principal; a área de instalação não recebe alerta de atraso ou indicação
+para usar a branch. Não há uma release por commit, ranking, percentual de atraso,
+changelog inferido nem promessa sobre a próxima publicação.
+
+A versão distribuída é lida do catálogo assinado compartilhado da OSF-05. O contexto
+mostra stable, separa a data da comparação da relação entre históricos e oferece
+refs, contadores e comparação fixa em detalhes nativos operáveis por teclado.
+Históricos divergentes têm texto próprio. Igualdade de SHA não atesta validação,
+compatibilidade, segurança ou identidade do binário. O Launcher mostra somente a
+explicação de que seu código não é público nesta visão.
+
+Os dados são associados a produto, versão, canal, URL e hashes de pacotes; catálogo
+novo com snapshot anterior não aplica contadores antigos à versão nova. Quando o
+último dado válido puder ser preservado segundo a regra de visibilidade, aparece
+explicitamente como antigo. A fonte da associação (release do próprio código ou
+nota pública do hub) fica visível, sem afirmar atestação de build.
+
+Implementação: `src/lib/code-relation.ts` (contrato/seleção),
+`scripts/github-code-relation.mjs` (resolução/coleta), `CodeRelations.tsx` e seu CSS.
+O coletor e o leitor de snapshots existentes foram estendidos, sem backend, OAuth,
+credencial no navegador ou requisições REST por visitante. Ver limites, migração,
+cache e orçamento em [GITHUB-PUBLICO.md](GITHUB-PUBLICO.md#relação-entre-distribuição-e-código--osf-52-08112026).
+
+Testes usam fixtures de identical/ahead/behind/diverged (incluindo Mola 6/1), mais de
+250 commits com lista recortada, código de workflow sem inferência de recursos,
+tags anotadas/cíclicas/movidas/ausentes, falha transitória/quota, 304, identidade de
+canal/pacotes, fonte ausente e visibilidade retirada. Testes preexistentes do catálogo
+continuam cobrindo assinatura, seleção de stable/beta, plataformas e distribuição
+no hub com vários produtos. A leitura assistiva é verificada pela estrutura semântica
+no navegador, sem simular certificação ou teste com leitor de tela de terceiros.
