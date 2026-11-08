@@ -10,6 +10,7 @@ on:
       - 'scripts/*github*.mjs'
       - 'src/lib/github-snapshot.ts'
       - 'src/lib/discussion-contract.ts'
+      - 'src/lib/release-history-contract.ts'
 permissions:
   contents: read
 concurrency:
@@ -42,9 +43,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: .cache/github
-          key: public-github-etag-v6-${{ github.run_id }}-${{ github.run_attempt }}
+          key: public-github-etag-v7-${{ github.run_id }}-${{ github.run_attempt }}
           restore-keys: |
-            public-github-etag-v6-
+            public-github-etag-v7-
       - name: Collect authorized public repositories
         run: npm run sync:github
         env:

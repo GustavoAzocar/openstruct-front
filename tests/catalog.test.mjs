@@ -215,3 +215,24 @@ test('leitor usa somente o feed assinado e respeita Retry-After e limites da res
   );
   await assert.rejects(loadPublicCatalog(async () => new Response('not json')));
 });
+
+test('verified catalog preserves historical channels and bounded notes without changing stable installation selection', async () => {
+  const data = fixture((catalog) => {
+    const app = catalog.apps.find((app) => app.id === 'consolostruct');
+    app.releases[0].notes = '<script>alert(1)</script> someone@example.com ' + 'A'.repeat(2200);
+    const beta = structuredClone(app.releases[0]);
+    const old = beta.version;
+    beta.version += '-rc.1';
+    beta.channel = 'beta';
+    beta.assets.forEach((a) => {
+      a.url = a.url.replaceAll(old, beta.version);
+    });
+    app.releases.push(beta);
+  });
+  const result = await verify(data);
+  const product = result.products.consolostruct;
+  assert.equal(product.release.channel, 'stable');
+  assert.ok(product.history.some((r) => r.channel === 'beta'));
+  assert.ok(product.history.every((r) => r.notes.length === 2000 && r.notesTruncated));
+  assert.ok(product.history.every((r) => !r.notes.includes('someone@example.com')));
+});

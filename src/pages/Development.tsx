@@ -206,6 +206,9 @@ export function Development() {
           <a className="button button-outline" href="#roadmap">
             Roadmap público
           </a>
+          <Link className="button button-outline" to="/releases">
+            Histórico de releases
+          </Link>
         </div>
       </section>
       <section className="development-sync" aria-label="Atualização dos dados">

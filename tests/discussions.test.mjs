@@ -98,7 +98,7 @@ const collect = (fetchImpl = api(), previous) =>
 
 test('collects bounded recent issue and PR details with separate conversation/review and public permalinks', async () => {
   const { snapshot, requests, cache } = await collect();
-  assert.equal(requests, 40); // Baseline 35 + 2 issue + 3 PR requests, only on the selected repo.
+  assert.equal(requests, 43); // Baseline 35 + 2 issue + 3 PR requests, only on the selected repo.
   const details = snapshot.repositories[0].discussions;
   assert.equal(details.length, 2);
   const pr = details.find((d) => d.kind === 'pull');
@@ -194,9 +194,12 @@ test('v4 migration is repeatable, preserves real PR evidence and does not fabric
   const first = await collect();
   const legacy = structuredClone(first.snapshot);
   legacy.schemaVersion = 4;
-  for (const repo of legacy.repositories) delete repo.discussions;
+  for (const repo of legacy.repositories) {
+    delete repo.discussions;
+    delete repo.releaseHistory;
+  }
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 6);
+  assert.equal(migrated.schemaVersion, 7);
   assert.doesNotThrow(() => validateGithubSnapshot(migrated));
   assert.deepEqual(migrated.repositories[0].lists.pulls, legacy.repositories[0].lists.pulls);
   assert.deepEqual(migrated.repositories[0].discussions, []);

@@ -22,6 +22,9 @@ import './armadurastruct.css';
 import './launcher.css';
 import './catalog.css';
 import './home.css';
+const Releases = React.lazy(() =>
+  import('./pages/Releases').then((module) => ({ default: module.Releases })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -38,6 +41,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="launcher" element={<Launcher />} />
               <Route path="docs" element={<Docs />} />
               <Route path="community" element={<Community />} />
+              <Route
+                path="releases"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="container page-hero" role="status">
+                        Carregando releases…
+                      </div>
+                    }
+                  >
+                    <Releases />
+                  </React.Suspense>
+                }
+              />
               <Route path={site.developmentPath} element={<Development />} />
               <Route path="*" element={<NotFound />} />
             </Route>

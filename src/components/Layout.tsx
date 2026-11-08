@@ -13,7 +13,12 @@ export function Layout() {
   const location = useLocation();
   useEffect(() => {
     if (location.hash) {
-      const id = decodeURIComponent(location.hash.slice(1));
+      let id = '';
+      try {
+        id = decodeURIComponent(location.hash.slice(1));
+      } catch {
+        /* Ignore malformed public fragments. */
+      }
       requestAnimationFrame(() =>
         document.getElementById(id)?.scrollIntoView({ behavior: 'instant' }),
       );
@@ -30,9 +35,11 @@ export function Layout() {
                 ? 'Documentação'
                 : location.pathname === '/community'
                   ? 'Comunidade'
-                  : location.pathname === site.developmentPath
-                    ? 'Central de desenvolvimento'
-                    : 'Página não encontrada'));
+                  : location.pathname === '/releases'
+                    ? 'Releases'
+                    : location.pathname === site.developmentPath
+                      ? 'Central de desenvolvimento'
+                      : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -141,6 +148,7 @@ export function Layout() {
               <span className="footer-heading">EXPLORE</span>
               <Link to="/docs">Documentação</Link>
               <Link to={site.developmentPath}>Central de desenvolvimento</Link>
+              <Link to="/releases">Releases e notas de versão</Link>
               <Link to="/docs#principios">Princípios</Link>
               <a href="/assets/openstruct-mark.svg" download>
                 Marca em SVG <ArrowUpRight size={13} />
@@ -157,6 +165,7 @@ export function Layout() {
               <Link to="/community">
                 Como contribuir <ArrowRight size={13} />
               </Link>
+              <Link to="/community#contribuidores">Contribuidores e créditos</Link>
             </div>
           </div>
           <div className="footer-bottom">

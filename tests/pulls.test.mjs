@@ -60,7 +60,7 @@ function api(override = () => null) {
 }
 test('collector exports four distinct PR states, public metadata and no issue duplication or CI fiction', async () => {
   const result = await collectGithub({ fetchImpl: api(), now });
-  assert.equal(result.requests, 35);
+  assert.equal(result.requests, 38);
   const repo = result.snapshot.repositories[0];
   assert.deepEqual(repo.lists.pulls.items.map(pullState), ['open', 'draft', 'closed', 'merged']);
   assert.equal(repo.lists.issues.items.length, 0);
@@ -156,7 +156,10 @@ test('304 reuses normalized PR evidence; failure retains stale public data and p
 test('legacy v3 open-only preview never becomes confirmed history for all PR states', async () => {
   const { snapshot } = await collectGithub({ fetchImpl: api(), now });
   snapshot.schemaVersion = 3;
-  for (const repo of snapshot.repositories) delete repo.discussions;
+  for (const repo of snapshot.repositories) {
+    delete repo.discussions;
+    delete repo.releaseHistory;
+  }
   for (const repo of snapshot.repositories)
     repo.lists.pulls.items = repo.lists.pulls.items
       .filter((item) => item.pull.state === 'open')
@@ -166,7 +169,7 @@ test('legacy v3 open-only preview never becomes confirmed history for all PR sta
   assert.equal(migrated.repositories[0].status, 'partial');
   const restored = await collectGithub({ previous: migrated, now, fetchImpl: api() });
   assert.equal(restored.snapshot.repositories[0].status, 'ready');
-  assert.equal(migrated.schemaVersion, 6);
+  assert.equal(migrated.schemaVersion, 7);
   assert.equal(migrated.repositories[0].lists.pulls.state, 'unavailable');
   assert.equal(
     selectPulls(migrated, developmentSources, 'all', now()).coverage.some((row) => row.known),
@@ -190,7 +193,7 @@ test('PR pagination remains bounded at two pages per repository and exposes trun
       );
     }),
   });
-  assert.equal(result.requests, 40);
+  assert.equal(result.requests, 43);
   assert.equal(result.snapshot.repositories[0].lists.pulls.items.length, 60);
   assert.equal(result.snapshot.repositories[0].lists.pulls.truncated, true);
 });

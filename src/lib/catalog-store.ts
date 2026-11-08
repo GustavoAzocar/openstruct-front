@@ -16,6 +16,7 @@ type CatalogFailure = 'offline' | 'invalid' | 'unsupported';
 export type ProductAvailability = {
   status: 'unknown' | 'ready' | 'unavailable';
   release?: CatalogRelease;
+  history?: CatalogRelease[];
   checkedAt?: string;
   catalogPublishedAt?: string;
   stale: boolean;
@@ -91,6 +92,7 @@ export function createCatalogStore(options: StoreOptions) {
         products[id] = {
           status: incoming.status,
           release: incoming.status === 'ready' ? incoming.release : undefined,
+          history: incoming.history,
           checkedAt: entry.checkedAt,
           catalogPublishedAt: catalog.publishedAt,
           stale,

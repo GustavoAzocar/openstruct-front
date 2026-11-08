@@ -5,6 +5,7 @@ import { Mark } from '../components/Brand';
 import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
 import { FirstContributions } from '../components/FirstContributions';
+import { Contributors } from '../components/Contributors';
 
 export function Community() {
   const { community } = useExperience();
@@ -80,6 +81,7 @@ export function Community() {
         ))}
       </section>
       <PublicGithubStatus />
+      <Contributors />
       <section className="community-note">
         <span className="eyebrow">NOSSO PONTO EM COMUM</span>
         <h2>

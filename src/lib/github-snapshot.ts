@@ -1,3 +1,5 @@
+import { emptyReleaseHistory, validateReleaseHistory } from './release-history-contract.ts';
+import type { ReleaseHistory } from './release-history-contract.ts';
 import { DISCUSSION_LIMIT, validateDiscussion } from './discussion-contract.ts';
 import type { PublicDiscussion } from './discussion-contract.ts';
 /** Public activity is independent of the signed installer catalog. */
@@ -16,7 +18,7 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=6';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=7';
 export type MilestoneMetadata = {
   state: 'open' | 'closed';
   openItems: number;
@@ -92,11 +94,12 @@ export type RepositorySnapshot = {
   } | null;
   lists: Record<ActivityKind, ActivityList>;
   release: ReleaseSnapshot;
+  releaseHistory: ReleaseHistory;
   issueDetails: Record<IssueState, IssueCollection>;
   discussions: PublicDiscussion[];
 };
 export type GithubSnapshot = {
-  schemaVersion: 6;
+  schemaVersion: 7;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -118,6 +121,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
     problem: 'visibility',
     summary: null,
     release: emptyRelease(),
+    releaseHistory: emptyReleaseHistory(),
     discussions: [],
     issueDetails: { open: emptyIssueCollection(), closed: emptyIssueCollection() },
     lists: {
@@ -130,7 +134,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 6,
+    schemaVersion: 7,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -174,7 +178,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3, 4, 5, 6].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4, 5, 6, 7].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -193,6 +197,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'summary',
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
+      ...(root.schemaVersion === 7 ? ['releaseHistory'] : []),
       ...((root.schemaVersion as number) >= 5 ? ['discussions'] : []),
       ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
@@ -276,6 +281,12 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           throw new Error('Invalid release source');
       }
     }
+    if (root.schemaVersion === 7)
+      validateReleaseHistory(
+        repo.releaseHistory,
+        String(repo.repository),
+        repo.visibility === 'public',
+      );
     if ((root.schemaVersion as number) >= 5) {
       if (
         !Array.isArray(repo.discussions) ||
@@ -388,7 +399,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
           'url',
           'updatedAt',
           'count',
-          ...(kind === 'milestones' && root.schemaVersion === 6 ? ['milestone'] : []),
+          ...(kind === 'milestones' && (root.schemaVersion as number) >= 6 ? ['milestone'] : []),
           ...(kind === 'pulls' &&
           rawItem &&
           typeof rawItem === 'object' &&
@@ -396,7 +407,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
             ? ['pull']
             : []),
         ]);
-        if (kind === 'milestones' && root.schemaVersion === 6) {
+        if (kind === 'milestones' && (root.schemaVersion as number) >= 6) {
           const milestone = object(item.milestone, [
             'state',
             'openItems',
@@ -477,19 +488,23 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     }
   }
   const validated = value as GithubSnapshot;
-  if (root.schemaVersion === 6) return validated;
+  if (root.schemaVersion === 7) return validated;
   // Earlier milestones were open-only and lacked closed counters/state. Unknown is not zero.
   return {
     ...validated,
-    schemaVersion: 6,
+    schemaVersion: 7,
     repositories: validated.repositories.map((repo) => ({
       ...repo,
       status: repo.status === 'ready' ? 'partial' : repo.status,
       discussions: (root.schemaVersion as number) >= 5 ? repo.discussions : [],
       release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
+      releaseHistory: emptyReleaseHistory(),
       lists: {
         ...repo.lists,
-        milestones: emptyRepository(repo.repository).lists.milestones,
+        milestones:
+          root.schemaVersion === 6
+            ? repo.lists.milestones
+            : emptyRepository(repo.repository).lists.milestones,
         ...((root.schemaVersion as number) < 4
           ? { pulls: emptyRepository(repo.repository).lists.pulls }
           : {}),

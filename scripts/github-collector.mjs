@@ -1,3 +1,5 @@
+import { normalizeReleaseHistory } from './github-release-history.mjs';
+import { RELEASE_PRODUCTS, validateReleaseHistory } from '../src/lib/release-history-contract.ts';
 import { collectDiscussions } from './github-discussions.mjs';
 import {
   GITHUB_REPOSITORIES,
@@ -14,7 +16,8 @@ import {
 
 const API = 'https://api.github.com/repos/';
 const RESPONSE_LIMIT = 2_000_000;
-const REQUEST_LIMIT = GITHUB_REPOSITORIES.length * (2 + (ACTIVITY_KINDS.length + 1) * MAX_PAGES);
+const REQUEST_LIMIT =
+  GITHUB_REPOSITORIES.length * (2 + (ACTIVITY_KINDS.length + 1) * MAX_PAGES) + 6;
 const safeText = (value, max) =>
   String(value ?? '')
     .replace(/[\u0000-\u001f\u007f]/g, ' ')
@@ -358,7 +361,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 6,
+            schemaVersion: 7,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -409,7 +412,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 6,
+            schemaVersion: 7,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -483,7 +486,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 6,
+          schemaVersion: 7,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -500,6 +503,40 @@ export async function collectGithub({
         entry.status = 'partial';
         entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
       }
+      if (Object.values(RELEASE_PRODUCTS).some((policy) => policy.releaseRepo === repository)) {
+        try {
+          let url = prefix + '/releases?per_page=' + PAGE_SIZE + '&page=1';
+          const items = [];
+          for (let page = 0; page < MAX_PAGES; page++) {
+            const response = await request(url, pages[url]);
+            const normalized =
+              response.body === undefined
+                ? response.items
+                : normalizeReleaseHistory(response.body, repository);
+            pages[url] = { items: normalized, etag: response.etag, next: response.next };
+            items.push(...normalized);
+            if (!response.next) {
+              url = '';
+              break;
+            }
+            url = nextPage('<' + response.next + '>; rel="next"', url);
+          }
+          entry.releaseHistory = {
+            state: 'fresh',
+            checkedAt: at,
+            truncated: Boolean(url),
+            items: [...new Map(items.map((item) => [item.url, item])).values()],
+          };
+          validateReleaseHistory(entry.releaseHistory, repository, true);
+        } catch (error) {
+          if (old?.visibility === 'public' && old.releaseHistory.checkedAt)
+            entry.releaseHistory = { ...old.releaseHistory, state: 'stale' };
+          for (const key of Object.keys(pages))
+            if (key.startsWith(prefix + '/releases?')) delete pages[key];
+          entry.status = 'partial';
+          entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
+        }
+      }
       if (includeDiscussions) entry.discussions = await collectDiscussions(entry, request, at);
       if (entry.status === 'ready') entry.lastSuccessAt = at;
     } catch (error) {
@@ -512,17 +549,26 @@ export async function collectGithub({
   // Withdraw detail text first if the combined snapshot reaches the public size cap.
   while (
     Buffer.byteLength(
-      JSON.stringify({ schemaVersion: 6, generatedAt: at, retryAt, repositories }),
+      JSON.stringify({ schemaVersion: 7, generatedAt: at, retryAt, repositories }),
     ) > 1_000_000
   ) {
     const repo = [...repositories].reverse().find((repo) => repo.discussions.length);
-    if (!repo) break;
-    repo.discussions.pop();
-    repo.status = 'partial';
-    repo.problem = 'request';
+    if (repo) {
+      repo.discussions.pop();
+      repo.status = 'partial';
+      repo.problem = 'request';
+    } else {
+      const history = [...repositories]
+        .reverse()
+        .find((r) => r.releaseHistory.items.some((item) => item.notes.length));
+      const item = history?.releaseHistory.items.find((item) => item.notes.length);
+      if (!item) break;
+      item.notes = '';
+      item.notesTruncated = true;
+    }
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 6,
+    schemaVersion: 7,
     generatedAt: at,
     retryAt,
     repositories,

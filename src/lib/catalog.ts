@@ -20,10 +20,12 @@ export type CatalogRelease = {
   publishedAt: string;
   releaseUrl: string;
   assets: CatalogAsset[];
+  notes?: string;
+  notesTruncated?: boolean;
 };
 export type CatalogProduct =
-  | { status: 'ready'; release: CatalogRelease }
-  | { status: 'unavailable' }
+  | { status: 'ready'; release: CatalogRelease; history: CatalogRelease[] }
+  | { status: 'unavailable'; history: CatalogRelease[] }
   | { status: 'invalid'; reason: 'missing' | 'invalid' };
 export type VerifiedCatalog = {
   publishedAt: string;
@@ -185,12 +187,19 @@ async function readProduct(
       publishedAt,
       releaseUrl,
       assets,
+      notes: String(release.notes)
+        .replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/g, ' ')
+        .replace(/[\w.+-]+@[\w.-]+\.[a-z]{2,}/gi, '[email removido]')
+        .slice(0, 2000),
+      notesTruncated: String(release.notes).length > 2000,
     });
   }
   // Stable releases are ordered by SemVer, not API order or the hub's latest release.
   const candidates = releases.filter((release) => release.channel === channel);
   candidates.sort((a, b) => compareVersions(b.version, a.version));
-  return candidates[0] ? { status: 'ready', release: candidates[0] } : { status: 'unavailable' };
+  return candidates[0]
+    ? { status: 'ready', release: candidates[0], history: releases }
+    : { status: 'unavailable', history: releases };
 }
 
 export function compareVersions(a: string, b: string): number {

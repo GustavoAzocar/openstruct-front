@@ -202,10 +202,11 @@ test('legacy open issues migrate without inventing labels, authors, comments or 
     for (const entry of snapshot.repositories) {
       delete entry.issueDetails;
       delete entry.discussions;
+      delete entry.releaseHistory;
       if (schemaVersion === 1) delete entry.release;
     }
     const migrated = validateGithubSnapshot(snapshot);
-    assert.equal(migrated.schemaVersion, 6);
+    assert.equal(migrated.schemaVersion, 7);
     const item = migrated.repositories[0].issueDetails.open.items[0];
     assert.equal(item.state, 'open');
     assert.equal(item.number, 3);
@@ -293,7 +294,7 @@ function api(overrides = () => null) {
 
 test('collector exports separate state slices and metadata, excludes every pull_request key, and preserves open summary', async () => {
   const result = await collectGithub({ now: () => time, fetchImpl: api() });
-  assert.equal(result.requests, 35);
+  assert.equal(result.requests, 38);
   const repo = result.snapshot.repositories[0];
   assert.equal(repo.issueDetails.open.items.length, 1);
   assert.equal(repo.issueDetails.closed.items.length, 1);
@@ -350,7 +351,7 @@ test('each issue state follows its own bounded pagination; unsafe labels are unk
       });
     }),
   });
-  assert.equal(result.requests, 45);
+  assert.equal(result.requests, 48);
   assert.equal(result.snapshot.repositories[0].issueDetails.open.truncated, true);
   assert.equal(result.snapshot.repositories[0].issueDetails.closed.truncated, true);
   assert.equal(result.snapshot.repositories[0].issueDetails.closed.items.length, 2);

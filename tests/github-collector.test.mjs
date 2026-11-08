@@ -62,7 +62,7 @@ function fixture(overrides = () => null) {
 
 test('exports only selected public fields, redacts emails and rejects unknown contract keys', async () => {
   const { snapshot, requests } = await collectGithub({ fetchImpl: fixture(), now });
-  assert.equal(requests, 35);
+  assert.equal(requests, 38);
   assert.equal(snapshot.repositories.length, 5);
   assert.ok(snapshot.repositories.every((entry) => entry.status === 'ready'));
   const json = JSON.stringify(snapshot);
@@ -115,7 +115,7 @@ test('follows Link pagination, filters PRs out of issues and declares a bounded 
       });
     }),
   });
-  assert.equal(result.requests, 40);
+  assert.equal(result.requests, 43);
   assert.deepEqual(
     result.snapshot.repositories[0].lists.issues.items.map((item) => item.id),
     ['1', '2'],
@@ -304,7 +304,7 @@ test('collects only public stable releases, including conditional 304 and confir
         : null,
     ),
   });
-  assert.equal(first.snapshot.schemaVersion, 6);
+  assert.equal(first.snapshot.schemaVersion, 7);
   assert.equal(first.snapshot.repositories[0].release.item.tag, 'v1.2.3');
   assert.ok(!JSON.stringify(first.snapshot).includes('not exported'));
   const second = await collectGithub({
@@ -438,4 +438,86 @@ test('milestones collect both states, preserve exact counters/dates and reuse no
   assert.equal(failed.snapshot.repositories[0].lists.milestones.state, 'stale');
   assert.deepEqual(failed.snapshot.repositories[0].lists.milestones.items, list.items);
   assert.equal(failed.snapshot.repositories[0].issueDetails.open.state, 'fresh');
+});
+
+test('bounded release history uses ETag pages, filters draft text, retains partial sources and withdraws removed releases', async () => {
+  const target = 'ricardocorsini/openstruct-catalog';
+  const endpoint = (url) => url.includes(target + '/releases?');
+  const first = await collectGithub({
+    now,
+    fetchImpl: fixture((url) => {
+      if (!endpoint(url)) return null;
+      const page = Number(new URL(url).searchParams.get('page'));
+      const next = new URL(url);
+      next.searchParams.set('page', String(page + 1));
+      const tag = 'launcher-v0.2.' + page;
+      return response(
+        [
+          { draft: true, tag_name: 'armadurastruct-v9.0.0', body: 'draft secret' },
+          {
+            draft: false,
+            prerelease: page === 2,
+            tag_name: tag,
+            name: 'Launcher',
+            published_at: '2026-11-07T15:00:00Z',
+            html_url: 'https://github.com/' + target + '/releases/tag/' + tag,
+            body: 'Notas públicas',
+          },
+        ],
+        200,
+        { etag: '"history-' + page + '"', link: '<' + next.href + '>; rel="next"' },
+      );
+    }),
+  });
+  const source = first.snapshot.repositories.at(-1).releaseHistory;
+  assert.equal(source.items.length, 2);
+  assert.equal(source.truncated, true);
+  assert.ok(!JSON.stringify(first.cache).includes('draft secret'));
+  const second = await collectGithub({
+    now,
+    previous: first.snapshot,
+    cache: first.cache,
+    fetchImpl: fixture((url, options) => {
+      if (!endpoint(url)) return null;
+      assert.ok(options.headers['If-None-Match']);
+      return response(null, 304);
+    }),
+  });
+  assert.deepEqual(second.snapshot.repositories.at(-1).releaseHistory, source);
+  const failed = await collectGithub({
+    now,
+    previous: first.snapshot,
+    fetchImpl: fixture((url) => (endpoint(url) ? response({}, 500) : null)),
+  });
+  assert.equal(failed.snapshot.repositories.at(-1).releaseHistory.state, 'stale');
+  assert.equal(failed.snapshot.repositories[1].releaseHistory.state, 'fresh');
+  const cleared = await collectGithub({ now, previous: first.snapshot, fetchImpl: fixture() });
+  assert.equal(cleared.snapshot.repositories.at(-1).releaseHistory.items.length, 0);
+  const hidden = await collectGithub({
+    now,
+    previous: first.snapshot,
+    fetchImpl: fixture((url) =>
+      url === 'https://api.github.com/repos/' + target
+        ? response(metadata(target, { private: true, visibility: 'private' }))
+        : null,
+    ),
+  });
+  assert.equal(hidden.snapshot.repositories.at(-1).releaseHistory.state, 'unavailable');
+  assert.equal(hidden.snapshot.repositories.at(-1).releaseHistory.items.length, 0);
+});
+
+test('v6 migration preserves milestone and discussion evidence while history remains unknown', async () => {
+  const first = await collectGithub({ now, fetchImpl: fixture() });
+  const legacy = structuredClone(first.snapshot);
+  legacy.schemaVersion = 6;
+  for (const repo of legacy.repositories) delete repo.releaseHistory;
+  const migrated = validateGithubSnapshot(legacy);
+  assert.equal(migrated.schemaVersion, 7);
+  assert.deepEqual(
+    migrated.repositories[0].lists.milestones,
+    legacy.repositories[0].lists.milestones,
+  );
+  assert.deepEqual(migrated.repositories[0].discussions, legacy.repositories[0].discussions);
+  assert.equal(migrated.repositories[0].releaseHistory.state, 'unavailable');
+  assert.doesNotThrow(() => validateGithubSnapshot(migrated));
 });

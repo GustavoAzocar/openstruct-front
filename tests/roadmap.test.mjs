@@ -117,9 +117,10 @@ test('v6 contract rejects invalid milestone counters, dates, foreign sources and
 test('legacy open-only milestones migrate to unknown; do not imply a complete roadmap', () => {
   const legacy = fixture();
   legacy.schemaVersion = 5;
+  for (const repo of legacy.repositories) delete repo.releaseHistory;
   delete legacy.repositories[0].lists.milestones.items[0].milestone;
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 6);
+  assert.equal(migrated.schemaVersion, 7);
   assert.equal(migrated.repositories[0].lists.milestones.state, 'unavailable');
   assert.equal(migrated.repositories[0].lists.milestones.items.length, 0);
   assert.equal(legacy.repositories[0].lists.milestones.items.length, 1);

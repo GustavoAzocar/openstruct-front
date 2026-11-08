@@ -35,7 +35,7 @@ Cada repositório registra visibilidade confirmada, horário, última coleta tot
 | Lista          | Seleção e ordem                                    | Limite e interpretação                                                                                               |
 | -------------- | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
 | Issues         | Abertas e fechadas, separadamente, por atualização | Até 2 páginas de 30 por estado; PRs são removidos. O resumo aberto é derivado da mesma coleta.                       |
-| PRs            | Todos os estados, por atualização                  | Até 60 no conjunto; distingue aberto, rascunho, mesclado e fechado sem merge.                                                                        |
+| PRs            | Todos os estados, por atualização                  | Até 60 no conjunto; distingue aberto, rascunho, mesclado e fechado sem merge.                                        |
 | Milestones     | Abertos e fechados, prazo crescente                | Até 60; v6 preserva estado e contadores de itens vinculados (issues + PRs), previsão e fechamento.                   |
 | Contribuidores | Ordem do endpoint GitHub                           | Até 60 usuários identificados; `count` é contributions. Exclui anônimos/bots; não é censo de todas as contribuições. |
 
@@ -117,3 +117,11 @@ O contrato v6 amplia os milestones para `state=all`, com contadores e datas ofic
 Contratos anteriores são migrados sem inferir estados ou progresso. A central
 reutiliza o snapshot e mostra planejamento separado do catálogo de instalação.
 Consulte [regras, fontes editoriais e manutenção](ROADMAP-PUBLICO.md).
+
+## Créditos e histórico (OSF-24/25)
+
+A Comunidade deduplica os contribuidores já coletados por login, sem ranking ou
+coleta de perfis: [regras de créditos](CONTRIBUIDORES.md). O snapshot v7 acrescenta
+histórico público de releases, excluindo drafts antes do cache e preservando as
+fontes por produto. São até seis GETs adicionais, sem mudar a lista de repositórios
+públicos ou as permissões: [contrato, confiança e cobertura](RELEASES-PUBLICAS.md).

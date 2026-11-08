@@ -305,6 +305,11 @@ o histórico restaura a seleção. Planejamento não recebe pacote ou plataforma
 
 ## Dados públicos do GitHub
 
+Os [créditos da Comunidade](https://www.openstruct.com.br/community#contribuidores)
+reúnem logins públicos, sem ranking; veja [critérios de atribuição](docs/CONTRIBUIDORES.md).
+O [histórico de releases](https://www.openstruct.com.br/releases) separa aplicativos
+e Launcher, com notas e canais das fontes oficiais; veja [contrato e limites](docs/RELEASES-PUBLICAS.md).
+
 O **[roadmap público](https://www.openstruct.com.br/development#roadmap)** combina
 milestones reais com trechos revisados de documentos públicos, separando planejamento
 e instalação. Veja [fontes, regras de estado e atualização](docs/ROADMAP-PUBLICO.md).
