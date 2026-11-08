@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
 import { currentAppNames, getCurrentApp } from '../lib/apps';
 import { ProductCatalogMeta } from '../components/CatalogAvailability';
+import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
@@ -78,10 +79,10 @@ const articles = [
   {
     id: 'contribuir',
     n: '09',
-    title: 'Como contribuir',
-    body: 'Descreva o contexto da sua ideia ou problema, o comportamento esperado e, quando possível, um exemplo que ajude a reproduzir a situação. Sugestões sobre clareza, documentação, acessibilidade e fluxo de trabalho também são contribuições importantes.',
-    action: 'Veja as formas de participar',
-    to: '/community',
+    title: 'Como colaborar: manual passo a passo',
+    body: 'Escolha o projeto certo e sua forma de ajudar. O manual conduz uma primeira colaboração sem código e uma alteração no frontend até a revisão, com exemplos, comandos, resultados esperados e cuidados antes de compartilhar. Também apresenta os guias próprios dos aplicativos.',
+    action: 'Como colaborar',
+    to: CONTRIBUTION_MANUAL_PATH,
   },
 ];
 

@@ -6,6 +6,7 @@ import { useExperience } from '../components/Experience';
 import { site } from '../lib/config';
 import { FirstContributions } from '../components/FirstContributions';
 import { Contributors } from '../components/Contributors';
+import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 
 export function Community() {
   const { community } = useExperience();
@@ -23,10 +24,13 @@ export function Community() {
           construir o próximo capítulo.
         </p>
         <div className="button-row">
+          <Link to={CONTRIBUTION_MANUAL_PATH} className="button button-primary">
+            Como colaborar <ArrowRight size={17} />
+          </Link>
           <a href="#para-comecar" className="button button-outline">
             Para começar <ArrowRight size={17} />
           </a>
-          <Link to={site.developmentPath} className="button button-primary">
+          <Link to={site.developmentPath} className="button button-outline">
             Acompanhar desenvolvimento <ArrowRight size={17} />
           </Link>
           <Link to={site.developmentPath + '#roadmap'} className="button button-outline">

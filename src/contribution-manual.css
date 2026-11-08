@@ -1,0 +1,241 @@
+.contribution-manual {
+  padding-bottom: 80px;
+}
+.contribution-manual .page-hero {
+  padding-bottom: 42px;
+}
+.manual-meta,
+.manual-note {
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+}
+.manual-public-notice {
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  padding: 22px 26px;
+  margin-bottom: 48px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.manual-public-notice p {
+  margin-bottom: 0;
+}
+.manual-layout {
+  display: grid;
+  grid-template-columns: 245px minmax(0, 1fr);
+  gap: 44px;
+  align-items: start;
+}
+.manual-toc {
+  position: sticky;
+  top: 110px;
+  display: grid;
+  gap: 16px;
+  font-size: 12px;
+  line-height: 1.7;
+}
+.manual-toc a {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.manual-toc a:hover {
+  color: var(--accent);
+}
+.manual-body {
+  min-width: 0;
+}
+.manual-body section {
+  scroll-margin-top: 110px;
+  margin-bottom: 64px;
+}
+.manual-body h2 {
+  font-size: clamp(26px, 3vw, 35px);
+  line-height: 1.4;
+  margin: 0 0 24px;
+}
+.manual-body h3 {
+  font-size: 19px;
+  margin: 24px 0 14px;
+  line-height: 1.5;
+}
+.manual-body p,
+.manual-body li {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.manual-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  overflow-wrap: anywhere;
+}
+.manual-select {
+  display: grid;
+  gap: 12px;
+  margin: 28px 0;
+  font-size: 14px;
+}
+.manual-select select {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  padding: 13px;
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+}
+.manual-destination {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 7px;
+  padding: 20px;
+  margin-bottom: 30px;
+  overflow-wrap: anywhere;
+}
+.manual-destination h3 {
+  margin-top: 0;
+}
+.manual-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 22px;
+  margin: 24px 0;
+  font-size: 13px;
+  line-height: 1.8;
+}
+.manual-glossary,
+.manual-pr-base {
+  padding: 20px;
+  border-block: 1px solid var(--line);
+  margin: 24px 0;
+}
+.manual-glossary > div,
+.manual-pr-base > div {
+  margin: 14px 0;
+}
+.manual-body dt {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.manual-body dd {
+  margin-left: 0;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+.manual-glossary dt {
+  font-weight: 700;
+  color: var(--ink);
+}
+.manual-paths {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+.manual-paths > div {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: var(--surface);
+}
+.manual-paths h3 {
+  margin-top: 0;
+}
+.manual-paths dd {
+  margin-bottom: 18px;
+}
+.manual-steps {
+  padding-left: 24px;
+}
+.manual-steps > li {
+  padding-left: 8px;
+  margin: 30px 0;
+}
+.manual-steps > li::marker {
+  font:
+    13px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+}
+.manual-result {
+  border-left: 2px solid var(--line);
+  padding-left: 16px;
+  color: var(--muted);
+  font-size: 12px !important;
+}
+.manual-code {
+  max-width: 100%;
+  margin: 22px 0;
+}
+.manual-code > p {
+  font-size: 12px;
+  font-weight: 600;
+}
+.manual-code pre {
+  margin: 0;
+  padding: 18px;
+  overflow-x: auto;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  font:
+    12px/1.9 'IBM Plex Mono',
+    monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.manual-body code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+}
+.manual-checklist {
+  padding-left: 20px;
+}
+.manual-checklist li {
+  padding-left: 5px;
+  margin: 16px 0;
+}
+.manual-body details {
+  border-bottom: 1px solid var(--line);
+  padding: 18px 0;
+  font-size: 14px;
+}
+.manual-body details summary {
+  min-height: 40px;
+  cursor: pointer;
+  font-weight: 600;
+}
+.manual-pr-base {
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+  .manual-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 32px;
+  }
+  .manual-toc {
+    position: static;
+  }
+}
+@media (max-width: 640px) {
+  .manual-paths {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .manual-public-notice {
+    padding: 20px;
+  }
+  .manual-steps {
+    padding-left: 18px;
+  }
+  .manual-steps > li {
+    padding-left: 0;
+  }
+  .manual-body details summary {
+    min-height: 44px;
+  }
+}

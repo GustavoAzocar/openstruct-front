@@ -5,6 +5,7 @@ import { Brand, Mark } from './Brand';
 import { useExperience } from './Experience';
 import { site } from '../lib/config';
 import { currentApps } from '../lib/apps';
+import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -35,11 +36,13 @@ export function Layout() {
                 ? 'Documentação'
                 : location.pathname === '/community'
                   ? 'Comunidade'
-                  : location.pathname === '/releases'
-                    ? 'Releases'
-                    : location.pathname === site.developmentPath
-                      ? 'Central de desenvolvimento'
-                      : 'Página não encontrada'));
+                  : location.pathname === CONTRIBUTION_MANUAL_PATH
+                    ? 'Como colaborar'
+                    : location.pathname === '/releases'
+                      ? 'Releases'
+                      : location.pathname === site.developmentPath
+                        ? 'Central de desenvolvimento'
+                        : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -162,8 +165,8 @@ export function Layout() {
               <button onClick={community}>
                 Discord <ArrowUpRight size={13} />
               </button>
-              <Link to="/community">
-                Como contribuir <ArrowRight size={13} />
+              <Link to={CONTRIBUTION_MANUAL_PATH}>
+                Como colaborar <ArrowRight size={13} />
               </Link>
               <Link to="/community#contribuidores">Contribuidores e créditos</Link>
             </div>

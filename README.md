@@ -25,17 +25,18 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 
 ## Páginas
 
-| Endereço               | Conteúdo                                                                            |
-| ---------------------- | ----------------------------------------------------------------------------------- |
-| `/`                    | Apresentação, ArmaduraStruct em destaque, aplicativos, princípios e FAQ             |
-| `/apps`                | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
-| `/apps/consolostruct`  | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
-| `/apps/molastruct`     | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
-| `/apps/armadurastruct` | ArmaduraStruct 0.2.0: fluxo CAD, formatos, saídas, licença e limites                |
-| `/launcher`            | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
-| `/docs`                | Guia inicial com busca, unidades, limitações da prévia e participação               |
-| `/community`           | Formas de contribuir e acompanhar o projeto                                         |
-| Outros endereços       | Página 404 com navegação de retorno                                                 |
+| Endereço                    | Conteúdo                                                                            |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `/`                         | Apresentação, ArmaduraStruct em destaque, aplicativos, princípios e FAQ             |
+| `/apps`                     | Catálogo com busca e filtros; futuros aplicativos identificados como planejamento   |
+| `/apps/consolostruct`       | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
+| `/apps/molastruct`          | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
+| `/apps/armadurastruct`      | ArmaduraStruct 0.2.0: fluxo CAD, formatos, saídas, licença e limites                |
+| `/launcher`                 | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
+| `/docs`                     | Guia inicial com busca, unidades, limitações da prévia e participação               |
+| `/community`                | Formas de contribuir e acompanhar o projeto                                         |
+| `/community/como-colaborar` | Manual público passo a passo, com percursos sem código e de código no frontend      |
+| Outros endereços            | Página 404 com navegação de retorno                                                 |
 
 ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
 
@@ -285,7 +286,12 @@ O tema é persistido no navegador, com preferência clara na primeira visita. A 
 
 ## Contribuição
 
-Abra uma issue descrevendo o contexto, o comportamento esperado e, quando possível, passos para reproduzir. Para mudanças de código, execute `npm run build` antes de abrir uma pull request. O workflow de CI repete o build em pushes e pull requests.
+Siga o **[manual de colaboração passo a passo](https://www.openstruct.com.br/community/como-colaborar)**.
+Ele explica como escolher o repositório, colaborar sem programar ou preparar uma pequena
+alteração no frontend e acompanhar sua revisão. Os aplicativos mantêm seus próprios guias.
+O ambiente do site está em [Desenvolvimento](#desenvolvimento); o percurso completo,
+comandos e checklists são mantidos no manual, evitando cópias divergentes.
+Veja [fontes, dependências e manutenção do manual](docs/MANUAL-COLABORACAO.md).
 
 Licença MIT. As fontes mantêm suas próprias licenças OFL.
 

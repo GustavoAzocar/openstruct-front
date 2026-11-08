@@ -4,6 +4,7 @@ import { useGithubActivity } from './useGithubActivity';
 import { contributionPolicies, selectFirstContributions } from '../lib/contributions';
 import { developmentSources, githubDate } from '../lib/development';
 import { site } from '../lib/config';
+import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import './first-contributions.css';
 
 export function FirstContributions() {
@@ -27,6 +28,9 @@ export function FirstContributions() {
         na issue e configuradas para aquele repositório, como <code>good first issue</code> e{' '}
         <code>help wanted</code>. Elas não são uma estimativa automática de dificuldade.
       </p>
+      <Link className="text-link" to={CONTRIBUTION_MANUAL_PATH}>
+        Como colaborar: siga o manual passo a passo <ArrowRight size={16} />
+      </Link>
       <div className="first-contributions-status">
         <p role="status">
           {loading
@@ -133,6 +137,9 @@ export function FirstContributions() {
               <a className="text-link" href={policy.guide.url} target="_blank" rel="noreferrer">
                 {policy.guide.label} <ArrowUpRight size={13} />
               </a>
+              <Link className="text-link" to={CONTRIBUTION_MANUAL_PATH + '?repo=' + source.slug}>
+                Primeiros passos neste projeto →
+              </Link>
               <nav aria-label={`Caminhos para contribuir com ${source.name}`}>
                 <a href={policy.documentation} target="_blank" rel="noreferrer">
                   Revisar documentação ↗

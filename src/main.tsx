@@ -25,6 +25,9 @@ import './home.css';
 const Releases = React.lazy(() =>
   import('./pages/Releases').then((module) => ({ default: module.Releases })),
 );
+const ContributionManual = React.lazy(() =>
+  import('./pages/ContributionManual').then((module) => ({ default: module.ContributionManual })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -41,6 +44,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path="launcher" element={<Launcher />} />
               <Route path="docs" element={<Docs />} />
               <Route path="community" element={<Community />} />
+              <Route
+                path="community/como-colaborar"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="container page-hero" role="status">
+                        Carregando manual…
+                      </div>
+                    }
+                  >
+                    <ContributionManual />
+                  </React.Suspense>
+                }
+              />
               <Route
                 path="releases"
                 element={
