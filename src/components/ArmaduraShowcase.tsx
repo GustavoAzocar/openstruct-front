@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { ArrowUpRight } from 'lucide-react';
 import { getCurrentApp } from '../lib/apps';
-import { armaduraScreenshot as capture } from '../lib/product-media';
+import { armaduraHomeScreenshot as capture } from '../lib/product-media';
 import { ProductCatalogMeta } from './CatalogAvailability';
 
 const app = getCurrentApp(capture.appId);
@@ -23,10 +23,12 @@ export function ArmaduraShowcase() {
           AO QUADRO DE AÇO
         </span>
       </div>
-      <Link
+      <a
         className="arm-home-capture-link"
-        to={`${app.route}#editor`}
-        aria-label={`Conhecer o ${app.name} e ver a captura completa do editor`}
+        href={capture.src}
+        target="_blank"
+        rel="noreferrer"
+        aria-label={`Ampliar captura do ${app.name} ${capture.version} em uma nova aba`}
       >
         <img
           src={capture.src}
@@ -37,12 +39,12 @@ export function ArmaduraShowcase() {
           loading="eager"
           decoding="async"
         />
-      </Link>
+      </a>
       <figcaption>
         <div className="arm-home-capture-source">
           <span>CAPTURA REAL · v{capture.version}</span>
-          <a href={capture.source.url} target="_blank" rel="noreferrer">
-            Ver fonte <ArrowUpRight size={12} />
+          <a href={capture.src} target="_blank" rel="noreferrer">
+            Ampliar captura <ArrowUpRight size={12} />
           </a>
         </div>
         <ProductCatalogMeta app={app} />
