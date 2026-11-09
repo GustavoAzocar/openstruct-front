@@ -1,3 +1,4 @@
+import { Contributors } from '../components/Contributors';
 import { Link } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -448,6 +449,7 @@ export function Consolo() {
           </Link>
         </div>
       </section>
+      <Contributors repository="ricardocorsini/consolo-struct" />
     </>
   );
 }

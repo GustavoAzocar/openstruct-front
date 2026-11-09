@@ -1,3 +1,4 @@
+import { Contributors } from '../components/Contributors';
 import molaMedia from '../lib/mola-media.json';
 import { CaptureGallery } from '../components/CaptureGallery';
 import { Link } from 'react-router-dom';
@@ -586,6 +587,7 @@ export function Mola() {
           </Link>
         </div>
       </section>
+      <Contributors repository="ricardocorsini/mola-struct" />
     </>
   );
 }

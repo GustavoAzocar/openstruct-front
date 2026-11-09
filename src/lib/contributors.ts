@@ -17,6 +17,9 @@ const knownBots = new Set(['dependabot', 'github-actions', 'renovate']);
 export function isPersonLogin(login: string) {
   return loginPattern.test(login) && !knownBots.has(login.toLowerCase());
 }
+export function githubAvatarUrl(login: string) {
+  return isPersonLogin(login) ? 'https://github.com/' + login.toLowerCase() + '.png?size=96' : null;
+}
 export function validateEditorialCredits(credits: EditorialCredit[]) {
   const seen = new Set<string>();
   if (credits.length > 100) throw new Error('Too many editorial credits');
@@ -48,6 +51,7 @@ export function contributorsView(
   now: number,
   offline = false,
   credits = editorialCredits,
+  sources = developmentSources,
 ) {
   validateEditorialCredits(credits);
   const people = new Map<
@@ -74,7 +78,7 @@ export function contributorsView(
       });
     return people.get(key)!;
   }
-  const coverage = developmentSources.map((source) => {
+  const coverage = sources.map((source) => {
     const repo = snapshot?.repositories.find(
       (r) => r.repository === source.repository && r.visibility === 'public',
     );
@@ -103,7 +107,9 @@ export function contributorsView(
       }
     return { source, state, checkedAt: list?.checkedAt, truncated: list?.truncated ?? false };
   });
-  for (const credit of credits) person(credit.login).credits.push(credit);
+  for (const credit of credits)
+    if (sources.some((source) => source.repository === credit.repository))
+      person(credit.login).credits.push(credit);
   return {
     people: [...people.values()].sort((a, b) => a.login.localeCompare(b.login, 'en')),
     coverage,

@@ -98,3 +98,67 @@
     padding: 20px;
   }
 }
+
+.contributor-profile {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+.contributor-profile > span:last-child {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.contributor-avatar {
+  flex: 0 0 64px;
+  width: 64px;
+  height: 64px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.contributor-avatar img {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  display: block;
+}
+.contributor-avatar-fallback {
+  font:
+    600 18px 'IBM Plex Mono',
+    monospace;
+  color: var(--accent);
+}
+.contributors-filter {
+  display: grid;
+  gap: 10px;
+  max-width: 430px;
+  margin: 24px 0;
+  font-size: 13px;
+}
+.contributors-filter select {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 12px;
+  max-width: 100%;
+  min-width: 0;
+}
+.contributors-product {
+  margin-block: 64px;
+  margin-inline: auto;
+}
+@media (max-width: 700px) {
+  .contributor-profile {
+    gap: 12px;
+  }
+  .contributors-grid h3 {
+    font-size: 20px;
+  }
+}

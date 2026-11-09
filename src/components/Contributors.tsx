@@ -1,24 +1,91 @@
-import { Link } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
+import type { PublicRepository } from '../lib/github-snapshot';
 import { useGithubActivity } from './useGithubActivity';
-import { contributorsView } from '../lib/contributors';
+import { contributorsView, githubAvatarUrl } from '../lib/contributors';
 import { developmentSources, githubDate } from '../lib/development';
 import './contributors.css';
 
-export function Contributors() {
+export function ContributorAvatar({ login }: { login: string }) {
+  const [failed, setFailed] = useState(false);
+  const src = githubAvatarUrl(login);
+  return (
+    <span className="contributor-avatar" aria-hidden="true">
+      {src && !failed ? (
+        <img
+          src={src}
+          width="64"
+          height="64"
+          alt=""
+          loading="lazy"
+          decoding="async"
+          referrerPolicy="no-referrer"
+          onError={() => setFailed(true)}
+        />
+      ) : (
+        <span className="contributor-avatar-fallback">{login.slice(0, 2).toUpperCase()}</span>
+      )}
+    </span>
+  );
+}
+export function Contributors({ repository }: { repository?: PublicRepository }) {
+  const [params] = useSearchParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const selected = repository
+    ? developmentSources.find((s) => s.repository === repository)
+    : developmentSources.find((s) => s.slug === params.get('contributorsRepo'));
+  const sources = selected ? [selected] : developmentSources;
+  function choose(slug: string) {
+    const next = new URLSearchParams(params);
+    next.delete('contributorsRepo');
+    if (developmentSources.some((s) => s.slug === slug)) next.set('contributorsRepo', slug);
+    navigate(
+      { pathname: location.pathname, search: next.toString(), hash: '#contribuidores' },
+      { preventScrollReset: true },
+    );
+  }
+
   const { result, loading, now } = useGithubActivity();
   const { people, coverage } = contributorsView(
     result?.snapshot,
     now,
     Boolean(result && result.source !== 'public'),
+    undefined,
+    sources,
   );
   return (
-    <section id="contribuidores" className="contributors" aria-labelledby="contributors-title">
+    <section
+      id="contribuidores"
+      className={repository ? 'contributors container contributors-product' : 'contributors'}
+      aria-labelledby="contributors-title"
+    >
       <span className="eyebrow">PESSOAS QUE CONSTROEM</span>
-      <h2 id="contributors-title">Contribuições reconhecidas.</h2>
+      <h2 id="contributors-title">
+        {selected ? 'Colaboradores · ' + selected.name : 'Contribuições reconhecidas.'}
+      </h2>
       <p>
         Código, documentação, exemplos e design ajudam o OpenStruct a crescer. Aqui reunimos os
-        logins públicos reconhecidos nas fontes, em ordem alfabética.
+        logins públicos reconhecidos {selected ? 'no repositório deste projeto' : 'nas fontes'}, em
+        ordem alfabética, com a foto pública da conta no GitHub.
       </p>
+      {!repository && (
+        <label className="contributors-filter" htmlFor="contributors-repository">
+          Colaboradores por projeto
+          <select
+            id="contributors-repository"
+            value={selected?.slug ?? ''}
+            onChange={(event) => choose(event.target.value)}
+          >
+            <option value="">Todos os projetos</option>
+            {developmentSources.map((source) => (
+              <option key={source.repository} value={source.slug}>
+                {source.name}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
       <p className="contributors-note" role="status">
         {loading
           ? 'Consultando os créditos públicos…'
@@ -29,8 +96,14 @@ export function Contributors() {
           {people.map((person) => (
             <article key={person.login}>
               <h3>
-                <a href={person.url} target="_blank" rel="noreferrer">
-                  @{person.login} ↗
+                <a
+                  className="contributor-profile"
+                  href={person.url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ContributorAvatar key={person.login} login={person.login} />
+                  <span>@{person.login} ↗</span>
                 </a>
               </h3>
               {person.repositories.length > 0 && (
@@ -91,8 +164,9 @@ export function Contributors() {
         <p>
           O GitHub identifica parte das contribuições por commits. Até 60 entradas são consultadas
           por repositório; contribuições sem conta associada e trabalhos fora dos commits podem não
-          aparecer. Bots são excluídos. Não há pontuação, ranking, contagem de commits por pessoa ou
-          fotos remotas.
+          aparecer. Bots são excluídos. Não há pontuação, ranking ou contagem de commits por pessoa.
+          As fotos públicas são carregadas do GitHub; quando não carregam, aparecem as iniciais. A
+          identificação e os links continuam utilizáveis.
         </p>
         <ul>
           {coverage.map(({ source, state, checkedAt, truncated }) => (
@@ -110,13 +184,19 @@ export function Contributors() {
         </ul>
       </details>
       <p className="contributors-note">
-        Créditos editoriais de documentação, testes ou design exigem atribuição pública ou
-        autorização documentada e revisão.{' '}
+        Lista sincronizada pelo snapshot público, aproximadamente a cada hora. As fotos seguem a
+        disponibilidade e o cache do GitHub. Créditos editoriais de documentação, testes ou design
+        exigem atribuição pública ou autorização documentada e revisão.{' '}
         {people.every((person) => !person.credits.length)
           ? 'Ainda não há créditos editoriais adicionais registrados.'
           : 'As atribuições editoriais são identificadas separadamente acima.'}
       </p>
-      <Link className="text-link" to="/community#para-comecar">
+      <Link
+        className="text-link"
+        to={
+          selected ? '/community/como-colaborar?repo=' + selected.slug : '/community#para-comecar'
+        }
+      >
         Encontre uma forma de contribuir →
       </Link>
     </section>

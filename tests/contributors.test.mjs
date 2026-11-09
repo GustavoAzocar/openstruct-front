@@ -77,3 +77,45 @@ test('editorial attribution remains separate from commit evidence and requires a
     assert.throws(() => validateEditorialCredits([{ ...credit, ...patch }]));
   assert.throws(() => validateEditorialCredits([credit, credit]));
 });
+
+test('project selection does not inherit commit attribution or editorial credits from other applications', () => {
+  const snapshot = fixture();
+  snapshot.repositories[1].lists.contributors.items = [person('ana')];
+  snapshot.repositories[2].lists.contributors.items = [person('bruno')];
+  const source = {
+    repository: snapshot.repositories[1].repository,
+    slug: 'consolo-struct',
+    name: 'ConsoloStruct',
+    description: '',
+    kind: 'Aplicativo',
+    url: 'https://github.com/' + snapshot.repositories[1].repository,
+  };
+  const credit = {
+    login: 'terceiro',
+    repository: snapshot.repositories[2].repository,
+    contribution: 'Documentação',
+    sourceUrl: 'https://github.com/' + snapshot.repositories[2].repository + '/issues/1',
+    basis: 'public-credit',
+    reviewedAt: '2026-11-09',
+  };
+  const view = contributorsView(snapshot, now, false, [credit], [source]);
+  assert.deepEqual(
+    view.people.map((p) => p.login),
+    ['ana'],
+  );
+  assert.equal(view.coverage.length, 1);
+  assert.equal(view.people[0].repositories[0].source.repository, source.repository);
+});
+test('avatar destinations use only validated public GitHub logins, without arbitrary image URLs', async () => {
+  const { githubAvatarUrl } = await import('../src/lib/contributors.ts');
+  assert.equal(githubAvatarUrl('Ana'), 'https://github.com/ana.png?size=96');
+  for (const value of [
+    '../private',
+    'https://evil.example/img',
+    'ana?token=x',
+    'dependabot',
+    'github-actions[bot]',
+    'a@b.com',
+  ])
+    assert.equal(githubAvatarUrl(value), null);
+});

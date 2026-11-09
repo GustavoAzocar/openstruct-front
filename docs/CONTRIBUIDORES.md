@@ -1,6 +1,6 @@
 # Créditos públicos — OSF-24
 
-Revisão em 07/11/2026, base `39a6df0a424fe95933c55058124fd1444814a3d5`.
+Revisão em 09/11/2026, base `76cdc5a762c5cc37e7d13e0896e3a3b2e3a66e66`.
 OSF-17 já coleta até 60 contribuidores por repositório autorizado. A Comunidade
 reaproveita esse snapshot, sem nova consulta REST por visitante ou coleta de perfis.
 
@@ -15,8 +15,23 @@ de bot e nomes de automações explicitamente conhecidos. O GitHub associa parte
 contribuições por commits e pode retornar dados em cache. Esta lista não comprova
 ausência de colaboração fora dos commits ou contas não associadas. Recortes, falhas
 e datas são visíveis. Não se coletam nome civil, e-mail, localização ou atividade
-privada. Avatares são opcionais e foram omitidos: a identificação textual funciona
-sem imagem, requisição de foto ou placeholder de pessoa.
+privada.
+
+## Fotos e associação por aplicativo
+
+ConsoloStruct, MolaStruct e ArmaduraStruct incluem a seção `#contribuidores`,
+restrita ao repositório público do próprio aplicativo. A Comunidade permite escolher
+qualquer uma das cinco fontes autorizadas; `contributorsRepo` na URL preserva a
+seleção e o histórico Voltar/Avançar. Créditos editoriais obedecem ao mesmo filtro.
+
+A foto pública usa o endereço canônico `https://github.com/LOGIN.png?size=96`,
+somente depois da validação do login. Não é necessária uma consulta REST de perfil
+por visitante, mudança de esquema ou credencial no frontend. As imagens são
+carregadas diretamente do GitHub, sem referer, com dimensões definidas e lazy
+loading. Quando falham, iniciais substituem a foto; login e link continuam legíveis.
+A imagem é decorativa para tecnologias assistivas porque o perfil já tem rótulo.
+Fotos seguem o cache/disponibilidade do GitHub, separadamente da coleta
+aproximadamente horária dos contribuidores. Não se promete atualização instantânea.
 
 ## Créditos editoriais
 

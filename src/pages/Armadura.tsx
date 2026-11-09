@@ -1,3 +1,4 @@
+import { Contributors } from '../components/Contributors';
 import { CaptureGallery } from '../components/CaptureGallery';
 import { Link } from 'react-router-dom';
 import {
@@ -389,6 +390,7 @@ export function Armadura() {
           </details>
         </div>
       </section>
+      <Contributors repository="ricardocorsini/armadura-struct" />
     </>
   );
 }
