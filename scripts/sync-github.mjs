@@ -36,6 +36,7 @@ try {
 }
 const result = await collectGithub({
   includeCodeRelations: true,
+  includeRecentCommits: true,
   catalogEnvelope: envelope,
   previous,
   cache,

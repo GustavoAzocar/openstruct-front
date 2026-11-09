@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 9,
   "generatedAt": null,
   "retryAt": null,
   "repositories": [
@@ -16,6 +16,23 @@
         "checkedAt": null,
         "item": null
       },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
       "issueDetails": {
         "open": {
           "state": "unavailable",
@@ -70,6 +87,23 @@
         "checkedAt": null,
         "item": null
       },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
       "issueDetails": {
         "open": {
           "state": "unavailable",
@@ -124,6 +158,23 @@
         "checkedAt": null,
         "item": null
       },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
       "issueDetails": {
         "open": {
           "state": "unavailable",
@@ -178,6 +229,23 @@
         "checkedAt": null,
         "item": null
       },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
       "issueDetails": {
         "open": {
           "state": "unavailable",
@@ -232,6 +300,23 @@
         "checkedAt": null,
         "item": null
       },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
       "issueDetails": {
         "open": {
           "state": "unavailable",

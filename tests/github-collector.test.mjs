@@ -304,7 +304,7 @@ test('collects only public stable releases, including conditional 304 and confir
         : null,
     ),
   });
-  assert.equal(first.snapshot.schemaVersion, 8);
+  assert.equal(first.snapshot.schemaVersion, 9);
   assert.equal(first.snapshot.repositories[0].release.item.tag, 'v1.2.3');
   assert.ok(!JSON.stringify(first.snapshot).includes('not exported'));
   const second = await collectGithub({
@@ -513,9 +513,10 @@ test('v6 migration preserves milestone and discussion evidence while history rem
   for (const repo of legacy.repositories) {
     delete repo.releaseHistory;
     delete repo.codeRelations;
+    delete repo.recentCommits;
   }
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 8);
+  assert.equal(migrated.schemaVersion, 9);
   assert.deepEqual(
     migrated.repositories[0].lists.milestones,
     legacy.repositories[0].lists.milestones,

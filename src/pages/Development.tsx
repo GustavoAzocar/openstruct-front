@@ -1,3 +1,5 @@
+import { RecentCommits } from '../components/RecentCommits';
+import { commitSectionLink } from '../lib/recent-commits';
 import { CodeRelations } from '../components/CodeRelations';
 import { PRODUCT_POLICIES } from '../lib/catalog-trust';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
@@ -46,6 +48,7 @@ function RepositoryCard({
 }) {
   const { source, issues, pulls, release } = repo;
   const partial = repo.entry?.status === 'partial';
+  const [commitParams] = useSearchParams();
   return (
     <article className="development-repository" aria-labelledby={'repo-' + source.slug}>
       <div className="development-repo-kicker">
@@ -137,6 +140,7 @@ function RepositoryCard({
         <Link to={site.developmentPath + '?repo=' + source.slug + '#pull-requests'}>
           PRs na central
         </Link>
+        <Link to={commitSectionLink(commitParams, source.slug)}>Últimos commits na central</Link>
         <a href={githubListUrl(source, 'issues')} target="_blank" rel="noreferrer">
           Issues no GitHub <ArrowUpRight size={12} />
         </a>
@@ -207,6 +211,9 @@ export function Development() {
           </Link>
           <a className="button button-outline" href="#roadmap">
             Roadmap público
+          </a>
+          <a className="button button-outline" href="#commits">
+            Últimos commits
           </a>
           <Link className="button button-outline" to="/releases">
             Histórico de releases
@@ -334,6 +341,13 @@ export function Development() {
           ))}
         </div>
       </section>
+      <RecentCommits
+        snapshot={result?.snapshot}
+        sources={sources}
+        loading={loading}
+        now={now}
+        offline={Boolean(result && result.source !== 'public')}
+      />
       <PublicRoadmap
         snapshot={result?.snapshot}
         sources={sources}

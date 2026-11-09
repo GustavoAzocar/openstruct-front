@@ -1,3 +1,5 @@
+import { emptyRecentCommits, validateRecentCommits } from './commit-contract.ts';
+import type { RecentCommits } from './commit-contract.ts';
 import { validateCodeRelation } from './code-relation.ts';
 import type { CodeRelation } from './code-relation.ts';
 import { emptyReleaseHistory, validateReleaseHistory } from './release-history-contract.ts';
@@ -20,7 +22,7 @@ export const PAGE_SIZE = 30;
 export const MAX_PAGES = 2;
 export const SNAPSHOT_STALE_MS = 2 * 60 * 60_000;
 export const GITHUB_SNAPSHOT_URL =
-  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=8';
+  'https://raw.githubusercontent.com/ricardocorsini/openstruct-front/github-data/snapshot.json?schema=9';
 export type MilestoneMetadata = {
   state: 'open' | 'closed';
   openItems: number;
@@ -98,11 +100,12 @@ export type RepositorySnapshot = {
   release: ReleaseSnapshot;
   releaseHistory: ReleaseHistory;
   codeRelations: CodeRelation[];
+  recentCommits: RecentCommits;
   issueDetails: Record<IssueState, IssueCollection>;
   discussions: PublicDiscussion[];
 };
 export type GithubSnapshot = {
-  schemaVersion: 8;
+  schemaVersion: 9;
   generatedAt: string | null;
   retryAt: string | null;
   repositories: RepositorySnapshot[];
@@ -126,6 +129,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
     release: emptyRelease(),
     releaseHistory: emptyReleaseHistory(),
     codeRelations: [],
+    recentCommits: emptyRecentCommits(),
     discussions: [],
     issueDetails: { open: emptyIssueCollection(), closed: emptyIssueCollection() },
     lists: {
@@ -138,7 +142,7 @@ export function emptyRepository(repository: PublicRepository): RepositorySnapsho
 }
 export function emptyGithubSnapshot(): GithubSnapshot {
   return {
-    schemaVersion: 8,
+    schemaVersion: 9,
     generatedAt: null,
     retryAt: null,
     repositories: GITHUB_REPOSITORIES.map(emptyRepository),
@@ -182,7 +186,7 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     throw new Error('Snapshot too large');
   const root = object(value, ['schemaVersion', 'generatedAt', 'retryAt', 'repositories']);
   if (
-    ![1, 2, 3, 4, 5, 6, 7, 8].includes(root.schemaVersion as number) ||
+    ![1, 2, 3, 4, 5, 6, 7, 8, 9].includes(root.schemaVersion as number) ||
     !Array.isArray(root.repositories) ||
     root.repositories.length !== GITHUB_REPOSITORIES.length
   )
@@ -202,7 +206,8 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       'lists',
       ...(root.schemaVersion !== 1 ? ['release'] : []),
       ...((root.schemaVersion as number) >= 7 ? ['releaseHistory'] : []),
-      ...(root.schemaVersion === 8 ? ['codeRelations'] : []),
+      ...((root.schemaVersion as number) >= 8 ? ['codeRelations'] : []),
+      ...(root.schemaVersion === 9 ? ['recentCommits'] : []),
       ...((root.schemaVersion as number) >= 5 ? ['discussions'] : []),
       ...((root.schemaVersion as number) >= 3 ? ['issueDetails'] : []),
     ]);
@@ -292,7 +297,13 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
         String(repo.repository),
         repo.visibility === 'public',
       );
-    if (root.schemaVersion === 8) {
+    if (root.schemaVersion === 9)
+      validateRecentCommits(
+        repo.recentCommits,
+        String(repo.repository),
+        repo.visibility === 'public',
+      );
+    if ((root.schemaVersion as number) >= 8) {
       if (!Array.isArray(repo.codeRelations) || repo.codeRelations.length > 2)
         throw new Error('Invalid relation list');
       const channels = new Set<string>();
@@ -503,11 +514,11 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
     }
   }
   const validated = value as GithubSnapshot;
-  if (root.schemaVersion === 8) return validated;
+  if (root.schemaVersion === 9) return validated;
   // Earlier milestones were open-only and lacked closed counters/state. Unknown is not zero.
   return {
     ...validated,
-    schemaVersion: 8,
+    schemaVersion: 9,
     repositories: validated.repositories.map((repo) => ({
       ...repo,
       status: repo.status === 'ready' ? 'partial' : repo.status,
@@ -515,7 +526,8 @@ export function validateGithubSnapshot(value: unknown): GithubSnapshot {
       release: root.schemaVersion === 1 ? emptyRelease() : repo.release,
       releaseHistory:
         (root.schemaVersion as number) >= 7 ? repo.releaseHistory : emptyReleaseHistory(),
-      codeRelations: [],
+      codeRelations: (root.schemaVersion as number) >= 8 ? repo.codeRelations : [],
+      recentCommits: emptyRecentCommits(),
       lists: {
         ...repo.lists,
         milestones:

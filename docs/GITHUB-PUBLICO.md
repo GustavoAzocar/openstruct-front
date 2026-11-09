@@ -190,3 +190,67 @@ seis seleções. Sem beta publicado, não há chamadas Git adicionais para esse 
 O teto global passa de 66+30 para **66+30+48 = 144** requisições GitHub por execução,
 mais uma leitura limitada do catálogo; na prática ETags e canais vazios reduzem isso.
 As falhas ficam isoladas por produto/canal, com estado parcial no repositório.
+
+## Últimos commits — OSF-53 (revisão em 08/11/2026)
+
+O esquema atual é **v9** e o leitor usa `?schema=9`. A migração de v1–v8 preserva
+as coleções existentes (inclusive as relações OSF-52 em v8) e acrescenta
+`recentCommits` como **unavailable/não coletado**, sem inventar vazio confirmado.
+O fallback estático também usa v9 e mantém generatedAt nulo e fontes desconhecidas.
+O publicador continua validando o contrato e o teto de 1 MB antes de gravar github-data.
+
+Cada fonte da allowlist possui `recentCommits` com state, checkedAt, branch,
+headSha, truncated, problem e items. Cada item contém SHA completo, URL exata do
+commit, assunto (máximo 240 caracteres e indicador de corte), autor/committer
+como contas públicas associadas (login, User/Bot e URL), authoredAt e committedAt.
+Nomes e e-mails brutos do Git, corpo da mensagem, imagens, patches e arquivos não
+são exportados. Contas não confirmadas e datas ausentes permanecem nulas, com
+fallback explícito na interface. Bots são identificados pelo type da API, sem
+inferir autoria pelo assunto. O assunto é texto não confiável: controles/bidi e
+endereços de e-mail e padrões comuns de credenciais/tokens são removidos antes
+do corte de tamanho; React escapa HTML sem Markdown, anexos ou
+links automáticos. URLs de commits precisam coincidir com repositório e SHA;
+perfis aceitam apenas o login GitHub correspondente ou seu caminho de app/bot.
+
+Após confirmar private=false e visibility=public, a coleta usa a default branch
+real, resolve seu HEAD e consulta **uma página de até 30 commits fixada no SHA**.
+Preserva a ordem retornada pelo endpoint List commits, sem ordenar por data ou
+SHA e sem prometer que datas informadas no Git são monotônicas. Duplicados são
+removidos por repositório/SHA, conservando a primeira ocorrência. Não há página
+seguinte na coleta; o Link rel=next marca truncamento. O frontend mostra cinco
+itens por vez e “Mostrar mais” apenas revela o restante já coletado, sem REST por
+visitante. O número exibido é o tamanho do recorte, nunca o total do repositório.
+“Ver histórico completo” aponta à branch correta, codificada inclusive com barra.
+
+O cache ETag contém somente metadados normalizados e é revalidado em respostas
+304. Históricos de HEADs anteriores são retirados do cache após uma coleta válida;
+branches renomeadas e force-push não misturam revisões. Falha mantém o último
+recorte conhecido com state=stale e checkedAt original, somente se a visibilidade
+continuar confirmada. Ausência de cache gera unavailable, não “nenhum commit”.
+Repositório vazio só é confirmado por resposta explícita de repositório vazio ou
+consulta vazia do histórico padrão após ausência da ref; 404, autenticação ou
+conflito genérico não bastam. Quota compartilhada conserva o horário anterior e
+marca o recorte como antigo. Perda/falha de confirmação pública retira a coleção
+e seu cache conforme a política existente. O Launcher privado nunca é consultado;
+os commits do hub pertencem ao catálogo e à distribuição, não ao seu código.
+
+São no máximo **duas chamadas por fonte / dez adicionais** por execução (HEAD e
+histórico; a confirmação excepcional de vazio substitui a consulta de histórico).
+O teto total é **66+30+48+10 = 154 GETs**, mais a leitura do catálogo assinado já
+existente. O request compartilhado mantém timeout, corpo limitado, 403/429,
+Retry-After e reset de quota. Cache de Actions muda para v9. Se necessário para
+respeitar 1 MB, após retirar amostras de conversa e notas, o coletor reduz o recorte
+de commits conservando o HEAD e a ordem relativa, e marca truncated=true.
+
+Em `/development`, o seletor existente controla todas as fontes. A seção `#commits`
+e os links dos cards conservam os demais parâmetros da URL. Voltar/Avançar e reload
+preservam a seleção. A quantidade visível reinicia ao trocar seleção, branch ou HEAD.
+SHA completo é consultável em details; a cópia usa a área de transferência do
+navegador com status acessível, ou orienta a seleção manual se não houver permissão.
+Autor e committer e suas respectivas datas possuem rótulos separados. A data
+principal é a data de registro no Git, não o horário de coleta nem a data de release.
+
+Esta coleção é independente de compare.commits e não contém apenas trabalho após
+uma release. A OSF-52 continua usando os totais do endpoint de comparação. Assuntos
+não são changelog, garantia de qualidade, validação de engenharia ou recomendação
+para instalar uma branch. Nenhuma política de releases ou motor de engenharia é alterado.

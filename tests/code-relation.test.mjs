@@ -252,9 +252,12 @@ function githubFixture(override = () => null) {
 test('snapshot v8 migration preserves v7 history, removes unconfirmed source data and never reads private Launcher', async () => {
   const legacy = emptyGithubSnapshot();
   legacy.schemaVersion = 7;
-  for (const repo of legacy.repositories) delete repo.codeRelations;
+  for (const repo of legacy.repositories) {
+    delete repo.codeRelations;
+    delete repo.recentCommits;
+  }
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 8);
+  assert.equal(migrated.schemaVersion, 9);
   assert.ok(migrated.repositories.every((r) => !r.codeRelations.length));
   assert.equal(validateGithubSnapshot(migrated), migrated);
   const bad = structuredClone(migrated);
@@ -278,7 +281,7 @@ test('snapshot v8 migration preserves v7 history, removes unconfirmed source dat
     now: () => Date.parse(at),
   });
   assert.ok(!seen.some((u) => u.includes('launcher-struct')));
-  assert.equal(result.snapshot.schemaVersion, 8);
+  assert.equal(result.snapshot.schemaVersion, 9);
   assert.equal(result.snapshot.repositories[1].codeRelations[0].state, 'unconfirmed');
   const hidden = await collectGithub({
     previous: result.snapshot,

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import { currentApps } from '../lib/apps';
 import { PRODUCT_POLICIES } from '../lib/catalog-trust';
 import type { CatalogProductId } from '../lib/catalog-trust';
@@ -171,8 +172,12 @@ export function CodeRelations({
                       </p>
                     )}
                     <p>
-                      Os totais vêm do endpoint de comparação. O snapshot não exporta a lista de
-                      commits nem arquivos alterados; não há changelog automático.
+                      Os totais vêm do endpoint de comparação, não do recorte de{' '}
+                      <Link to={'/development?repo=' + row.sourceRepo.split('/')[1] + '#commits'}>
+                        Últimos commits
+                      </Link>
+                      . Arquivos e diffs não são publicados; mensagens de commit não formam um
+                      changelog automático.
                     </p>
                   </details>
                 </>

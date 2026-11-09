@@ -120,10 +120,11 @@ test('legacy open-only milestones migrate to unknown; do not imply a complete ro
   for (const repo of legacy.repositories) {
     delete repo.releaseHistory;
     delete repo.codeRelations;
+    delete repo.recentCommits;
   }
   delete legacy.repositories[0].lists.milestones.items[0].milestone;
   const migrated = validateGithubSnapshot(legacy);
-  assert.equal(migrated.schemaVersion, 8);
+  assert.equal(migrated.schemaVersion, 9);
   assert.equal(migrated.repositories[0].lists.milestones.state, 'unavailable');
   assert.equal(migrated.repositories[0].lists.milestones.items.length, 0);
   assert.equal(legacy.repositories[0].lists.milestones.items.length, 1);

@@ -1,3 +1,4 @@
+import { collectRecentCommits } from './github-commits.mjs';
 import { collectCodeRelation } from './github-code-relation.mjs';
 import { verifySignedCatalog } from '../src/lib/catalog.ts';
 import { PRODUCT_POLICIES } from '../src/lib/catalog-trust.ts';
@@ -224,14 +225,24 @@ export async function collectGithub({
   timeoutMs = 10_000,
   includeDiscussions = false,
   includeCodeRelations = false,
+  includeRecentCommits = false,
   catalogEnvelope = null,
 } = {}) {
   previous = validateGithubSnapshot(previous);
   if (previous.retryAt && Date.parse(previous.retryAt) > now()) {
-    if (!previous.repositories.some((repo) => repo.codeRelations.some((row) => row.relation)))
+    if (
+      !previous.repositories.some(
+        (repo) => repo.codeRelations.some((row) => row.relation) || repo.recentCommits.checkedAt,
+      )
+    )
       return { snapshot: previous, cache, requests: 0 };
     const snapshot = structuredClone(previous);
     for (const repo of snapshot.repositories) {
+      if (repo.recentCommits.checkedAt) {
+        repo.recentCommits = { ...repo.recentCommits, state: 'stale', problem: 'rate-limit' };
+        repo.status = 'partial';
+        repo.problem = 'rate-limit';
+      }
       repo.codeRelations = repo.codeRelations.map((row) =>
         row.relation ? { ...row, state: 'stale' } : row,
       );
@@ -254,7 +265,11 @@ export async function collectGithub({
   async function request(url, old, sample = false) {
     if (
       retryAt ||
-      requests >= REQUEST_LIMIT + (includeDiscussions ? 30 : 0) + (includeCodeRelations ? 48 : 0)
+      requests >=
+        REQUEST_LIMIT +
+          (includeDiscussions ? 30 : 0) +
+          (includeCodeRelations ? 48 : 0) +
+          (includeRecentCommits ? 10 : 0)
     )
       throw new RequestError('rate-limit');
     requests++;
@@ -297,6 +312,15 @@ export async function collectGithub({
       if (response.status === 304) {
         if (!old || !Array.isArray(old.items)) throw new RequestError('cache');
         return { items: old.items, next: old.next ?? null, etag: old.etag };
+      }
+      if (
+        response.status === 409 &&
+        (url.includes('/git/ref/heads/') || url.includes('/commits?'))
+      ) {
+        const failure = await boundedJson(response);
+        if (failure?.message === 'Git Repository is empty.')
+          return { body: { emptyRepository: true }, etag: null, next: null };
+        throw new RequestError('request');
       }
       if (response.status === 404 && url.endsWith('/releases/latest'))
         return { body: null, etag: null, next: null };
@@ -384,7 +408,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.id, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 8,
+            schemaVersion: 9,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -435,7 +459,7 @@ export async function collectGithub({
             items: [...new Map(items.map((item) => [item.number, item])).values()],
           };
           validateGithubSnapshot({
-            schemaVersion: 8,
+            schemaVersion: 9,
             generatedAt: at,
             retryAt: null,
             repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -509,7 +533,7 @@ export async function collectGithub({
             : normalizeRelease(response.body);
         entry.release = { state: 'fresh', checkedAt: at, item };
         validateGithubSnapshot({
-          schemaVersion: 8,
+          schemaVersion: 9,
           generatedAt: at,
           retryAt: null,
           repositories: GITHUB_REPOSITORIES.map((id) =>
@@ -558,6 +582,20 @@ export async function collectGithub({
             if (key.startsWith(prefix + '/releases?')) delete pages[key];
           entry.status = 'partial';
           entry.problem = error.code === 'rate-limit' ? 'rate-limit' : 'request';
+        }
+      }
+      if (includeRecentCommits) {
+        entry.recentCommits = await collectRecentCommits({
+          repository,
+          branch: entry.summary.defaultBranch,
+          request,
+          cache: pages,
+          previous: old?.visibility === 'public' ? old.recentCommits : null,
+          at,
+        });
+        if (entry.recentCommits.state !== 'fresh') {
+          entry.status = 'partial';
+          entry.problem = retryAt ? 'rate-limit' : 'request';
         }
       }
       if (includeDiscussions) entry.discussions = await collectDiscussions(entry, request, at);
@@ -611,7 +649,7 @@ export async function collectGithub({
   // Withdraw detail text first if the combined snapshot reaches the public size cap.
   while (
     Buffer.byteLength(
-      JSON.stringify({ schemaVersion: 8, generatedAt: at, retryAt, repositories }),
+      JSON.stringify({ schemaVersion: 9, generatedAt: at, retryAt, repositories }),
     ) > 1_000_000
   ) {
     const repo = [...repositories].reverse().find((repo) => repo.discussions.length);
@@ -624,13 +662,21 @@ export async function collectGithub({
         .reverse()
         .find((r) => r.releaseHistory.items.some((item) => item.notes.length));
       const item = history?.releaseHistory.items.find((item) => item.notes.length);
-      if (!item) break;
+      if (!item) {
+        const commits = [...repositories].reverse().find((r) => r.recentCommits.items.length > 1);
+        if (!commits) break;
+        const list = commits.recentCommits;
+        const index = list.items.findLastIndex((i) => i.sha !== list.headSha);
+        list.items.splice(index, 1);
+        list.truncated = true;
+        continue;
+      }
       item.notes = '';
       item.notesTruncated = true;
     }
   }
   const snapshot = validateGithubSnapshot({
-    schemaVersion: 8,
+    schemaVersion: 9,
     generatedAt: at,
     retryAt,
     repositories,
