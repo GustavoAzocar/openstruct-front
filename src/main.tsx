@@ -7,6 +7,7 @@ import { Home } from './pages/Home';
 import { Consolo } from './pages/Consolo';
 import { Armadura } from './pages/Armadura';
 import { Mola } from './pages/Mola';
+import { GeoSPT } from './pages/GeoSPT';
 import { Launcher } from './pages/Launcher';
 import { Catalog } from './pages/Catalog';
 import { Docs } from './pages/Docs';
@@ -18,6 +19,7 @@ import { CatalogProvider } from './components/CatalogProvider';
 import './styles.css';
 import './consolostruct.css';
 import './molastruct.css';
+import './geosptstruct.css';
 import './armadurastruct.css';
 import './launcher.css';
 import './catalog.css';
@@ -41,6 +43,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path={getCurrentApp('consolostruct').route} element={<Consolo />} />
               <Route path={getCurrentApp('molastruct').route} element={<Mola />} />
               <Route path={getCurrentApp('armadurastruct').route} element={<Armadura />} />
+              <Route path={getCurrentApp('geosptstruct').route} element={<GeoSPT />} />
               <Route path="launcher" element={<Launcher />} />
               <Route path="docs" element={<Docs />} />
               <Route path="community" element={<Community />} />

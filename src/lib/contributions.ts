@@ -57,6 +57,19 @@ export const contributionPolicies: Record<PublicRepository, ContributionPolicy> 
     reviewedRef: '86db6dd9c286e28a44a70afa10efede70f7127b3',
     reviewedAt: '2026-11-07',
   },
+  'itanervale/GEOSPT-STRUCT': {
+    labels: ['good first issue', 'help wanted'],
+    guide: {
+      url: 'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/README.md',
+      label: 'Manual e testes no README',
+    },
+    documentation:
+      'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/README.md',
+    examples:
+      'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/src/engine/dataset-balsas.js',
+    reviewedRef: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+    reviewedAt: '2026-11-10',
+  },
   'ricardocorsini/openstruct-catalog': {
     labels: ['good first issue', 'help wanted'],
     guide: {

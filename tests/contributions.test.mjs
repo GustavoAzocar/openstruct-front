@@ -147,7 +147,10 @@ test('each opportunity links directly to its own reviewed guide, with alternativ
     assert.ok(row.policy.documentation.startsWith(row.source.url + '/blob/'));
     if (row.policy.examples) assert.ok(row.policy.examples.startsWith(row.source.url + '/'));
     assert.match(row.policy.reviewedRef, /^[a-f0-9]{40}$/);
-    assert.equal(row.policy.reviewedAt, '2026-11-07');
+    assert.equal(
+      row.policy.reviewedAt,
+      row.source.repository === 'itanervale/GEOSPT-STRUCT' ? '2026-11-10' : '2026-11-07',
+    );
     assert.ok(
       row.policy.guide.label.includes('README') ||
         row.policy.guide.label === 'Guia de contribuição',

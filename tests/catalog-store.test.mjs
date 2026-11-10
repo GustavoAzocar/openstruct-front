@@ -11,7 +11,7 @@ import { createCatalogStore, CATALOG_TTL_MS, availabilityLabel } from '../src/li
 import { CATALOG_IDS } from '../src/lib/catalog-trust.ts';
 
 const envelope = JSON.parse(
-  await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+  await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
 );
 const catalog = await verifySignedCatalog(envelope);
 const baseline = { envelope, checkedAt: '2026-11-07T10:48:13Z' };
@@ -39,7 +39,7 @@ test('uma consulta por sessão é compartilhada, com carregamento e data por apl
     states.some((state) => state.loading && state.attempts === 1),
     true,
   );
-  for (const id of CATALOG_IDS) {
+  for (const id of CATALOG_IDS.filter((id) => id !== 'geosptstruct')) {
     const product = store.getSnapshot().products[id];
     assert.equal(product.status, 'ready');
     assert.equal(product.stale, false);

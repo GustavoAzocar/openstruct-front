@@ -11,7 +11,7 @@ import {
 import { CATALOG_IDS, CATALOG_URL, PRODUCT_POLICIES } from '../src/lib/catalog-trust.ts';
 
 const realEnvelope = JSON.parse(
-  await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+  await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
 );
 const original = JSON.parse(realEnvelope.payload);
 const keyIds = ['catalog-test', ...new Set(Object.values(PRODUCT_POLICIES).map((p) => p.keyId))];
@@ -57,7 +57,7 @@ const verify = (catalog, channel) =>
 test('verifica o envelope e todos os pacotes reais com as chaves públicas oficiais', async () => {
   const catalog = await verifySignedCatalog(realEnvelope);
   assert.deepEqual(
-    CATALOG_IDS.map((id) => catalog.products[id].release.version),
+    original.apps.map(({ id }) => catalog.products[id].release.version),
     ['0.6.0', '0.5.1', '0.2.0'],
   );
   assert.equal(catalog.products.armadurastruct.release.assets.length, 2);

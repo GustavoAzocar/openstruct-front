@@ -228,13 +228,87 @@ export const apps: AppEntry[] = [
     },
   },
   {
+    id: 'geosptstruct',
+    name: 'GeoSPT',
+    category: 'Fundações',
+    description:
+      'Da sondagem à capacidade de carga de estacas, com Décourt–Quaresma, Aoki–Velloso e memoriais de cálculo.',
+    color: 'mineral',
+    symbol: 'pile',
+    number: '04',
+    route: '/apps/geosptstruct',
+    previewAnchor: '#interface',
+    image: '/assets/geosptstruct-athena.webp',
+    imageAlt:
+      'Atena em perfil diante de uma estaca cilíndrica de concreto em três camadas de solo, sobre fundo verde mineral',
+    stage: 'current',
+    maturity: 'development',
+    repository: {
+      url: 'https://github.com/itanervale/GEOSPT-STRUCT',
+      branch: 'main',
+      visibility: 'public',
+    },
+    documentation: {
+      url: 'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/README.md',
+      ref: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+    },
+    license: {
+      spdx: null,
+      url: 'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/README.md',
+      ref: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+    },
+    code: {
+      version: '2.0.7',
+      url: 'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/package.json',
+      ref: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+    },
+    distribution: {
+      version: '2.0.7',
+      sourceTag: 'v2.0.7',
+      sourceCommit: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+      channel: 'stable',
+      publishedAt: '2026-11-10T16:56:48Z',
+      releaseUrl:
+        'https://github.com/ricardocorsini/openstruct-catalog/releases/tag/geosptstruct-v2.0.7',
+      platforms: [
+        {
+          os: 'windows',
+          arch: 'x86_64',
+          format: 'exe',
+          url: 'https://github.com/ricardocorsini/openstruct-catalog/releases/download/geosptstruct-v2.0.7/geosptstruct-2.0.7-windows-x86_64.exe',
+        },
+        {
+          os: 'linux',
+          arch: 'x86_64',
+          format: 'AppImage',
+          url: 'https://github.com/ricardocorsini/openstruct-catalog/releases/download/geosptstruct-v2.0.7/geosptstruct-2.0.7-linux-x86_64.AppImage',
+        },
+      ],
+    },
+    editorial: {
+      reviewedAt: '2026-11-10',
+      sources: [
+        {
+          kind: 'description',
+          url: 'https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/README.md',
+          ref: '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+        },
+        {
+          kind: 'distribution',
+          url: 'https://github.com/ricardocorsini/openstruct-catalog/blob/f3e95a4f5a65a8944fe03ba70df1fd6cde393486/catalog.signed.json',
+          ref: 'f3e95a4f5a65a8944fe03ba70df1fd6cde393486',
+        },
+      ],
+    },
+  },
+  {
     id: 'vigasstruct',
     name: 'VigasStruct',
     category: 'Concreto armado',
     description: 'Um novo olhar para o dimensionamento e o detalhamento de vigas.',
     color: 'blue',
     symbol: 'beam',
-    number: '04',
+    number: '05',
     stage: 'planned',
     maturity: 'planned',
     editorial: {
@@ -255,7 +329,7 @@ export const apps: AppEntry[] = [
     description: 'Geometria, materiais e interação para estudar seções de pilares.',
     color: 'steel',
     symbol: 'column',
-    number: '05',
+    number: '06',
     stage: 'planned',
     maturity: 'planned',
     editorial: {
@@ -276,7 +350,7 @@ export const apps: AppEntry[] = [
     description: 'O encontro entre solo, estrutura e ferramentas abertas.',
     color: 'amber',
     symbol: 'footing',
-    number: '06',
+    number: '07',
     stage: 'planned',
     maturity: 'planned',
     editorial: {
@@ -297,7 +371,7 @@ export const apps: AppEntry[] = [
     description: 'Uma forma mais clara de explorar e apresentar modelos estruturais.',
     color: 'ink',
     symbol: 'frame',
-    number: '07',
+    number: '08',
     stage: 'planned',
     maturity: 'planned',
     editorial: {

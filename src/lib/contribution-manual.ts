@@ -7,6 +7,7 @@ export const manualReview = {
   frontendRef: '83ad34fb4681c0817efc3d6a84f81bf0ad0150d5',
   frontendBranch: 'master',
   sources: {
+    'itanervale/GEOSPT-STRUCT': '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
     'ricardocorsini/openstruct-front': '83ad34fb4681c0817efc3d6a84f81bf0ad0150d5',
     'ricardocorsini/consolo-struct': '54abc400ae43a5a3bdf025df85c327dde1ad5086',
     'ricardocorsini/mola-struct': 'aeda58309ddadcd53cac16aa1625473391d8efad',

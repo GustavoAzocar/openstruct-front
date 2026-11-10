@@ -247,13 +247,13 @@ function network(override = () => null) {
     return new Response('[]');
   };
 }
-test('collector integrates all five authorized sources, isolates failures and clears history/cache when visibility cannot be reconfirmed', async () => {
+test('collector integrates all six authorized sources, isolates failures and clears history/cache when visibility cannot be reconfirmed', async () => {
   const first = await collectGithub({
     fetchImpl: network(),
     includeRecentCommits: true,
     now: () => Date.parse(at),
   });
-  assert.equal(first.requests, 48);
+  assert.equal(first.requests, 57);
   assert.ok(first.snapshot.repositories.every((r) => r.recentCommits.items.length === 1));
   assert.equal(first.snapshot.schemaVersion, 9);
   assert.equal(validateGithubSnapshot(first.snapshot), first.snapshot);

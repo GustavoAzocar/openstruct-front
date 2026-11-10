@@ -357,6 +357,77 @@
           "items": []
         }
       }
+    },
+    {
+      "repository": "itanervale/GEOSPT-STRUCT",
+      "visibility": "unknown",
+      "verifiedPublicAt": null,
+      "lastSuccessAt": null,
+      "status": "unavailable",
+      "problem": "visibility",
+      "summary": null,
+      "release": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "item": null
+      },
+      "releaseHistory": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "truncated": false,
+        "items": []
+      },
+      "codeRelations": [],
+      "recentCommits": {
+        "state": "unavailable",
+        "checkedAt": null,
+        "branch": null,
+        "headSha": null,
+        "truncated": false,
+        "problem": null,
+        "items": []
+      },
+      "discussions": [],
+      "issueDetails": {
+        "open": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "closed": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      },
+      "lists": {
+        "issues": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "pulls": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "milestones": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        },
+        "contributors": {
+          "state": "unavailable",
+          "checkedAt": null,
+          "truncated": false,
+          "items": []
+        }
+      }
     }
   ]
 }

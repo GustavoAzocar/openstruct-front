@@ -266,7 +266,7 @@ test('snapshot v8 migration preserves v7 history, removes unconfirmed source dat
   ];
   assert.throws(() => validateGithubSnapshot(bad));
   const envelope = JSON.parse(
-    await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+    await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
   );
   const verified = await verifySignedCatalog(envelope);
   assert.equal(verified.products.consolostruct.status, 'ready');

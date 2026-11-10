@@ -23,7 +23,7 @@ versões de instalação e disponibilidade; ela não reescreve o conteúdo técn
 | `repository`                                  | URL oficial pública, branch padrão e visibilidade conferida durante a revisão.                                                                                             |
 | `code`                                        | Versão de `package.json`, **commit exato** e URL desse arquivo na revisão consultada. Não determina a versão disponível para instalar.                                     |
 | `distribution`                                | Versão efetivamente distribuída, tag/commit de origem, canal, data, release pública e pacotes por plataforma. Pode estar ausente em um produto atual ainda sem publicação. |
-| `documentation`, `license`                    | Fontes fixadas por tag/commit. A licença contém o identificador SPDX declarado pelo produto.                                                                               |
+| `documentation`, `license`                    | Fontes fixadas por tag/commit. A licença contém o identificador SPDX declarado pelo produto, ou `null` quando o repositório ainda não informa uma licença.                 |
 | `editorial.reviewedAt`                        | Data da revisão humana/editorial dos dados; não muda automaticamente no build.                                                                                             |
 | `editorial.sources`                           | URLs e refs imutáveis do texto-base, distribuição ou planejamento.                                                                                                         |
 

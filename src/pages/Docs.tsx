@@ -9,6 +9,7 @@ import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
 const armadura = getCurrentApp('armadurastruct');
+const geospt = getCurrentApp('geosptstruct');
 
 const articles = [
   {
@@ -77,8 +78,16 @@ const articles = [
     to: armadura.route,
   },
   {
-    id: 'contribuir',
+    id: 'geosptstruct',
     n: '09',
+    title: 'GeoSPT: sondagens e capacidade de carga de estacas',
+    body: 'Cadastre os furos SPT, compatibilize as cotas e compare Décourt–Quaresma e Aoki–Velloso em quatro modos: envoltória, perfil médio, por furo e interpolação. Consulte o corte interpretado, os diagramas de transferência de carga e os memoriais. Salve obras JSON e exporte XLSX, HTML/PDF e dados de auditoria. O exemplo Balsas está no aplicativo. A licença ainda não foi informada pelo repositório.',
+    action: 'Fluxo, métodos e manual do GeoSPT',
+    to: geospt.route,
+  },
+  {
+    id: 'contribuir',
+    n: '10',
     title: 'Como colaborar: manual passo a passo',
     body: 'Escolha o projeto certo e sua forma de ajudar. O manual conduz uma primeira colaboração sem código e uma alteração no frontend até a revisão, com exemplos, comandos, resultados esperados e cuidados antes de compartilhar. Também apresenta os guias próprios dos aplicativos.',
     action: 'Como colaborar',

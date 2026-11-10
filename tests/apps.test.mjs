@@ -5,7 +5,7 @@ import { getAppStatus, validateAppRegistry } from '../src/lib/app-registry.ts';
 
 const copy = () => structuredClone(apps);
 
-test('preserva os sete produtos, suas rotas e os quatro itens em planejamento', () => {
+test('preserva os oito produtos, suas rotas e os quatro itens em planejamento', () => {
   assert.doesNotThrow(() => validateAppRegistry(apps));
   assert.deepEqual(
     currentApps.map((app) => [app.name, app.route]),
@@ -13,6 +13,7 @@ test('preserva os sete produtos, suas rotas e os quatro itens em planejamento', 
       ['ConsoloStruct', '/apps/consolostruct'],
       ['MolaStruct', '/apps/molastruct'],
       ['ArmaduraStruct', '/apps/armadurastruct'],
+      ['GeoSPT', '/apps/geosptstruct'],
     ],
   );
   const planned = apps.filter((app) => app.stage === 'planned');
@@ -20,7 +21,7 @@ test('preserva os sete produtos, suas rotas e os quatro itens em planejamento', 
     planned.map((app) => app.name),
     ['VigasStruct', 'PilarStruct', 'SapataStruct', '3DStruct'],
   );
-  assert.equal(apps.length, 7);
+  assert.equal(apps.length, 8);
   for (const app of planned) {
     assert.equal(getAppStatus(app), 'Em planejamento');
     assert.equal(app.distribution, undefined);
@@ -59,7 +60,7 @@ test('planejamento não aceita versão, download ou repositório inventados', ()
     ['route', '/apps/vigasstruct'],
   ]) {
     const data = copy();
-    data[3][key] = value;
+    data.find((app) => app.id === 'vigasstruct')[key] = value;
     assert.throws(() => validateAppRegistry(data), undefined, key);
   }
 });
@@ -122,7 +123,7 @@ test('motor tem versão própria e fonte técnica vinculada à distribuição', 
     assert.throws(() => validateAppRegistry(data));
   }
   const planned = copy();
-  planned[3].engine = structuredClone(consolo.engine);
+  planned.find((app) => app.id === 'vigasstruct').engine = structuredClone(consolo.engine);
   assert.throws(() => validateAppRegistry(planned));
 });
 

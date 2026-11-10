@@ -6,7 +6,7 @@ import { verifySignedCatalog } from '../src/lib/catalog.ts';
 import { CATALOG_TRUST } from '../src/lib/catalog-trust.ts';
 
 const envelope = JSON.parse(
-  await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+  await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
 );
 const bytes = (value) => new Uint8Array(Buffer.from(value, 'base64'));
 const message = new TextEncoder().encode(envelope.payload);

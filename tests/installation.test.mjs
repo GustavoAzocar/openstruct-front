@@ -9,13 +9,15 @@ import {
 } from '../src/lib/installation.ts';
 
 const envelope = JSON.parse(
-  await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+  await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
 );
 const { products } = await verifySignedCatalog(envelope);
 const windows = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)';
 
 test('a alternativa manual conserva os pacotes verificados de cada produto e o publicador correto', () => {
-  for (const [id, product] of Object.entries(products)) {
+  for (const [id, product] of Object.entries(products).filter(
+    ([, product]) => product.status === 'ready',
+  )) {
     const view = manualInstallationOptions({ ...product, stale: false }, windows);
     assert.equal(view.release.version, product.release.version);
     assert.deepEqual(

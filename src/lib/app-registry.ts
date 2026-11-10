@@ -38,7 +38,7 @@ export type CurrentApp = AppIdentity & {
   imageAlt: string;
   repository: { url: string; branch: string; visibility: 'public' };
   documentation: SourceReference;
-  license: SourceReference & { spdx: 'MIT' | 'GPL-3.0-or-later' };
+  license: SourceReference & { spdx: 'MIT' | 'GPL-3.0-or-later' | null };
   code: SourceReference & { version: string };
   engine?: SourceReference & { version: string; policy: string };
   distribution?: AppDistribution;
@@ -212,7 +212,10 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
     source(app.documentation, `${id}.documentation`, repoUrl.href);
     source(app.license, `${id}.license`, repoUrl.href);
     const license = record(app.license, `${id}.license`);
-    requireValue(['MIT', 'GPL-3.0-or-later'].includes(String(license.spdx)), `${id}.license.spdx`);
+    requireValue(
+      license.spdx === null || ['MIT', 'GPL-3.0-or-later'].includes(String(license.spdx)),
+      `${id}.license.spdx`,
+    );
     source(app.code, `${id}.code`, repoUrl.href);
     const code = record(app.code, `${id}.code`);
     requireValue(

@@ -1,0 +1,59 @@
+{
+  "appId": "geosptstruct",
+  "sourceCommit": "5f5cded75e94dbce2bea90eb685deef74d1dfd1f",
+  "reviewedAt": "2026-11-10",
+  "captures": [
+    {
+      "id": "geospt-captura-compatibilizacao",
+      "src": "/assets/geosptstruct/v2.0.7/compatibilizacao.webp",
+      "alt": "Sondagens na mesma referência. Alinhamento dos furos por cota absoluta, com os perfis e as leituras SPT do exemplo Balsas.",
+      "width": 1911,
+      "height": 937,
+      "title": "Sondagens na mesma referência.",
+      "caption": "Alinhamento dos furos por cota absoluta, com os perfis e as leituras SPT do exemplo Balsas.",
+      "version": "2.0.7",
+      "sourceUrl": "https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/public/imagens-manual/03_compatibilizacao.png",
+      "sha256": "9658e2ecd77f037704faefae82f19b7ff8ac66693feb2332b25275cb0690e4f2",
+      "bytes": 46806
+    },
+    {
+      "id": "geospt-captura-capacidade",
+      "src": "/assets/geosptstruct/v2.0.7/capacidade.webp",
+      "alt": "Capacidade, curva e memorial. Envoltória inferior do exemplo Balsas, comparação entre os dois métodos e memorial cota a cota.",
+      "width": 1917,
+      "height": 935,
+      "title": "Capacidade, curva e memorial.",
+      "caption": "Envoltória inferior do exemplo Balsas, comparação entre os dois métodos e memorial cota a cota.",
+      "version": "2.0.7",
+      "sourceUrl": "https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/public/imagens-manual/06_capacidade-memorial.png",
+      "sha256": "9b05cd0a78c2e85cc23e7a489e3964df5be9edaa2d25f18878bdab4bf73e0bd3",
+      "bytes": 56492
+    },
+    {
+      "id": "geospt-captura-corte",
+      "src": "/assets/geosptstruct/v2.0.7/corte.webp",
+      "alt": "O subsolo em corte. Sondagens, estacas, nível d’água e camadas interpretadas. As ligações entre furos são inferências que precisam de revisão.",
+      "width": 1139,
+      "height": 908,
+      "title": "O subsolo em corte.",
+      "caption": "Sondagens, estacas, nível d’água e camadas interpretadas. As ligações entre furos são inferências que precisam de revisão.",
+      "version": "2.0.7",
+      "sourceUrl": "https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/public/imagens-manual/09_corte-tela-cheia.png",
+      "sha256": "db2b4a658c8a33e9fb31a4dda212354799406e55f59eb9631886ded39ae9b78a",
+      "bytes": 73886
+    },
+    {
+      "id": "geospt-captura-transferencia",
+      "src": "/assets/geosptstruct/v2.0.7/transferencia.webp",
+      "alt": "Carga ao longo da estaca. Diagrama de transferência axial: estaca, esforço normal N(z) e tensão axial σ(z), com cenários de carga selecionáveis.",
+      "width": 1156,
+      "height": 914,
+      "title": "Carga ao longo da estaca.",
+      "caption": "Diagrama de transferência axial: estaca, esforço normal N(z) e tensão axial σ(z), com cenários de carga selecionáveis.",
+      "version": "2.0.7",
+      "sourceUrl": "https://github.com/itanervale/GEOSPT-STRUCT/blob/5f5cded75e94dbce2bea90eb685deef74d1dfd1f/public/imagens-manual/11_transferencia-carga.png",
+      "sha256": "18d35c7174a61f5731fdde0d722e0f616a3c78f23427c902fbc1d92269fa8e6c",
+      "bytes": 27308
+    }
+  ]
+}

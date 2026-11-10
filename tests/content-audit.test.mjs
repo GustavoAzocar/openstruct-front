@@ -158,7 +158,7 @@ test('redirects are reviewable without downloading a binary or following a possi
 });
 test('verified feed drift requests editorial review without mutating data or confusing code/engine versions', async () => {
   const envelope = JSON.parse(
-    await readFile(new URL('../src/data/catalog.signed.json', import.meta.url), 'utf8'),
+    await readFile(new URL('./fixtures/catalog-2026-11-07.signed.json', import.meta.url), 'utf8'),
   );
   const catalog = await verifySignedCatalog(envelope);
   const before = JSON.stringify(apps);
