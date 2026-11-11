@@ -1,7 +1,7 @@
 import { useEffect, useId, useMemo, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import { ArrowRight, Search } from 'lucide-react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { manualSystems, publicManualEditions } from '../lib/manual-chapters';
 import {
   highlightManualText,
@@ -38,13 +38,16 @@ function Highlight({ text, query }: { text: string; query: string }) {
 export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?: string } }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const navigationType = useNavigationType();
   const queryId = useId();
   const scopeId = useId();
   const input = useRef<HTMLInputElement>(null);
+  const pendingSearch = useRef<string | null>(null);
   const [loaded, setLoaded] = useState<LoadedIndex>();
 
   const params = new URLSearchParams(location.search);
   const query = (params.get('q') ?? '').slice(0, MANUAL_SEARCH_QUERY_LIMIT);
+  const [draft, setDraft] = useState(query);
   const requestedSystem = params.get('sistema');
   const systemId =
     requestedSystem && (requestedSystem === allSystems || bySystem.has(requestedSystem))
@@ -69,6 +72,14 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
       : edition
         ? `${systemId}/${edition.id}`
         : '';
+
+  useEffect(() => {
+    // A navegação atualiza a URL em transição. Digitação em andamento continua síncrona.
+    const pending = pendingSearch.current;
+    if (navigationType === 'REPLACE' && pending !== null && pending !== location.search.slice(1)) return;
+    pendingSearch.current = null;
+    setDraft(query);
+  }, [location.search, location.key, navigationType, query]);
 
   useEffect(() => {
     if (!indexKey) return;
@@ -106,12 +117,13 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
   }
 
   function updateSearch(values: { q?: string; sistema?: string; edicao?: string }) {
-    const next = new URLSearchParams(location.search);
+    const next = new URLSearchParams(pendingSearch.current ?? location.search);
     for (const [name, value] of Object.entries(values)) {
       if (value) next.set(name, value);
       else next.delete(name);
     }
     const search = next.toString();
+    pendingSearch.current = search;
     navigate(
       { pathname: location.pathname, search, hash: location.hash },
       { replace: true, preventScrollReset: true },
@@ -119,6 +131,7 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
   }
 
   function clear() {
+    setDraft('');
     updateSearch({ q: '' });
     input.current?.focus();
   }
@@ -159,12 +172,16 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
               type="search"
               autoComplete="off"
               placeholder="Memória de cálculo"
-              value={query}
+              value={draft}
               maxLength={MANUAL_SEARCH_QUERY_LIMIT}
               aria-describedby={scopeId}
-              onChange={(event) => updateSearch({ q: event.currentTarget.value })}
+              onChange={(event) => {
+                const value = event.currentTarget.value;
+                setDraft(value);
+                updateSearch({ q: value });
+              }}
               onKeyDown={(event) => {
-                if (event.key === 'Escape' && query && !event.nativeEvent.isComposing) {
+                if (event.key === 'Escape' && draft && !event.nativeEvent.isComposing) {
                   event.preventDefault();
                   clear();
                 }
@@ -215,7 +232,7 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
               ? `${edition.title} · ${edition.id === selection?.system.currentEditionId ? 'Vigente' : 'Histórica'}`
               : 'Edição vigente indisponível'}
         </p>
-        {query && (
+        {draft && (
           <button className="manual-search-clear" type="button" onClick={clear}>
             Limpar busca
           </button>
