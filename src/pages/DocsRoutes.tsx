@@ -107,9 +107,13 @@ function ManualPage() {
   if (!system) return <DocsNotFound />;
 
   const editions = publicManualEditions(system);
+  const currentCoverage = editions.find(({ id }) => id === system.currentEditionId)?.coverage;
+  const currentSource = currentCoverage?.sources[0];
   const official =
     system.kind === 'app'
-      ? { label: `Consultar documentação do ${system.name}`, to: system.app.documentation.url }
+      ? currentSource && currentCoverage
+        ? { label: `Consultar fonte da versão ${currentCoverage.version}`, to: currentSource.url }
+        : { label: `Consultar documentação do ${system.name}`, to: system.app.documentation.url }
       : undefined;
 
   if (!editionId) {
@@ -143,7 +147,9 @@ function ManualPage() {
   const editionLink = { label: edition.title, to: manualEditionPath(system.id, edition.id) };
   const chapters = publicManualChapters(edition);
   const editionAge = edition.id === system.currentEditionId ? 'Edição vigente' : 'Edição histórica';
-  const editionReview = edition.status === 'sample' ? 'Amostra didática' : 'Manual revisado';
+  const sampleLabel = system.kind === 'editorial' ? 'Amostra didática' : 'Amostra do manual';
+  const editionReview = edition.status === 'sample' ? sampleLabel : 'Manual revisado';
+  const coverageSource = edition.coverage?.sources[0];
 
   if (!chapterSlug) {
     return (
@@ -153,6 +159,16 @@ function ManualPage() {
           summary={system.summary}
           status={`${editionReview} · ${editionAge}`}
           breadcrumbs={[systemLink]}
+          notice={
+            edition.coverage
+              ? `Versão do aplicativo coberta: ${edition.coverage.version}.`
+              : undefined
+          }
+          official={
+            coverageSource
+              ? { label: 'Consultar fonte da versão', to: coverageSource.url }
+              : undefined
+          }
           linksTitle="Capítulos disponíveis"
           links={chapters.map((chapter) => ({
             title: chapter.title,
@@ -170,7 +186,7 @@ function ManualPage() {
   const Reader = chapter && readers.get(chapter.source);
   if (!Reader) return <DocsNotFound />;
 
-  const chapterReview = chapter.status === 'sample' ? 'Amostra didática' : editionReview;
+  const chapterReview = chapter.status === 'sample' ? sampleLabel : editionReview;
   const chapterLink = (neighbor: ManualChapter | undefined) =>
     neighbor && {
       label: neighbor.title,
@@ -191,6 +207,7 @@ function ManualPage() {
             summary: chapter.summary,
             edition: edition.title,
             reviewedAt: chapter.reviewedAt,
+            appVersion: edition.coverage?.version,
           }}
           breadcrumbs={[systemLink, editionLink]}
           status={`${chapterReview} · ${editionAge}`}

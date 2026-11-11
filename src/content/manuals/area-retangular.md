@@ -4,6 +4,7 @@ A área $A$ de um retângulo é o produto da base $b$ pela altura $h$.
 
 $$
 A = b\,h
+\label{eq:area-retangular}
 $$
 
 | Símbolo | Grandeza            | Unidade neste exemplo |
@@ -15,7 +16,7 @@ $$
 ## Substituição numérica
 
 1. Use $b = 0{,}20\,\mathrm{m}$ e $h = 0{,}30\,\mathrm{m}$.
-2. Substitua os valores na [formulação](#formulacao) e multiplique as unidades junto com os números.
+2. Substitua os valores na [equação da área](#eq-area-retangular) e multiplique as unidades junto com os números.
 
 $$
 A = (0{,}20\,\mathrm{m})\times(0{,}30\,\mathrm{m}) = 0{,}060\,\mathrm{m}^2

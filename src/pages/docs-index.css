@@ -64,6 +64,22 @@
   font-weight: 650;
 }
 
+.docs-directory-chapters {
+  display: grid;
+  gap: 8px;
+  padding: 10px 0 0;
+  margin: 0;
+  border-block-start: 1px solid var(--line);
+  list-style: none;
+  font-size: 0.875rem;
+}
+
+.docs-directory-chapters a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
 .docs-guides {
   margin-block-end: 20px;
 }

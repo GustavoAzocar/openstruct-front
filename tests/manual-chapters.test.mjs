@@ -11,6 +11,7 @@ import {
   manualSystemPath,
   manualSystems,
   publicManualChapters,
+  publicManualEditions,
   publicManualPaths,
   validateManualSystems,
 } from '../src/lib/manual-chapters.ts';
@@ -77,6 +78,28 @@ test('derives entries from current applications and retains the editorial sample
   assert.equal(MANUAL_SYSTEM_ROUTE, ':systemId');
   assert.equal(MANUAL_EDITION_ROUTE, ':systemId/:editionId');
   assert.equal(MANUAL_CHAPTER_ROUTE, ':systemId/:editionId/:chapterSlug');
+});
+
+test('publishes the four versioned presentations and the two sample flows', () => {
+  validateManualSystems(manualSystems);
+  const coverage = {
+    consolostruct: '0.7.1',
+    molastruct: '0.5.1',
+    armadurastruct: '0.2.0',
+    geosptstruct: '2.0.7',
+  };
+
+  for (const [id, version] of Object.entries(coverage)) {
+    const system = getManualSystem(id);
+    const edition = publicManualEditions(system).find(({ id }) => id === system.currentEditionId);
+    assert.equal(edition.status, 'sample');
+    assert.equal(edition.coverage.version, version);
+    assert.equal(publicManualChapters(edition)[0].slug, 'apresentacao');
+  }
+
+  const paths = publicManualPaths();
+  assert.ok(paths.includes('/docs/consolostruct/edicao-1/c01-modelo-memoria'));
+  assert.ok(paths.includes('/docs/recursos-editoriais/edicao-1/modelo-editorial'));
 });
 
 test('retains historical paths while leaving draft editions and chapters unpublished', () => {

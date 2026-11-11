@@ -106,3 +106,123 @@ test('isolates macros between formulas', () => {
   assert.match(chapter.html, /<mi>b<\/mi>/);
   assert.match(chapter.html, /e <span class="manual-math-error">/);
 });
+
+test('links to a stable display equation without passing its label to KaTeX', () => {
+  const chapter = compileManualMarkdown(String.raw`## Formulação geométrica
+
+Veja a [equação da área](#eq-area-do-retangulo).
+
+$$
+A = b h \label{eq:area-do-retangulo}
+$$
+
+O seno é apresentado como
+
+$$
+\sin\label{eq:seno}x
+$$`);
+
+  assert.deepEqual(chapter.diagnostics, []);
+  assert.match(chapter.html, /href="#eq-area-do-retangulo">equação da área<\/a>/);
+  assert.match(
+    chapter.html,
+    /id="eq-area-do-retangulo"><span class="katex"><math[^>]*display="block"/,
+  );
+  assert.match(chapter.html, /id="eq-seno">/);
+  assert.match(chapter.html, /<mi>sin<\/mi>/);
+  assert.doesNotMatch(chapter.html, /\\label\{|\sstyle=/);
+});
+
+test('flags malformed, duplicate and inline equation labels without creating duplicate anchors', () => {
+  const chapter = compileManualMarkdown(String.raw`## Eq seção
+
+$$ x = 1 \label{eq:repetido} $$
+
+$$ x = 2 \label{eq:repetido} $$
+
+$$ x = 3 \label{eq:secao} $$
+
+$$ x = 4 \label{eq:ruim_<x>} $$
+
+$$ x = 5 \label{eq:um} \label{eq:dois} $$
+
+A expressão $x \label{eq:inline}$ e o texto seguinte continuam disponíveis.`);
+
+  assert.equal(chapter.diagnostics.length, 5);
+  assert.match(chapter.diagnostics[0].message, /identificador eq-repetido já está em uso/);
+  assert.match(chapter.diagnostics[1].message, /identificador eq-secao já está em uso/);
+  assert.match(chapter.diagnostics[2].message, /use um rótulo no formato/);
+  assert.match(chapter.diagnostics[3].message, /use um rótulo por equação/);
+  assert.match(chapter.diagnostics[4].message, /rótulos só são permitidos em equações em bloco/);
+  assert.equal([...chapter.html.matchAll(/id="eq-repetido"/g)].length, 1);
+  assert.equal([...chapter.html.matchAll(/id="eq-secao"/g)].length, 1);
+  assert.doesNotMatch(chapter.html, /id="eq-(?:inline|ruim|um|dois)|<x>/);
+  assert.match(chapter.html, /&lt;x&gt;/);
+  assert.match(chapter.html, /texto seguinte continuam disponíveis/);
+});
+
+test('uses a standalone image title as an escaped caption and keeps its alt text', () => {
+  const chapter = compileManualMarkdown(
+    [
+      '![Janela de entrada](/assets/tela.png "Entrada &amp; saída &lt;exemplo&gt;")',
+      '',
+      'Texto com ![ícone](/assets/icone.png "Um título") na mesma linha.',
+      '',
+      '![Imagem sem legenda](/assets/sem-legenda.png " ")',
+      '',
+      '![Destino inseguro](javascript:alert%281%29 "Uma legenda")',
+    ].join('\n'),
+  );
+
+  assert.deepEqual(chapter.diagnostics, []);
+  assert.match(
+    chapter.html,
+    /<figure class="manual-figure">\s*<img src="\/assets\/tela\.png" alt="Janela de entrada">\s*<figcaption>Entrada &amp; saída &lt;exemplo&gt;<\/figcaption>\s*<\/figure>/,
+  );
+  assert.match(
+    chapter.html,
+    /<p>Texto com <img[^>]* title="Um título"[^>]*> na mesma linha\.<\/p>/,
+  );
+  assert.match(chapter.html, /<p><img src="\/assets\/sem-legenda.png"/);
+  assert.equal([...chapter.html.matchAll(/<figure /g)].length, 1);
+  assert.doesNotMatch(chapter.html, /src="javascript:|<exemplo>/);
+});
+
+test('renders only supported blockquote callouts and retains nested content', () => {
+  const chapter = compileManualMarkdown(String.raw`> [!NOTE]
+> Consulte a **fonte**.
+>
+> > Uma citação.
+
+> [!TIP]
+>
+> - Confira as unidades.
+> - Registre a saída.
+
+> [!WARNING]
+> Observe o limite <u>informado</u>.
+
+> [!UNKNOWN]
+> Citação literal.
+
+> \[!NOTE]
+> Marcador escapado.`);
+
+  assert.equal(chapter.diagnostics.length, 2);
+  assert.match(
+    chapter.html,
+    /<aside class="manual-callout manual-callout-note">\s*<p class="manual-callout-title">Nota<\/p>\s*<p>Consulte a <strong>fonte<\/strong>\.<\/p>\s*<blockquote>[\s\S]*?<\/blockquote>\s*<\/aside>/,
+  );
+  assert.match(
+    chapter.html,
+    /<aside class="manual-callout manual-callout-tip">\s*<p class="manual-callout-title">Dica<\/p>\s*<ul>/,
+  );
+  assert.match(
+    chapter.html,
+    /<aside class="manual-callout manual-callout-warning">\s*<p class="manual-callout-title">Atenção<\/p>\s*<p>Observe o limite &lt;u&gt;informado&lt;\/u&gt;\.<\/p>/,
+  );
+  assert.equal([...chapter.html.matchAll(/<aside /g)].length, 3);
+  assert.equal([...chapter.html.matchAll(/<\/aside>/g)].length, 3);
+  assert.match(chapter.html, /<blockquote>\s*<p>\[!UNKNOWN\]/);
+  assert.match(chapter.html, /<blockquote>\s*<p>\[!NOTE\]\nMarcador escapado/);
+});

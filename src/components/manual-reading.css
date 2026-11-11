@@ -130,6 +130,11 @@
   font-size: 0.825rem;
 }
 
+.manual-reading-app-version {
+  margin-block-start: 3px;
+  font-size: 0.825rem;
+}
+
 .manual-reading-edition span {
   margin-inline: 0.25rem;
 }
@@ -165,22 +170,127 @@
   text-underline-offset: 0.18em;
 }
 
-.manual-reading-content blockquote {
+.manual-reading-content :is(blockquote, .manual-callout) {
   margin: 1.2em 0;
   padding: 12px 18px;
-  border-inline-start: 4px solid var(--orange);
+  border-inline-start: 4px solid var(--callout-accent, var(--orange));
   border-radius: 0 8px 8px 0;
-  background: color-mix(in srgb, var(--orange) 10%, var(--surface));
+  background: color-mix(in srgb, var(--callout-accent, var(--orange)) 10%, var(--surface));
 }
 
 .manual-reading-content blockquote p {
   margin: 0;
 }
 
+.manual-reading-content .manual-callout-note {
+  --callout-accent: var(--accent);
+}
+
+.manual-reading-content .manual-callout-tip {
+  --callout-accent: #279978;
+}
+
+.manual-reading-content .manual-callout-warning {
+  --callout-accent: var(--orange);
+}
+
+.manual-reading-content .manual-callout-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.manual-reading-content .manual-callout p:last-child {
+  margin-block-end: 0;
+}
+
+.manual-reading-content .manual-figure {
+  margin: 1.25em 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.manual-reading-content .manual-figure img {
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: 7px 7px 0 0;
+}
+
+.manual-reading-content .manual-figure img[hidden] {
+  display: none;
+}
+
+.manual-reading-content .manual-figure-unavailable {
+  margin: 0;
+  padding: 14px 16px;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-figure figcaption {
+  padding: 10px 14px;
+  border-block-start: 1px solid var(--line);
+  font-size: 0.875em;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-figure figcaption p {
+  margin-block: 0;
+}
+
 .manual-reading-content :where(.manual-table-scroll, .manual-math-scroll, pre) {
   max-inline-size: 100%;
   overflow-x: auto;
   margin-block: 1em;
+}
+
+.manual-reading-content .manual-code-block {
+  margin-block: 1em;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.manual-reading-content .manual-code-controls {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  padding: 6px 8px;
+  border-block-end: 1px solid var(--line);
+}
+
+.manual-reading-content .manual-code-controls button {
+  min-block-size: 36px;
+  padding-inline: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.manual-reading-content .manual-code-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.manual-reading-content .manual-copy-status {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-code-block pre {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 0 0 7px 7px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.manual-reading-content code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875em;
 }
 
 .manual-reading-content .manual-table-scroll {
@@ -227,6 +337,10 @@
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--surface);
+}
+
+.manual-reading-content .manual-math-scroll:target {
+  border-color: var(--accent);
 }
 
 .manual-reading-content .manual-math-error {
@@ -298,7 +412,8 @@
       .manual-reading-toc,
       .manual-reading-back,
       .manual-reading-breadcrumb,
-      .manual-reading-adjacent
+      .manual-reading-adjacent,
+      .manual-code-controls
     ) {
     display: none;
   }
@@ -353,6 +468,22 @@
     margin-block: 0.65em;
     overflow: visible;
     break-inside: avoid;
+  }
+
+  .manual-reading-content :is(.manual-callout, .manual-figure) {
+    margin-block: 0.75em;
+    break-inside: avoid;
+  }
+
+  .manual-reading-content .manual-figure img {
+    max-block-size: 130mm;
+    object-fit: contain;
+  }
+
+  .manual-reading-content .manual-code-block pre {
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
   }
 
   .manual-reading-content :where(blockquote, .manual-math-scroll) {

@@ -134,6 +134,7 @@ export function Docs() {
         <ul className="docs-directory-list">
           {systemManuals.map((system) => {
             const edition = system.editions.find(({ id }) => id === system.currentEditionId);
+            const chapters = edition ? publicManualChapters(edition) : [];
             return (
               <li className="docs-directory-entry" key={system.id}>
                 <h3>
@@ -146,9 +147,22 @@ export function Docs() {
                   {edition?.status === 'reviewed'
                     ? 'Manual disponível'
                     : edition?.status === 'sample'
-                      ? 'Amostra disponível'
+                      ? edition.coverage
+                        ? `Amostra para a versão ${edition.coverage.version}`
+                        : 'Amostra disponível'
                       : 'Manual em elaboração'}
                 </p>
+                {edition && chapters.length > 0 && (
+                  <ul className="docs-directory-chapters">
+                    {chapters.map((chapter) => (
+                      <li key={chapter.slug}>
+                        <Link to={manualChapterPath(system.id, edition.id, chapter.slug)}>
+                          {chapter.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             );
           })}

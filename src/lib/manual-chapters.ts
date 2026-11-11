@@ -263,6 +263,8 @@ export function validateManualSystems(value: unknown): asserts value is ManualSy
   }
 }
 
+const initialReviewDate = '2026-11-11';
+
 const rectangleAreaChapter: ManualChapter = {
   slug: 'area-retangular',
   title: 'Área de um retângulo',
@@ -271,11 +273,34 @@ const rectangleAreaChapter: ManualChapter = {
   keywords: ['área', 'retângulo', 'base', 'altura', 'unidades', 'fórmula'],
   source: 'area-retangular.md',
   status: 'sample',
-  reviewedAt: '2026-11-11',
+  reviewedAt: initialReviewDate,
   sources: [
     {
       ref: 'OpenStax, Prealgebra 2e, seção 9.4',
       url: 'https://openstax.org/books/prealgebra-2e/pages/9-4-use-properties-of-rectangles-triangles-and-trapezoids',
+    },
+  ],
+};
+
+const editorialModelChapter: ManualChapter = {
+  slug: 'modelo-editorial',
+  title: 'Modelo editorial de capítulo',
+  summary:
+    'Um exemplo de como publicar capturas, tabelas, avisos, código, fórmulas e referências cruzadas.',
+  order: 2,
+  keywords: ['modelo', 'autoria', 'legenda', 'glossário', 'JSON', 'matriz', 'equação'],
+  source: 'modelo-editorial.md',
+  status: 'sample',
+  reviewedAt: initialReviewDate,
+  sources: [
+    ...rectangleAreaChapter.sources,
+    {
+      ref: 'f3f31df7e9dfa35967ceac6f26a950d80014a120',
+      url: 'https://github.com/ricardocorsini/GEOSPT-STRUCT/blob/f3f31df7e9dfa35967ceac6f26a950d80014a120/public/manual.html',
+    },
+    {
+      ref: '88ffb2e06b2e87d7270ff9e4bc40f48937b97e29',
+      url: 'https://github.com/ricardocorsini/openstruct-front/blob/88ffb2e06b2e87d7270ff9e4bc40f48937b97e29/docs/CONSOLOSTRUCT-CAPTURAS.md',
     },
   ],
 };
@@ -286,7 +311,7 @@ const editorialEdition: ManualEdition = {
   status: 'sample',
   reviewedAt: rectangleAreaChapter.reviewedAt,
   coverage: null,
-  chapters: [rectangleAreaChapter],
+  chapters: [rectangleAreaChapter, editorialModelChapter],
 };
 
 const editorialSystem: ManualSystem = {
@@ -298,18 +323,128 @@ const editorialSystem: ManualSystem = {
   editions: [editorialEdition],
 };
 
-export const manualSystems: ManualSystem[] = [
-  ...currentApps.map((app): ManualSystem => ({
+function githubSource(repository: string, ref: string, path: string): SourceReference {
+  return { ref, url: `https://github.com/${repository}/blob/${ref}/${path}` };
+}
+
+const consoloRef = 'f5267af015b77741b5e31b2a1900056bf43f7740';
+const consoloRepository = 'ricardocorsini/consolo-struct';
+const consoloGuide = githubSource(consoloRepository, consoloRef, 'docs/GUIA-DE-USO.md');
+const consoloReadme = githubSource(consoloRepository, consoloRef, 'README.md');
+const consoloExample = githubSource(
+  consoloRepository,
+  consoloRef,
+  'examples/detalhamento/consolos-detalhados.lume.json',
+);
+const molaGuide = githubSource(
+  'ricardocorsini/mola-struct',
+  '5d22f0626f8feb709a8b3b8301babd9985667d01',
+  'README.md',
+);
+const armaduraGuide = githubSource(
+  'ricardocorsini/armadura-struct',
+  'c25baa3b6b914670eccc58e40c87e06732d9019b',
+  'docs/GUIA.md',
+);
+const geoSptGuide = githubSource(
+  'itanervale/GEOSPT-STRUCT',
+  '5f5cded75e94dbce2bea90eb685deef74d1dfd1f',
+  'README.md',
+);
+
+type AppSample = {
+  coverage: NonNullable<ManualEdition['coverage']>;
+  chapters: Pick<ManualChapter, 'slug' | 'title' | 'summary' | 'keywords' | 'sources'>[];
+};
+
+const appSamples: Partial<Record<string, AppSample>> = {
+  consolostruct: {
+    coverage: { version: '0.7.1', sources: [consoloGuide, consoloReadme] },
+    chapters: [
+      {
+        slug: 'apresentacao',
+        title: 'Apresentação do ConsoloStruct',
+        summary: 'Escopo do cálculo local, organização do projeto e limites da versão 0.7.1.',
+        keywords: ['consolo', 'ELU', 'memória', 'detalhamento', 'escopo'],
+        sources: [consoloGuide, consoloReadme],
+      },
+      {
+        slug: 'c01-modelo-memoria',
+        title: 'C01: do modelo à memória de cálculo',
+        summary: 'Abra o exemplo público, confira as entradas e acompanhe o resultado da peça C01.',
+        keywords: ['C01', 'primeiros passos', 'unidades', 'modelo', 'memória', 'captura'],
+        sources: [consoloGuide, consoloReadme, consoloExample],
+      },
+    ],
+  },
+  molastruct: {
+    coverage: { version: '0.5.1', sources: [molaGuide] },
+    chapters: [
+      {
+        slug: 'apresentacao',
+        title: 'Apresentação do MolaStruct',
+        summary: 'Escopo, entradas e saídas da estimativa de rigidez na versão 0.5.1.',
+        keywords: ['rigidez', 'fundação', 'sapata', 'estaca', 'SPT'],
+        sources: [molaGuide],
+      },
+    ],
+  },
+  armadurastruct: {
+    coverage: { version: '0.2.0', sources: [armaduraGuide] },
+    chapters: [
+      {
+        slug: 'apresentacao',
+        title: 'Apresentação do ArmaduraStruct',
+        summary:
+          'Detalhamento, arquivos do projeto e limites de importação e exportação da versão 0.2.0.',
+        keywords: ['armadura', 'CAD', 'DXF', 'DWG', 'quadro de aço'],
+        sources: [armaduraGuide],
+      },
+    ],
+  },
+  geosptstruct: {
+    coverage: { version: '2.0.7', sources: [geoSptGuide] },
+    chapters: [
+      {
+        slug: 'apresentacao',
+        title: 'Apresentação do GeoSPT',
+        summary: 'Sondagens, interpretação geotécnica e saídas da versão 2.0.7.',
+        keywords: ['GeoSPT', 'sondagem', 'cotas', 'estaca', 'capacidade de carga'],
+        sources: [geoSptGuide],
+      },
+    ],
+  },
+};
+
+function appManual(app: CurrentApp): ManualSystem {
+  const sample = appSamples[app.id];
+  const edition: ManualEdition | undefined = sample && {
+    id: 'edicao-1',
+    title: 'Edição 1',
+    status: 'sample',
+    reviewedAt: initialReviewDate,
+    coverage: sample.coverage,
+    chapters: sample.chapters.map((chapter, index) => ({
+      ...chapter,
+      order: index + 1,
+      source: `${app.id}/${chapter.slug}.md`,
+      status: 'sample',
+      reviewedAt: initialReviewDate,
+    })),
+  };
+
+  return {
     id: app.id,
     kind: 'app',
     name: app.name,
     summary: app.description,
     app,
-    currentEditionId: null,
-    editions: [],
-  })),
-  editorialSystem,
-];
+    currentEditionId: edition?.id ?? null,
+    editions: edition ? [edition] : [],
+  };
+}
+
+export const manualSystems: ManualSystem[] = [...currentApps.map(appManual), editorialSystem];
 
 export function getManualSystem(id: string): ManualSystem | undefined {
   return manualSystems.find((system) => system.id === id);

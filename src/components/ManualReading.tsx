@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { ManualChapterContent } from './ManualChapterContent';
 import './manual-reading.css';
 
 type ReadingMetadata = {
@@ -8,6 +9,7 @@ type ReadingMetadata = {
   summary: string;
   edition: string;
   reviewedAt: string | null;
+  appVersion?: string;
 };
 
 type Chapter = {
@@ -18,6 +20,7 @@ type Chapter = {
 export type ManualLink = { label: string; to: string };
 
 const reviewDate = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' });
+const sectionHeadings = 'h2[id], h3[id], h4[id], h5[id], h6[id]';
 
 export function ManualBreadcrumbs({
   breadcrumbs,
@@ -69,9 +72,6 @@ export function ManualReading({
   const [tocOpen, setTocOpen] = useState(
     () => typeof window === 'undefined' || !window.matchMedia('(max-width: 760px)').matches,
   );
-  // Uma mudança no sumário não pode recriar o HTML que contém a seção em foco.
-  const markup = useMemo(() => ({ __html: chapter.html }), [chapter.html]);
-
   useEffect(() => {
     let target: HTMLElement | null = null;
     if (location.hash) {
@@ -81,11 +81,20 @@ export function ManualReading({
         /* Um fragmento malformado não impede a leitura. */
       }
     }
-    if (target && body.current?.contains(target)) {
-      target.tabIndex = -1;
-      target.focus({ preventScroll: true });
-      target.scrollIntoView({ behavior: 'instant' });
-      setActive(target.id);
+    const content = body.current;
+    if (target && content?.contains(target)) {
+      const anchored = target;
+      if (!anchored.hasAttribute('tabindex')) anchored.tabIndex = -1;
+      anchored.focus({ preventScroll: true });
+      anchored.scrollIntoView({ behavior: 'instant' });
+      const section = Array.from(content.querySelectorAll<HTMLElement>(sectionHeadings))
+        .reverse()
+        .find(
+          (heading) =>
+            heading === anchored ||
+            Boolean(heading.compareDocumentPosition(anchored) & Node.DOCUMENT_POSITION_FOLLOWING),
+        );
+      setActive(section?.id ?? '');
       return;
     }
     title.current?.focus({ preventScroll: true });
@@ -95,7 +104,7 @@ export function ManualReading({
 
   useEffect(() => {
     const headings = Array.from(
-      body.current?.querySelectorAll<HTMLElement>('h2[id], h3[id], h4[id], h5[id], h6[id]') ?? [],
+      body.current?.querySelectorAll<HTMLElement>(sectionHeadings) ?? [],
     ).reverse();
     const readingLine =
       Number.parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + 1;
@@ -161,9 +170,13 @@ export function ManualReading({
                 </>
               )}
             </p>
+            {metadata.appVersion && (
+              <p className="manual-reading-app-version">
+                Versão do aplicativo {metadata.appVersion}
+              </p>
+            )}
           </header>
-          {/* O plugin Vite valida e higieniza o HTML gerado do Markdown versionado. */}
-          <div className="manual-reading-content" ref={body} dangerouslySetInnerHTML={markup} />
+          <ManualChapterContent html={chapter.html} contentRef={body} />
           {(adjacent?.previous || adjacent?.next) && (
             <nav className="manual-reading-adjacent" aria-label="Capítulos desta edição">
               {adjacent.previous && (

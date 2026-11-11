@@ -12,9 +12,14 @@ export type CompiledManual = {
   diagnostics: ManualDiagnostic[];
 };
 
-type ManualEnvironment = Env & { diagnostics: ManualDiagnostic[] };
+type ManualEnvironment = Env & { diagnostics: ManualDiagnostic[]; anchorIds: Set<string> };
 
 const MAX_FORMULA_LENGTH = 4_000;
+const callouts = {
+  NOTE: { variant: 'note', title: 'Nota' },
+  TIP: { variant: 'tip', title: 'Dica' },
+  WARNING: { variant: 'warning', title: 'Atenção' },
+} as const;
 const markdown = MarkdownIt({ html: true, linkify: true });
 const escapeHtml = markdown.utils.escapeHtml;
 
@@ -40,14 +45,46 @@ markdown.renderer.rules.table_open = () =>
   '<div class="manual-table-scroll" tabindex="0" role="group" aria-label="Tabela"><table>\n';
 markdown.renderer.rules.table_close = () => '</table></div>\n';
 
+markdown.renderer.rules.manual_figure_content = (tokens, index, options, env, renderer) => {
+  const { children, content } = tokens[index];
+  const image = renderer.renderInline(children ?? [], options, env);
+  return `${image}\n<figcaption>${escapeHtml(content)}</figcaption>\n`;
+};
+
+markdown.renderer.rules.manual_callout_open = (tokens, index, options, _env, renderer) =>
+  `${renderer.renderToken(tokens, index, options)}<p class="manual-callout-title">${escapeHtml(tokens[index].content)}</p>\n`;
+
 markdown.use(tex, {
-  render(source, displayMode, env) {
-    const formula = source.trim();
+  render(source, displayMode, context) {
+    const env = context as ManualEnvironment;
+    let formula = source.trim();
+    let id: string | undefined;
     let markup: string;
     try {
-      if (!formula) throw new Error('a expressão está vazia');
       if (formula.length > MAX_FORMULA_LENGTH)
         throw new Error('a expressão excede o tamanho máximo');
+
+      // Só a barra de um comando real inicia um rótulo. Preserve pares de barras.
+      const labels = [...formula.matchAll(/(?<!\\)((?:\\\\)*)\\label(?![a-zA-Z])/g)];
+      if (labels.length) {
+        if (!displayMode) throw new Error('rótulos só são permitidos em equações em bloco');
+        if (labels.length > 1) throw new Error('use um rótulo por equação');
+        const [label] = labels;
+        const commandEnd = label.index + label[0].length;
+        const argument = /^\{eq:([a-z0-9]+(?:-[a-z0-9]+)*)\}/.exec(formula.slice(commandEnd));
+        if (!argument) throw new Error('use um rótulo no formato \\label{eq:identificador}');
+
+        const anchor = `eq-${argument[1]}`;
+        if (env.anchorIds.has(anchor)) throw new Error(`o identificador ${anchor} já está em uso`);
+        env.anchorIds.add(anchor);
+        id = anchor;
+        formula = (
+          formula.slice(0, label.index + label[1].length) +
+          ' ' +
+          formula.slice(commandEnd + argument[0].length)
+        ).trim();
+      }
+      if (!formula) throw new Error('a expressão está vazia');
 
       let restrictedCommand: string | undefined;
       markup = katex.renderToString(formula, {
@@ -68,17 +105,61 @@ markdown.use(tex, {
       const excerpt = formula.replace(/\s+/g, ' ').slice(0, 80);
       const reason =
         error instanceof katex.ParseError ? error.rawMessage : (error as Error).message;
-      (env as ManualEnvironment).diagnostics.push({
+      env.diagnostics.push({
         message: `Fórmula inválida ${JSON.stringify(excerpt)} (${reason}).`,
       });
       markup = `<span class="manual-math-error">Fórmula inválida. <code>${escapeHtml(formula)}</code></span>`;
     }
 
     return displayMode
-      ? `<div class="manual-math-scroll" tabindex="0" role="group" aria-label="Equação">${markup}</div>\n`
+      ? `<div class="manual-math-scroll" tabindex="0" role="group" aria-label="Equação"${id ? ` id="${id}"` : ''}>${markup}</div>\n`
       : markup;
   },
 });
+
+function promoteFigure(tokens: Token[], index: number): void {
+  const [open, inline, close] = tokens.slice(index, index + 3);
+  const [image] = inline.children ?? [];
+  if (inline.children?.length !== 1 || image.type !== 'image') return;
+  const title = image.attrGet('title');
+  if (typeof title !== 'string' || !title.trim()) return;
+
+  open.type = 'figure_open';
+  open.tag = 'figure';
+  open.hidden = false;
+  open.attrSet('class', 'manual-figure');
+  inline.type = 'manual_figure_content';
+  inline.content = title.trim();
+  image.attrs = image.attrs?.filter(([name]) => name !== 'title') ?? null;
+  close.type = 'figure_close';
+  close.tag = 'figure';
+  close.hidden = false;
+}
+
+function promoteCallout(tokens: Token[], index: number): boolean {
+  const [open, paragraph, inline, paragraphClose, next] = tokens.slice(index, index + 5);
+  if (paragraph?.type !== 'paragraph_open' || inline?.type !== 'inline') return false;
+  const marker = /^\[!(NOTE|TIP|WARNING)\][ \t]*(?:\n|$)/.exec(inline.content);
+  const [text, newline] = inline.children ?? [];
+  if (!marker || text?.type !== 'text' || text.content.trim() !== `[!${marker[1]}]`) return false;
+  if (newline && newline.type !== 'softbreak' && newline.type !== 'hardbreak') return false;
+  if (!newline && next?.type === 'blockquote_close') return false;
+
+  const { variant, title } = callouts[marker[1] as keyof typeof callouts];
+  open.type = 'manual_callout_open';
+  open.tag = 'aside';
+  open.content = title;
+  open.attrSet('class', `manual-callout manual-callout-${variant}`);
+
+  if (newline) {
+    inline.children = inline.children!.slice(2);
+  } else {
+    paragraph.hidden = true;
+    inline.children = [];
+    paragraphClose.hidden = true;
+  }
+  return true;
+}
 
 function headingText(tokens: Token[]): string {
   return tokens
@@ -92,12 +173,22 @@ function headingText(tokens: Token[]): string {
 }
 
 export function compileManualMarkdown(source: string): CompiledManual {
-  const env: ManualEnvironment = { diagnostics: [] };
+  const ids = new Set<string>();
+  const env: ManualEnvironment = { diagnostics: [], anchorIds: ids };
   const tokens = markdown.parse(source, env);
   const headings: ManualHeading[] = [];
-  const ids = new Set<string>();
+  const openCallouts = new Set<number>();
 
   for (const [index, token] of tokens.entries()) {
+    if (token.type === 'paragraph_open') promoteFigure(tokens, index);
+    if (token.type === 'blockquote_open' && promoteCallout(tokens, index)) {
+      openCallouts.add(token.level);
+    }
+    if (token.type === 'blockquote_close' && openCallouts.delete(token.level)) {
+      token.type = 'aside_close';
+      token.tag = 'aside';
+    }
+
     if (token.type === 'heading_open') {
       const title = headingText(tokens[index + 1].children ?? []);
       const slug =
