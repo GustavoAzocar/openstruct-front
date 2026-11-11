@@ -274,3 +274,20 @@ test('validates explicit product coverage and references pinned to its official 
     assert.throws(() => validateManualSystems([fixture]), expected);
   }
 });
+
+test('validates the optional reviewed range around the documented SemVer', () => {
+  const system = fixtureApp();
+  const { coverage } = system.editions[0];
+  coverage.range = { min: '0.0.0', max: coverage.version };
+  validateManualSystems([system]);
+
+  for (const range of [
+    { min: '0.0.0', max: 'v1.0.0' },
+    { min: coverage.version, max: '0.0.0' },
+    { min: '0.0.0', max: '0.0.1' },
+    null,
+  ]) {
+    coverage.range = range;
+    assert.throws(() => validateManualSystems([system]), /\.coverage\.range/);
+  }
+});

@@ -5,6 +5,7 @@ import chapterLoaders from 'virtual:manual-content';
 import { ManualLanding } from '../components/ManualLanding';
 import { ManualReading } from '../components/ManualReading';
 import { ManualSearch } from '../components/ManualSearch';
+import { ManualVersionNotice } from '../components/ManualVersionNotice';
 import {
   getManualSystem,
   manualChapterPath,
@@ -153,6 +154,9 @@ function ManualPage() {
   const editionReview = edition.status === 'sample' ? sampleLabel : 'Manual revisado';
   const coverageSource = edition.coverage?.sources[0];
   const manualSearch = <ManualSearch scope={{ systemId: system.id, editionId: edition.id }} />;
+  const versionNotice = system.kind === 'app' && (
+    <ManualVersionNotice system={system} edition={edition} />
+  );
 
   if (!chapterSlug) {
     return (
@@ -161,6 +165,7 @@ function ManualPage() {
           title={edition.title}
           summary={system.summary}
           search={manualSearch}
+          versionNotice={versionNotice}
           status={`${editionReview} · ${editionAge}`}
           breadcrumbs={[systemLink]}
           notice={
@@ -216,6 +221,7 @@ function ManualPage() {
           breadcrumbs={[systemLink, editionLink]}
           status={`${chapterReview} · ${editionAge}`}
           search={manualSearch}
+          versionNotice={versionNotice}
           adjacent={{
             previous: chapterLink(chapters[chapterIndex - 1]),
             next: chapterLink(chapters[chapterIndex + 1]),

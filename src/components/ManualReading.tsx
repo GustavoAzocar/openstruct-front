@@ -59,6 +59,7 @@ export function ManualReading({
   adjacent,
   back = { label: 'Voltar à documentação', to: '/docs' },
   search,
+  versionNotice,
 }: {
   metadata: ReadingMetadata;
   chapter: Chapter;
@@ -67,6 +68,7 @@ export function ManualReading({
   adjacent?: { previous?: ManualLink; next?: ManualLink };
   back?: ManualLink;
   search?: ReactNode;
+  versionNotice?: ReactNode;
 }) {
   const { hash, pathname } = useLocation();
   const title = useRef<HTMLHeadingElement>(null);
@@ -180,6 +182,7 @@ export function ManualReading({
               </p>
             )}
           </header>
+          {versionNotice}
           <ManualChapterContent html={chapter.html} contentRef={body} />
           {(adjacent?.previous || adjacent?.next) && (
             <nav className="manual-reading-adjacent" aria-label="Capítulos desta edição">

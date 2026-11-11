@@ -1,6 +1,7 @@
 import { validateAppRegistry } from './app-registry.ts';
 import type { CurrentApp, SourceReference } from './app-registry.ts';
 import { apps, currentApps } from './apps.ts';
+import { compareVersions } from './catalog.ts';
 import { releaseVersionPattern } from './release-history-contract.ts';
 
 export type ManualChapter = {
@@ -16,12 +17,20 @@ export type ManualChapter = {
   sources: SourceReference[];
 };
 
+export type ManualVersionRange = { min: string; max: string };
+export type ManualCoverage = {
+  version: string;
+  sources: SourceReference[];
+  /** Inclusive SemVer interval, explicitly reviewed. */
+  range?: ManualVersionRange;
+};
+
 export type ManualEdition = {
   id: string;
   title: string;
   status: 'sample' | 'reviewed' | 'draft';
   reviewedAt: string | null;
-  coverage: { version: string; sources: SourceReference[] } | null;
+  coverage: ManualCoverage | null;
   chapters: ManualChapter[];
 };
 
@@ -92,14 +101,26 @@ function reviewDate(value: unknown, draft: boolean, field: string): void {
   );
 }
 
-function isVersion(value: string): boolean {
+export function isComparableManualVersion(value: unknown): value is string {
   return (
+    typeof value === 'string' &&
     value.length <= 100 &&
     releaseVersionPattern.test(value) &&
     value
       .split(/[.+-]/)
       .slice(0, 3)
       .every((part) => Number.isSafeInteger(Number(part)))
+  );
+}
+
+export function isManualVersionRange(value: unknown, version: string): value is ManualVersionRange {
+  if (!value || typeof value !== 'object' || !('min' in value) || !('max' in value)) return false;
+  return (
+    isComparableManualVersion(version) &&
+    isComparableManualVersion(value.min) &&
+    isComparableManualVersion(value.max) &&
+    compareVersions(value.min, version) <= 0 &&
+    compareVersions(version, value.max) <= 0
   );
 }
 
@@ -127,7 +148,10 @@ function validateSources(
     if (!repository) continue;
 
     const tagVersion = ref.startsWith('v') ? ref.slice(1) : '';
-    requireValue(commitPattern.test(ref) || isVersion(tagVersion), `${field}.ref: use SHA ou tag`);
+    requireValue(
+      commitPattern.test(ref) || isComparableManualVersion(tagVersion),
+      `${field}.ref: use SHA ou tag`,
+    );
     const base = `${repository}/`;
     const fixedPath =
       url.href.startsWith(`${base}blob/${ref}/`) ||
@@ -188,7 +212,16 @@ export function validateManualSystems(value: unknown): asserts value is ManualSy
       if (edition.coverage !== null) {
         const coverage = record(edition.coverage, `${scope}.coverage`);
         const coveredVersion = text(coverage.version, `${scope}.coverage.version`);
-        requireValue(repository && isVersion(coveredVersion), `${scope}.coverage.version`);
+        requireValue(
+          repository && isComparableManualVersion(coveredVersion),
+          `${scope}.coverage.version`,
+        );
+        if (coverage.range !== undefined) {
+          requireValue(
+            isManualVersionRange(coverage.range, coveredVersion),
+            `${scope}.coverage.range`,
+          );
+        }
         validateSources(coverage.sources, `${scope}.coverage.sources`, repository, coveredVersion);
       } else {
         requireValue(!repository || edition.status !== 'reviewed', `${scope}.coverage`);

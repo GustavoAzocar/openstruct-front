@@ -16,6 +16,7 @@ export function ManualLanding({
   linksTitle = 'Conteúdo disponível',
   back,
   search,
+  versionNotice,
 }: {
   title: string;
   summary: string;
@@ -27,6 +28,7 @@ export function ManualLanding({
   linksTitle?: string;
   back?: ManualLink;
   search?: ReactNode;
+  versionNotice?: ReactNode;
 }) {
   return (
     <div className="container manual-landing">
@@ -48,6 +50,7 @@ export function ManualLanding({
             )}
           </div>
         )}
+        {versionNotice}
         {links.length > 0 && (
           <section className="manual-landing-index" aria-labelledby="manual-landing-index">
             <h2 id="manual-landing-index">{linksTitle}</h2>
