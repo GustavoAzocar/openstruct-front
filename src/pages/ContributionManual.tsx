@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { developmentSources } from '../lib/development';
+import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 import {
   contributionPaths,
   exampleReport,
@@ -64,6 +65,9 @@ export function ContributionManual() {
           <a className="button button-outline" href="#codigo">
             Alterar o frontend
           </a>
+          <Link className="button button-outline" to={AI_CONTRIBUTION_PATH}>
+            Contribuir com IA
+          </Link>
         </div>
       </header>
       <aside className="manual-public-notice" aria-label="Antes de compartilhar">

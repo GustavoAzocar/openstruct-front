@@ -8,6 +8,43 @@
   gap: 5px;
   color: var(--accent);
 }
+.home-ai-guide {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px;
+  margin-top: 32px;
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand);
+  border-radius: 8px;
+  background: var(--surface);
+}
+.home-ai-guide > svg {
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.home-ai-guide > div {
+  flex: 1;
+}
+.home-ai-guide h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.7rem);
+  line-height: 1.4;
+  margin: 8px 0;
+}
+.home-ai-guide p {
+  font-size: 13px;
+}
+.home-ai-guide .button {
+  flex-shrink: 0;
+}
+@media (max-width: 700px) {
+  .home-ai-guide {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 24px;
+  }
+}
 .arm-home-showcase {
   min-width: 0;
   margin: 0;

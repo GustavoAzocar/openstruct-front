@@ -6,6 +6,7 @@ import { useExperience } from './Experience';
 import { site } from '../lib/config';
 import { currentApps } from '../lib/apps';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
+import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -40,11 +41,13 @@ export function Layout() {
                   ? 'Comunidade'
                   : location.pathname === CONTRIBUTION_MANUAL_PATH
                     ? 'Como colaborar'
-                    : location.pathname === '/releases'
-                      ? 'Releases'
-                      : location.pathname === site.developmentPath
-                        ? 'Central de desenvolvimento'
-                        : 'Página não encontrada'));
+                    : location.pathname === AI_CONTRIBUTION_PATH
+                      ? 'Contribuir com IA'
+                      : location.pathname === '/releases'
+                        ? 'Releases'
+                        : location.pathname === site.developmentPath
+                          ? 'Central de desenvolvimento'
+                          : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {
@@ -170,6 +173,7 @@ export function Layout() {
               <Link to={CONTRIBUTION_MANUAL_PATH}>
                 Como colaborar <ArrowRight size={13} />
               </Link>
+              <Link to={AI_CONTRIBUTION_PATH}>Contribuir com IA</Link>
               <Link to="/community#contribuidores">Contribuidores e créditos</Link>
             </div>
           </div>
