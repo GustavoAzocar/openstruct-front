@@ -95,7 +95,9 @@ for (const [file, source] of files) {
           file === 'index.html' && m[1].startsWith('/src/') ? { fileLink: m[1].slice(1) } : {},
         );
     }
-  if (file.endsWith('.md')) {
+  // Published manuals use the web router and the compiler's IDs. Audit their
+  // rendered links and media below, where their actual routes are available.
+  if (file.endsWith('.md') && !file.startsWith('src/content/manuals/')) {
     const clean = source
       .replace(/```[\s\S]*?```/g, (m) => m.replace(/[^\n]/g, ' '))
       .replace(/`[^`\n]+`/g, (m) => m.replace(/[^\n]/g, ' '));

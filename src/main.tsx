@@ -33,6 +33,9 @@ const ContributionManual = React.lazy(() =>
 const AiContribution = React.lazy(() =>
   import('./pages/AiContribution').then((module) => ({ default: module.AiContribution })),
 );
+const RectangleArea = React.lazy(() =>
+  import('./pages/RectangleArea').then((module) => ({ default: module.RectangleArea })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -49,6 +52,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path={getCurrentApp('geosptstruct').route} element={<GeoSPT />} />
               <Route path="launcher" element={<Launcher />} />
               <Route path="docs" element={<Docs />} />
+              <Route
+                path="docs/recursos-editoriais/edicao-1/area-retangular"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="container page-hero" role="status">
+                        Carregando capítulo…
+                      </div>
+                    }
+                  >
+                    <RectangleArea />
+                  </React.Suspense>
+                }
+              />
               <Route path="community" element={<Community />} />
               <Route
                 path="community/como-colaborar"

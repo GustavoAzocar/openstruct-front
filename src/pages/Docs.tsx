@@ -5,6 +5,7 @@ import { site } from '../lib/config';
 import { currentAppNames, getCurrentApp } from '../lib/apps';
 import { ProductCatalogMeta } from '../components/CatalogAvailability';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
+import { rectangleArea } from '../lib/manual-chapters';
 
 const consolo = getCurrentApp('consolostruct');
 const mola = getCurrentApp('molastruct');
@@ -92,6 +93,14 @@ const articles = [
     body: 'Escolha o projeto certo e sua forma de ajudar. O manual conduz uma primeira colaboração sem código e uma alteração no frontend até a revisão, com exemplos, comandos, resultados esperados e cuidados antes de compartilhar. Também apresenta os guias próprios dos aplicativos.',
     action: 'Como colaborar',
     to: CONTRIBUTION_MANUAL_PATH,
+  },
+  {
+    id: 'recursos-editoriais',
+    n: '11',
+    title: 'Recursos editoriais',
+    body: 'Veja uma amostra didática de como os manuais apresentam fórmulas, símbolos, unidades e exemplos numéricos.',
+    action: rectangleArea.title,
+    to: rectangleArea.path,
   },
 ];
 

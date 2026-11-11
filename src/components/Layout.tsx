@@ -7,6 +7,7 @@ import { site } from '../lib/config';
 import { currentApps } from '../lib/apps';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
+import { rectangleArea } from '../lib/manual-chapters';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -16,6 +17,11 @@ export function Layout() {
   const { launch, community } = useExperience();
   const location = useLocation();
   useEffect(() => {
+    if (location.pathname.replace(/\/$/, '') === rectangleArea.path) {
+      // O capítulo recupera o fragmento depois que seu conteúdo sob demanda é montado.
+      document.title = `${rectangleArea.title} — OpenStruct`;
+      return;
+    }
     if (location.hash) {
       let id = '';
       try {
