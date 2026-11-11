@@ -1,6 +1,7 @@
 /// <reference types="vite/client" />
 
-declare module '*.md?manual' {
-  const chapter: import('../scripts/manual-markdown.ts').CompiledManual;
-  export default chapter;
+declare module 'virtual:manual-content' {
+  type CompiledManual = import('../scripts/manual-markdown.ts').CompiledManual;
+  const chapters: Record<string, () => Promise<CompiledManual>>;
+  export default chapters;
 }

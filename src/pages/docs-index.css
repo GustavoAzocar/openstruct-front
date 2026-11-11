@@ -1,0 +1,88 @@
+.docs-hero .text-link {
+  margin-block-start: 18px;
+}
+
+.docs-directory {
+  margin-block-end: clamp(36px, 6vw, 72px);
+}
+
+.docs-directory h2,
+.docs-guides h2 {
+  margin-block: 0 18px;
+  font-size: clamp(1.45rem, 3.5vw, 2rem);
+}
+
+.docs-directory-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.docs-directory-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-block-start: 3px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+}
+
+.docs-directory-entry h3 {
+  margin: 0;
+  font-size: 1.03rem;
+}
+
+.docs-directory-entry a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.docs-directory-entry a:hover {
+  color: var(--accent);
+  text-decoration: underline;
+}
+
+.docs-directory-entry svg {
+  flex: none;
+  color: var(--accent);
+}
+
+.docs-directory-entry p {
+  font-size: 0.875rem;
+}
+
+.docs-directory-entry .docs-directory-status {
+  margin-block-start: auto;
+  padding-block-start: 5px;
+  font-weight: 650;
+}
+
+.docs-guides {
+  margin-block-end: 20px;
+}
+
+.docs-guides .search-box {
+  max-inline-size: 30rem;
+}
+
+.docs-guides input {
+  inline-size: 100%;
+}
+
+.docs-articles article h3 {
+  margin-block: 0;
+  font-size: clamp(1.25rem, 3vw, 1.75rem);
+}
+
+.docs-topic-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 22px;
+}

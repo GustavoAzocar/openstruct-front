@@ -7,7 +7,6 @@ import { site } from '../lib/config';
 import { currentApps } from '../lib/apps';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
-import { rectangleArea } from '../lib/manual-chapters';
 
 export function Layout() {
   const [open, setOpen] = useState(false);
@@ -17,11 +16,8 @@ export function Layout() {
   const { launch, community } = useExperience();
   const location = useLocation();
   useEffect(() => {
-    if (location.pathname.replace(/\/$/, '') === rectangleArea.path) {
-      // O capítulo recupera o fragmento depois que seu conteúdo sob demanda é montado.
-      document.title = `${rectangleArea.title} — OpenStruct`;
-      return;
-    }
+    // A documentação restaura o foco após montar suas páginas e capítulos assíncronos.
+    if (/^\/docs(?:\/|$)/i.test(location.pathname)) return;
     if (location.hash) {
       let id = '';
       try {
@@ -41,19 +37,17 @@ export function Layout() {
             ? 'Aplicativos'
             : location.pathname === '/launcher'
               ? 'Struct Launcher'
-              : location.pathname === '/docs'
-                ? 'Documentação'
-                : location.pathname === '/community'
-                  ? 'Comunidade'
-                  : location.pathname === CONTRIBUTION_MANUAL_PATH
-                    ? 'Como colaborar'
-                    : location.pathname === AI_CONTRIBUTION_PATH
-                      ? 'Contribuir com IA'
-                      : location.pathname === '/releases'
-                        ? 'Releases'
-                        : location.pathname === site.developmentPath
-                          ? 'Central de desenvolvimento'
-                          : 'Página não encontrada'));
+              : location.pathname === '/community'
+                ? 'Comunidade'
+                : location.pathname === CONTRIBUTION_MANUAL_PATH
+                  ? 'Como colaborar'
+                  : location.pathname === AI_CONTRIBUTION_PATH
+                    ? 'Contribuir com IA'
+                    : location.pathname === '/releases'
+                      ? 'Releases'
+                      : location.pathname === site.developmentPath
+                        ? 'Central de desenvolvimento'
+                        : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {

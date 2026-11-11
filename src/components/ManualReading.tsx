@@ -7,22 +7,60 @@ type ReadingMetadata = {
   title: string;
   summary: string;
   edition: string;
-  reviewedAt: string;
+  reviewedAt: string | null;
 };
 
 type Chapter = {
   html: string;
-  headings: { id: string; title: string; depth: number }[];
+  headings: readonly { id: string; title: string; depth: number }[];
 };
 
+export type ManualLink = { label: string; to: string };
+
 const reviewDate = new Intl.DateTimeFormat('pt-BR', { timeZone: 'UTC' });
+
+export function ManualBreadcrumbs({
+  breadcrumbs,
+  title,
+}: {
+  breadcrumbs: readonly ManualLink[];
+  title: string;
+}) {
+  return (
+    <nav className="manual-reading-breadcrumb" aria-label="Localização">
+      <ol>
+        <li>
+          <Link to="/docs">Documentação</Link>
+        </li>
+        {breadcrumbs.map(({ label, to }) => (
+          <li key={to}>
+            <ChevronRight aria-hidden="true" size={14} />
+            <Link to={to}>{label}</Link>
+          </li>
+        ))}
+        <li aria-current="page">
+          <ChevronRight aria-hidden="true" size={14} />
+          {title}
+        </li>
+      </ol>
+    </nav>
+  );
+}
 
 export function ManualReading({
   metadata,
   chapter,
+  breadcrumbs = [],
+  status,
+  adjacent,
+  back = { label: 'Voltar à documentação', to: '/docs' },
 }: {
   metadata: ReadingMetadata;
   chapter: Chapter;
+  breadcrumbs?: readonly ManualLink[];
+  status?: string;
+  adjacent?: { previous?: ManualLink; next?: ManualLink };
+  back?: ManualLink;
 }) {
   const location = useLocation();
   const title = useRef<HTMLHeadingElement>(null);
@@ -81,57 +119,69 @@ export function ManualReading({
 
   return (
     <div className="container manual-reading">
-      <nav className="manual-reading-breadcrumb" aria-label="Localização">
-        <ol>
-          <li>
-            <Link to="/docs">Documentação</Link>
-          </li>
-          <li>
-            <ChevronRight aria-hidden="true" size={14} />
-            <Link to="/docs#recursos-editoriais">Recursos editoriais</Link>
-          </li>
-          <li aria-current="page">
-            <ChevronRight aria-hidden="true" size={14} />
-            {metadata.title}
-          </li>
-        </ol>
-      </nav>
-      <div className="manual-reading-layout">
-        <nav className="manual-reading-toc" aria-label="Sumário do capítulo">
-          <details open={tocOpen} onToggle={(event) => setTocOpen(event.currentTarget.open)}>
-            <summary>Sumário do capítulo</summary>
-            <ul>
-              {chapter.headings.map(({ id, title, depth }) => (
-                <li key={id} data-depth={depth}>
-                  <Link
-                    to={{ hash: `#${id}` }}
-                    aria-current={active === id ? 'location' : undefined}
-                  >
-                    {title}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </details>
-        </nav>
+      <ManualBreadcrumbs breadcrumbs={breadcrumbs} title={metadata.title} />
+      <div
+        className={`manual-reading-layout${chapter.headings.length ? '' : ' manual-reading-layout-single'}`}
+      >
+        {chapter.headings.length > 0 && (
+          <nav className="manual-reading-toc" aria-label="Sumário do capítulo">
+            <details open={tocOpen} onToggle={(event) => setTocOpen(event.currentTarget.open)}>
+              <summary>Sumário do capítulo</summary>
+              <ul>
+                {chapter.headings.map(({ id, title, depth }) => (
+                  <li key={id} data-depth={depth}>
+                    <Link
+                      to={{ hash: `#${id}` }}
+                      aria-current={active === id ? 'location' : undefined}
+                    >
+                      {title}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </details>
+          </nav>
+        )}
         <article className="manual-reading-article" aria-labelledby="manual-reading-title">
           <header className="manual-reading-cover">
-            <p className="manual-reading-status">Amostra didática</p>
+            {status && <p className="manual-reading-status">{status}</p>}
             <h1 id="manual-reading-title" ref={title} tabIndex={-1}>
               {metadata.title}
             </h1>
             <p>{metadata.summary}</p>
             <p className="manual-reading-edition">
-              {metadata.edition} <span aria-hidden="true">·</span> Revisão de{' '}
-              <time dateTime={metadata.reviewedAt}>
-                {reviewDate.format(new Date(metadata.reviewedAt))}
-              </time>
+              {metadata.edition}
+              {metadata.reviewedAt && (
+                <>
+                  {' '}
+                  <span aria-hidden="true">·</span> Revisão de{' '}
+                  <time dateTime={metadata.reviewedAt}>
+                    {reviewDate.format(new Date(metadata.reviewedAt))}
+                  </time>
+                </>
+              )}
             </p>
           </header>
           {/* O plugin Vite valida e higieniza o HTML gerado do Markdown versionado. */}
           <div className="manual-reading-content" ref={body} dangerouslySetInnerHTML={markup} />
-          <Link className="manual-reading-back text-link" to="/docs#recursos-editoriais">
-            <ArrowLeft aria-hidden="true" size={16} /> Voltar aos recursos editoriais
+          {(adjacent?.previous || adjacent?.next) && (
+            <nav className="manual-reading-adjacent" aria-label="Capítulos desta edição">
+              {adjacent.previous && (
+                <Link to={adjacent.previous.to} rel="prev">
+                  <span>Capítulo anterior</span>
+                  {adjacent.previous.label}
+                </Link>
+              )}
+              {adjacent.next && (
+                <Link to={adjacent.next.to} rel="next">
+                  <span>Próximo capítulo</span>
+                  {adjacent.next.label}
+                </Link>
+              )}
+            </nav>
+          )}
+          <Link className="manual-reading-back text-link" to={back.to}>
+            <ArrowLeft aria-hidden="true" size={16} /> {back.label}
           </Link>
         </article>
       </div>

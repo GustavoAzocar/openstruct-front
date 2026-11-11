@@ -15,6 +15,7 @@ function visitTree(node, fn) {
 import { createServer } from 'vite';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { prerenderToNodeStream } from 'react-dom/static';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { apps, getCurrentApp } from '../src/lib/apps.ts';
 import { verifySignedCatalog, loadPublicCatalog } from '../src/lib/catalog.ts';
@@ -206,10 +207,15 @@ try {
   for (const route of routes) {
     const module = await server.ssrLoadModule('/' + route.file + '.tsx');
     const Component = module[route.name];
-    const html = renderToStaticMarkup(
-      React.createElement(
+    const documentation = route.path === '/docs/*';
+    const paths = documentation
+      ? (await server.ssrLoadModule('/src/lib/manual-chapters.ts')).publicManualPaths()
+      : [route.path];
+
+    for (const page of paths) {
+      const element = React.createElement(
         MemoryRouter,
-        { initialEntries: [route.path] },
+        { initialEntries: [page] },
         React.createElement(
           CatalogProvider,
           null,
@@ -230,17 +236,47 @@ try {
             ),
           ),
         ),
-      ),
-    );
-    const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((m) => decodeHtml(m[1])));
-    pages.set(route.path, { ids });
-    for (const m of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
-      const url = decodeHtml(m[1]);
-      const loc = location(url, route.file + '.tsx');
-      add(url, loc.file, loc.line, {
-        page: route.path,
-        ...(loc.computed ? { computed: true } : {}),
-      });
+      );
+      let html;
+      if (documentation) {
+        // Aguarde os capítulos lazy para auditar o conteúdo, em vez do fallback.
+        const errors = [];
+        const { prelude } = await prerenderToNodeStream(element, {
+          onError(error) {
+            errors.push(error);
+          },
+        });
+        html = Buffer.concat(await Array.fromAsync(prelude)).toString('utf8');
+        if (errors.length) throw new AggregateError(errors, `Falha ao renderizar ${page}`);
+        if (/\sdata-docs-(?:not-found|load-error)(?:=|\s|>)/.test(html))
+          throw Error(`A rota de documentação publicada ${page} não pôde ser renderizada.`);
+      } else {
+        html = renderToStaticMarkup(element);
+      }
+
+      const ids = new Set();
+      for (const match of html.matchAll(/\sid="([^"]+)"/g)) {
+        const id = decodeHtml(match[1]);
+        if (documentation && ids.has(id))
+          findings.push(
+            issue(
+              { file: route.file + '.tsx', line: 1, page, url: '#' + id, computed: true },
+              'duplicate-anchor',
+              'ID duplicado na rota de documentação',
+              'Dar identificadores únicos às seções, equações e outros elementos da página.',
+            ),
+          );
+        ids.add(id);
+      }
+      pages.set(page, { ids });
+      for (const match of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
+        const url = decodeHtml(match[1]);
+        const loc = location(url, route.file + '.tsx');
+        add(url, loc.file, loc.line, {
+          page,
+          ...(loc.computed ? { computed: true } : {}),
+        });
+      }
     }
   }
 } finally {
@@ -383,7 +419,7 @@ const report = {
   generatedAt: new Date().toISOString(),
   mode: external ? 'external' : 'local',
   coverage: {
-    routes: routes.map((r) => r.path),
+    routes: [...pages.keys()],
     references: refs.length,
     externalRequests: requests,
     externalLimit: 120,
@@ -404,7 +440,7 @@ const esc = (s) =>
     .replace(/[|\r\n]/g, ' ')
     .replace(/`/g, "'");
 const md =
-  `# Auditoria de conteúdo\n\n${report.generatedAt} · ${report.mode} · ${refs.length} referências · ${routes.length} rotas · ${requests} requisições externas\n\nFeed: ${feed.source}, publicado em ${feed.publishedAt}. Revisões são alertas humanos, sem alteração automática.\n\n| Estado | Arquivo:linha | URL | Diagnóstico | Ação |\n| --- | --- | --- | --- | --- |\n` +
+  `# Auditoria de conteúdo\n\n${report.generatedAt} · ${report.mode} · ${refs.length} referências · ${pages.size} rotas · ${requests} requisições externas\n\nFeed: ${feed.source}, publicado em ${feed.publishedAt}. Revisões são alertas humanos, sem alteração automática.\n\n| Estado | Arquivo:linha | URL | Diagnóstico | Ação |\n| --- | --- | --- | --- | --- |\n` +
   unique
     .map(
       (f) =>
