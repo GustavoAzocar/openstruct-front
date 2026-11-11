@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { contributionPrompt } from '../src/lib/ai-contribution.ts';
+import { aiToolGuides, contributionPrompt } from '../src/lib/ai-contribution.ts';
 import { developmentSources } from '../src/lib/development.ts';
 
 const armadura = developmentSources.find((source) => source.slug === 'armadura-struct');
@@ -36,6 +36,28 @@ test('a blank model keeps explicit placeholders and partial input is never mista
   assert.equal(partial.forkUrl, fork);
   assert.equal(partial.personalized, false);
   assert.ok(partial.prompt.includes('[URL_DA_ISSUE_ABERTA]'));
+});
+
+test('switching assistants keeps the contribution destinations and uses the selected tool context', () => {
+  for (const [tool, guide] of Object.entries(aiToolGuides)) {
+    const result = contributionPrompt(armadura, fork, issue, tool);
+    assert.equal(result.personalized, true);
+    assert.equal(result.forkUrl, fork);
+    assert.equal(result.issueUrl, issue);
+    assert.ok(result.prompt.includes(guide.environment));
+    assert.ok(result.prompt.includes(guide.modelGuidance));
+    if (tool === 'claude' || tool === 'gemini') {
+      assert.ok(!result.prompt.includes('GPT-6.1 Sol'));
+      assert.ok(!result.prompt.includes('GPT-6 Luna'));
+    }
+    const blank = contributionPrompt(armadura, '', '', tool);
+    assert.ok(blank.prompt.includes('[URL_DO_SEU_FORK]'));
+    assert.ok(blank.prompt.includes('[URL_DA_ISSUE_ABERTA]'));
+  }
+  assert.equal(
+    contributionPrompt(armadura, fork, issue).prompt,
+    contributionPrompt(armadura, fork, issue, 'chatgpt').prompt,
+  );
 });
 
 test('fork URL normalizes copied browser/git addresses and accepts a renamed fork', () => {

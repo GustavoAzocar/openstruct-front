@@ -36,7 +36,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/docs`                     | Guia inicial com busca, unidades, limitações da prévia e participação               |
 | `/community`                | Formas de contribuir e acompanhar o projeto                                         |
 | `/community/como-colaborar` | Manual público passo a passo, com percursos sem código e de código no frontend      |
-| `/development/contribuir-com-ia` | Guia para contribuir com ChatGPT ou Codex: conexão, fork, issue, prompt e PR manual |
+| `/development/contribuir-com-ia` | Guia com ChatGPT/Codex, Claude e Gemini: ambiente, modelo, fork, issue, prompt e PR |
 | Outros endereços            | Página 404 com navegação de retorno                                                 |
 
 ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
@@ -294,8 +294,12 @@ O ambiente do site está em [Desenvolvimento](#desenvolvimento); o percurso comp
 comandos e checklists são mantidos no manual, evitando cópias divergentes.
 Veja [fontes, dependências e manutenção do manual](docs/MANUAL-COLABORACAO.md).
 
-Para trabalhar com uma IA, siga o **[roteiro de contribuição com ChatGPT ou Codex](https://www.openstruct.com.br/development/contribuir-com-ia)**.
+Para trabalhar com uma IA, siga o **[roteiro de contribuição com ChatGPT/Codex, Claude e Gemini](https://www.openstruct.com.br/development/contribuir-com-ia)**.
 O guia tem seis passos e um prompt copiável, personalizado com o projeto, o fork e a issue.
+O ambiente escolhido também orienta o prompt: ChatGPT Work/Codex, Claude Code ou
+Antigravity com Gemini (com alternativa Gemini CLI). Exemplos ajudam a julgar a tarefa:
+modelos menores para ajustes simples e GPT-6.1 Sol com raciocínio Máximo para trabalho complexo,
+quando disponível. Modelo, esforço e permissões são configurados na própria ferramenta.
 O fluxo sincroniza o fork antes da implementação, pede testes e envia a alteração para uma
 branch do colaborador; a abertura do PR é manual. Há atalhos na home, em Desenvolvimento,
 no manual geral e no rodapé. [Manutenção e fontes do guia](docs/CONTRIBUICAO-IA.md).
