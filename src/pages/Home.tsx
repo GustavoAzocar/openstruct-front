@@ -83,7 +83,7 @@ export function Home() {
         <div>
           <span className="eyebrow">CONSTRUA COM A COMUNIDADE</span>
           <h2 id="home-ai-guide-title">Sua primeira contribuição com IA.</h2>
-          <p>Do GitHub conectado ao primeiro PR: um roteiro simples para ChatGPT e Codex.</p>
+          <p>Do GitHub conectado ao primeiro PR: um roteiro para ChatGPT/Codex, Claude e Gemini.</p>
         </div>
         <Link className="button button-outline" to={AI_CONTRIBUTION_PATH}>
           Abrir passo a passo <ArrowRight size={16} />

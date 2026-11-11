@@ -6,15 +6,17 @@ import {
   DEFAULT_AI_REPOSITORY,
   aiGuideSources,
   aiGuideSteps,
+  aiToolGuides,
   contributionPrompt,
 } from '../lib/ai-contribution';
+import type { AiGuideTool } from '../lib/ai-contribution';
 import { developmentSources } from '../lib/development';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { site } from '../lib/config';
 import '../ai-contribution.css';
 
 export function AiContribution() {
-  const [tool, setTool] = useState('chatgpt');
+  const [tool, setTool] = useState<AiGuideTool>('chatgpt');
   const [repository, setRepository] = useState(DEFAULT_AI_REPOSITORY);
   const [fork, setFork] = useState('');
   const [issue, setIssue] = useState('');
@@ -22,7 +24,8 @@ export function AiContribution() {
   const promptRef = useRef<HTMLTextAreaElement>(null);
   const location = useLocation();
   const source = developmentSources.find((entry) => entry.slug === repository)!;
-  const recipe = contributionPrompt(source, fork, issue);
+  const toolGuide = aiToolGuides[tool];
+  const recipe = contributionPrompt(source, fork, issue, tool);
   const invalid = Boolean(recipe.forkError || recipe.issueError);
   const copied = copyResult?.prompt === recipe.prompt && copyResult.success;
 
@@ -60,8 +63,8 @@ export function AiContribution() {
           Da issue ao PR, <span className="blue-text">com a ajuda da IA.</span>
         </h1>
         <p>
-          Conecte o GitHub, escolha uma tarefa e use o ChatGPT ou Codex para ajudar a implementar.
-          Você confere a entrega e envia sua contribuição para revisão.
+          Conecte o GitHub, escolha uma tarefa e use ChatGPT/Codex, Claude ou Gemini para
+          implementar. Você confere a entrega e envia sua contribuição para revisão.
         </p>
         <div className="button-row">
           <a className="button button-primary" href="#conectar">
@@ -88,75 +91,131 @@ export function AiContribution() {
             01
           </span>
           <div>
-            <h2 id="ai-connect-title">Conecte sua conta do GitHub</h2>
+            <h2 id="ai-connect-title">Escolha o ambiente de trabalho e conecte o GitHub</h2>
             <p>
-              Você precisa de uma conta no GitHub e acesso ao ChatGPT ou Codex. Escolha por onde
-              começar:
+              Use um ambiente que consiga ler o projeto, editar arquivos e executar testes. No
+              ChatGPT, sugerimos <strong>Work ou Codex</strong>; no Claude,
+              <strong> Claude Code</strong>; com Gemini, <strong>Google Antigravity</strong>.
+              Escolha seu roteiro:
             </p>
             <fieldset className="ai-tool-choice">
               <legend>Onde você vai usar a IA?</legend>
-              {[
-                { value: 'chatgpt', label: 'ChatGPT' },
-                { value: 'codex', label: 'Codex' },
-              ].map((option) => (
-                <label key={option.value}>
+              {(Object.keys(aiToolGuides) as AiGuideTool[]).map((toolId) => (
+                <label key={toolId}>
                   <input
                     type="radio"
                     name="ai-tool"
-                    value={option.value}
-                    checked={tool === option.value}
-                    onChange={() => setTool(option.value)}
+                    value={toolId}
+                    checked={tool === toolId}
+                    onChange={() => setTool(toolId)}
                   />
-                  {option.label}
+                  {aiToolGuides[toolId].label}
                 </label>
               ))}
             </fieldset>
-            <div className="ai-setup-panel">
-              {tool === 'chatgpt' ? (
-                <ol>
-                  <li>
-                    Abra <strong>Plugins</strong> no ChatGPT, procure <strong>GitHub</strong> e
-                    instale.
-                  </li>
-                  <li>
-                    Selecione <strong>Conectar</strong>, entre no GitHub e autorize os repositórios
-                    que vai usar, incluindo seu fork depois de criá-lo.
-                  </li>
-                  <li>
-                    Abra uma nova conversa e selecione <strong>@GitHub</strong> ao escrever a
-                    mensagem.
-                  </li>
-                </ol>
-              ) : (
-                <ol>
-                  <li>
-                    No ChatGPT, abra uma tarefa do Codex em <strong>Work in → Cloud</strong>{' '}
-                    (trabalhar na nuvem).
-                  </li>
-                  <li>
-                    Use um ambiente disponível e informe a URL do seu fork. Se a tela pedir conexão
-                    com o GitHub, entre na sua conta e autorize esse repositório.
-                  </li>
-                  <li>
-                    Se usar a seleção de repositórios de um ambiente, escolha{' '}
-                    <strong>seu fork</strong>. Cole o prompt do passo 4 para começar.
-                  </li>
-                </ol>
-              )}
+            <div className="ai-setup-panel" aria-live="polite">
+              <ol>
+                {toolGuide.steps.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
             </div>
             <p className="ai-guide-note">
-              Os menus e recursos podem variar conforme sua conta. Conectar o GitHub dá acesso aos
-              repositórios autorizados; para implementar e testar, a sessão também precisa permitir
-              edição de arquivos e execução de comandos. Peça à IA para conferir esses acessos antes
-              de começar.{' '}
-              <a
-                href={tool === 'chatgpt' ? aiGuideSources.plugins : aiGuideSources.cloud}
-                target="_blank"
-                rel="noreferrer"
-              >
+              Pode conectar a conta agora. Se ainda não tem um fork,{' '}
+              <a href="#fork">crie sua cópia no passo 2</a> e volte aqui para selecioná-la.
+            </p>
+            {tool === 'gemini' && (
+              <details className="ai-local-setup">
+                <summary>Como abrir meu fork no computador? Já uso terminal?</summary>
+                <p>
+                  Instale o Git, copie a URL do fork criado no passo 2 e peça à IA os comandos para
+                  cloná-lo. Abra essa pasta no Antigravity. Para enviar commits, conclua a
+                  autenticação do GitHub quando solicitada.
+                </p>
+                <p>
+                  Se já usa terminal, pode instalar e iniciar o{' '}
+                  <a href={aiGuideSources.geminiCli} target="_blank" rel="noreferrer">
+                    Gemini CLI pelo guia oficial ↗
+                  </a>{' '}
+                  nessa mesma pasta e colar o prompt. A autenticação no Google e o acesso de escrita
+                  ao GitHub são etapas separadas.
+                </p>
+              </details>
+            )}
+            <p className="ai-guide-note">
+              Os menus e recursos podem variar conforme a versão e sua conta. Conectar o GitHub dá
+              acesso aos repositórios autorizados; para implementar e testar, a sessão também
+              precisa permitir edição de arquivos e execução de comandos. Peça à IA para conferir
+              esses acessos antes de começar.{' '}
+              <a href={toolGuide.setupUrl} target="_blank" rel="noreferrer">
                 Ver configuração oficial <ArrowUpRight size={13} />
               </a>
             </p>
+            <aside className="ai-model-guide" id="modelo" aria-labelledby="ai-model-title">
+              <h3 id="ai-model-title">Qual modelo e nível de raciocínio usar?</h3>
+              <p>
+                Para contribuições complexas no ChatGPT ou Codex, nossa sugestão é{' '}
+                <strong>GPT-6.1 Sol com raciocínio Máximo (Max)</strong>, quando disponível. Antes
+                de escolher, julgue o tamanho e o impacto da tarefa:
+              </p>
+              <table aria-labelledby="ai-model-title">
+                <thead>
+                  <tr>
+                    <th scope="col">Tarefa</th>
+                    <th scope="col">Exemplos</th>
+                    <th scope="col">Ponto de partida</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">Simples</th>
+                    <td>Corrigir texto, link ou um ajuste visual localizado.</td>
+                    <td>
+                      Modelo menor, como GPT-6 Luna, ou opção leve disponível no Claude/Gemini.
+                      Esforço baixo ou médio pode bastar.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Intermediária</th>
+                    <td>Adicionar um campo ou corrigir um fluxo com regras e testes conhecidos.</td>
+                    <td>
+                      GPT-6.1 Sol com esforço padrão ou alto, ou outro modelo adequado disponível.
+                      Aumente se surgirem dependências ou falhas difíceis.
+                    </td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Complexa</th>
+                    <td>
+                      Alterar cálculos, geometria, persistência, exportações ou vários fluxos
+                      conectados.
+                    </td>
+                    <td>
+                      GPT-6.1 Sol + Máximo. No Claude/Gemini, use um modelo de maior capacidade e
+                      planejamento antes da implementação.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <p className="ai-guide-note">
+                <strong>Como selecionar no ChatGPT/Codex:</strong> abra o seletor de modelo e
+                raciocínio abaixo da caixa de mensagem; se aparecer o controle Power, abra Advanced
+                (Avançado). Escolha GPT-6.1 Sol e Máximo quando a tarefa justificar. A
+                disponibilidade varia conforme conta e ambiente.
+              </p>
+              <p className="ai-guide-note">
+                No Claude Code, Plan ajuda a preparar a abordagem; depois peça a implementação. No
+                Antigravity, Planning prepara tarefas complexas e Fast atende mudanças pequenas.
+                Esses modos têm comportamentos próprios, sem equivalência exata com Work ou Máximo.
+              </p>
+              <p className="ai-guide-note">
+                Mais raciocínio pode consumir mais tempo e uso. A escolha do modelo é feita no
+                seletor da ferramenta; copiar o prompt não troca o modelo da sessão. Em qualquer
+                configuração, revise e teste a entrega.{' '}
+                <a href={aiGuideSources.models} target="_blank" rel="noreferrer">
+                  Modelos e raciocínio no ChatGPT/Codex ↗
+                </a>
+              </p>
+            </aside>
           </div>
         </section>
 
@@ -323,7 +382,7 @@ export function AiContribution() {
                 </button>
               </div>
               <label className="ai-prompt-label" htmlFor="ai-prompt-text">
-                Prompt para colar no ChatGPT ou Codex
+                Prompt para {toolGuide.label}
               </label>
               <textarea
                 id="ai-prompt-text"
@@ -448,8 +507,8 @@ export function AiContribution() {
         <details>
           <summary>A IA leu a issue, mas não consegue editar ou enviar.</summary>
           <p>
-            Peça que identifique a limitação. Para editar e rodar testes, use uma tarefa do Codex
-            com acesso ao código e execução de comandos. Para enviar, ela também precisa de
+            Peça que identifique a limitação. Use Work/Codex, Claude Code ou um agente com Gemini
+            com acesso ao código e execução de comandos. Para enviar, a sessão também precisa de
             permissão de escrita no seu fork. Se a etapa continuar indisponível, peça instruções
             para executá-la na sua conta; não compartilhe tokens na conversa.
           </p>
@@ -474,6 +533,24 @@ export function AiContribution() {
           </a>
           <a href={aiGuideSources.environments} target="_blank" rel="noreferrer">
             Ambientes do Codex ↗
+          </a>
+          <a href={aiGuideSources.work} target="_blank" rel="noreferrer">
+            ChatGPT Work ↗
+          </a>
+          <a href={aiGuideSources.models} target="_blank" rel="noreferrer">
+            Modelos e raciocínio ↗
+          </a>
+          <a href={aiGuideSources.claude} target="_blank" rel="noreferrer">
+            Claude Code ↗
+          </a>
+          <a href={aiGuideSources.antigravity} target="_blank" rel="noreferrer">
+            Antigravity com Gemini ↗
+          </a>
+          <a href={aiGuideSources.antigravityModes} target="_blank" rel="noreferrer">
+            Planning e Fast ↗
+          </a>
+          <a href={aiGuideSources.geminiCli} target="_blank" rel="noreferrer">
+            Gemini CLI ↗
           </a>
           <a href={aiGuideSources.sync} target="_blank" rel="noreferrer">
             Sincronizar fork ↗

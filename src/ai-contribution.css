@@ -157,6 +157,67 @@
   border: 1px solid var(--line);
   border-radius: 8px;
 }
+.ai-local-setup {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 13px;
+}
+.ai-local-setup summary {
+  cursor: pointer;
+  padding: 8px 0;
+  font-weight: 600;
+}
+.ai-guide-step .ai-local-setup p {
+  font-size: 13px;
+  margin-top: 12px;
+}
+.ai-local-setup a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ai-model-guide {
+  margin-top: 28px;
+  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--brand);
+  border-radius: 8px;
+  scroll-margin-top: 24px;
+}
+.ai-model-guide h3 {
+  font-size: 21px;
+  line-height: 1.4;
+  margin-bottom: 14px;
+}
+.ai-guide-step .ai-model-guide p {
+  font-size: 14px;
+}
+.ai-model-guide table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 20px;
+  font-size: 13px;
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+.ai-model-guide th,
+.ai-model-guide td {
+  text-align: left;
+  vertical-align: top;
+  padding: 12px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.ai-model-guide th {
+  font-weight: 600;
+}
+.ai-model-guide th:first-child {
+  width: 22%;
+}
+.ai-model-guide td {
+  color: var(--muted);
+}
 .ai-prompt-fields {
   display: grid;
   gap: 16px;
@@ -338,8 +399,16 @@
     font-size: 14px;
   }
   .ai-prompt-fields,
-  .ai-prompt-box {
+  .ai-prompt-box,
+  .ai-model-guide {
     padding: 18px;
+  }
+  .ai-model-guide table {
+    font-size: 12px;
+  }
+  .ai-model-guide th,
+  .ai-model-guide td {
+    padding: 10px 5px;
   }
   .ai-prompt-box textarea {
     font-size: 12px;
