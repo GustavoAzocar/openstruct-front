@@ -1,4 +1,5 @@
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-react';
+import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { ManualBreadcrumbs } from './ManualReading';
 import type { ManualLink } from './ManualReading';
@@ -14,6 +15,7 @@ export function ManualLanding({
   links = [],
   linksTitle = 'Conteúdo disponível',
   back,
+  search,
 }: {
   title: string;
   summary: string;
@@ -24,11 +26,13 @@ export function ManualLanding({
   links?: readonly { title: string; summary?: string; to: string }[];
   linksTitle?: string;
   back?: ManualLink;
+  search?: ReactNode;
 }) {
   return (
     <div className="container manual-landing">
       <ManualBreadcrumbs breadcrumbs={breadcrumbs} title={title} />
       <div className="manual-landing-column">
+        {search}
         <header className="manual-reading-cover">
           {status && <p className="manual-reading-status">{status}</p>}
           <h1 tabIndex={-1}>{title}</h1>

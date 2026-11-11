@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ManualChapterContent } from './ManualChapterContent';
@@ -57,6 +58,7 @@ export function ManualReading({
   status,
   adjacent,
   back = { label: 'Voltar à documentação', to: '/docs' },
+  search,
 }: {
   metadata: ReadingMetadata;
   chapter: Chapter;
@@ -64,8 +66,9 @@ export function ManualReading({
   status?: string;
   adjacent?: { previous?: ManualLink; next?: ManualLink };
   back?: ManualLink;
+  search?: ReactNode;
 }) {
-  const location = useLocation();
+  const { hash, pathname } = useLocation();
   const title = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState('');
@@ -74,9 +77,9 @@ export function ManualReading({
   );
   useEffect(() => {
     let target: HTMLElement | null = null;
-    if (location.hash) {
+    if (hash) {
       try {
-        target = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        target = document.getElementById(decodeURIComponent(hash.slice(1)));
       } catch {
         /* Um fragmento malformado não impede a leitura. */
       }
@@ -100,7 +103,7 @@ export function ManualReading({
     title.current?.focus({ preventScroll: true });
     window.scrollTo({ top: 0, behavior: 'instant' });
     setActive('');
-  }, [chapter, location.hash, location.key]);
+  }, [chapter, hash, pathname]);
 
   useEffect(() => {
     const headings = Array.from(
@@ -129,6 +132,7 @@ export function ManualReading({
   return (
     <div className="container manual-reading">
       <ManualBreadcrumbs breadcrumbs={breadcrumbs} title={metadata.title} />
+      {search}
       <div
         className={`manual-reading-layout${chapter.headings.length ? '' : ' manual-reading-layout-single'}`}
       >

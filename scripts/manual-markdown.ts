@@ -172,7 +172,7 @@ function headingText(tokens: Token[]): string {
     .trim();
 }
 
-export function compileManualMarkdown(source: string): CompiledManual {
+function parseManualMarkdown(source: string) {
   const ids = new Set<string>();
   const env: ManualEnvironment = { diagnostics: [], anchorIds: ids };
   const tokens = markdown.parse(source, env);
@@ -214,9 +214,55 @@ export function compileManualMarkdown(source: string): CompiledManual {
     }
   }
 
+  return { tokens, headings, env };
+}
+
+export function compileManualMarkdown(source: string): CompiledManual {
+  const { tokens, headings, env } = parseManualMarkdown(source);
   return {
     html: markdown.renderer.render(tokens, markdown.options, env),
     headings,
     diagnostics: env.diagnostics,
   };
+}
+
+function searchableInlineText(tokens: Token[]): string {
+  return tokens
+    .map((token) => {
+      if (token.children) return searchableInlineText(token.children);
+      if (token.type === 'text' || token.type === 'code_inline') return token.content;
+      if (['softbreak', 'hardbreak', 'math_inline'].includes(token.type)) return ' ';
+      return '';
+    })
+    .join('');
+}
+
+function normalizeWhitespace(text: string): string {
+  return text.replace(/\s+/g, ' ').trim();
+}
+
+export function indexManualMarkdown(source: string) {
+  const { tokens, headings } = parseManualMarkdown(source);
+  let section = { id: null as string | null, title: '', parts: [] as string[] };
+  const sections = [section];
+
+  for (const [index, token] of tokens.entries()) {
+    if (token.type === 'heading_open') {
+      const title = searchableInlineText(tokens[index + 1].children ?? []);
+      section = {
+        id: headings[sections.length - 1].id,
+        title: normalizeWhitespace(title),
+        parts: [],
+      };
+      sections.push(section);
+    } else if (token.type === 'manual_figure_content') {
+      section.parts.push(searchableInlineText(token.children ?? []), token.content);
+    } else if (token.type === 'inline' && tokens[index - 1]?.type !== 'heading_open') {
+      section.parts.push(searchableInlineText(token.children ?? []));
+    }
+  }
+
+  return sections
+    .map(({ id, title, parts }) => ({ id, title, text: normalizeWhitespace(parts.join(' ')) }))
+    .filter(({ id, text }) => id !== null || text.length > 0);
 }

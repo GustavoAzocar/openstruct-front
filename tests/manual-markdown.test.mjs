@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { compileManualMarkdown } from '../scripts/manual-markdown.ts';
+import { createServer } from 'vite';
+import { compileManualMarkdown, indexManualMarkdown } from '../scripts/manual-markdown.ts';
+import { manualSystems, publicManualEditions } from '../src/lib/manual-chapters.ts';
 
 test('compiles section anchors, GFM tables and code without inline styles', () => {
   const source = [
@@ -225,4 +227,91 @@ test('renders only supported blockquote callouts and retains nested content', ()
   assert.equal([...chapter.html.matchAll(/<\/aside>/g)].length, 3);
   assert.match(chapter.html, /<blockquote>\s*<p>\[!UNKNOWN\]/);
   assert.match(chapter.html, /<blockquote>\s*<p>\[!NOTE\]\nMarcador escapado/);
+});
+
+test('indexes introductory prose and uses the renderer IDs for visible section text', () => {
+  const source = String.raw`Apresentação com [a fonte](https://example.test/referencia) e $x_{ignorar}$.
+
+## Área $y_{ignorar}$ de referência
+
+A altura perpendicular aparece no cálculo da área total.
+
+$$
+\sum_{i=1}^{n} A_i \label{eq:ignorar}
+$$
+
+![Captura com valores de entrada](/assets/ignorar.png "Legenda da interface.")
+
+| Símbolo | Unidade |
+| --- | --- |
+| $A_i$ | metro quadrado |
+
+> [!NOTE]
+> Confira o resultado.
+
+~~~text
+fenced-example-ignore
+~~~
+
+## Glossário
+
+### Âncora
+
+Identificador de seção.
+
+### Âncora
+
+Identificador de equação.`;
+  const rendered = compileManualMarkdown(source);
+  const sections = indexManualMarkdown(source);
+  assert.deepEqual(rendered.diagnostics, []);
+  assert.deepEqual(
+    sections.map(({ id }) => id),
+    [null, ...rendered.headings.map(({ id }) => id)],
+  );
+  assert.deepEqual(sections[0], { id: null, title: '', text: 'Apresentação com a fonte e .' });
+  assert.equal(sections[1].title, 'Área de referência');
+  assert.match(sections[1].text, /altura perpendicular/);
+  assert.match(sections[1].text, /Captura com valores de entrada Legenda da interface/);
+  assert.match(sections[1].text, /Símbolo Unidade metro quadrado Confira o resultado/);
+  assert.doesNotMatch(sections[1].text, /ignorar|fenced-example-ignore|\[!NOTE\]|<[^>]+>/);
+  assert.equal(sections.find(({ id }) => id === 'glossario').title, 'Glossário');
+  assert.equal(sections.find(({ id }) => id === 'ancora-2').text, 'Identificador de equação.');
+});
+
+test('Vite exposes lazy public edition indexes with links to rendered sections', async () => {
+  const server = await createServer({
+    server: { middlewareMode: true, hmr: false, host: '127.0.0.1' },
+    appType: 'custom',
+  });
+  try {
+    const { default: searchEditions } = await server.ssrLoadModule('virtual:manual-search');
+    const { default: content } = await server.ssrLoadModule('virtual:manual-content');
+    assert.deepEqual(
+      Object.keys(searchEditions),
+      manualSystems.flatMap((system) =>
+        publicManualEditions(system).map((edition) => `${system.id}/${edition.id}`),
+      ),
+    );
+    assert.ok(Object.values(searchEditions).every((load) => typeof load === 'function'));
+
+    const editorial = await searchEditions['recursos-editoriais/edicao-1']();
+    const glossary = editorial.find(({ href }) => href.endsWith('/modelo-editorial#ancora'));
+    assert.equal(glossary.sectionTitle, 'Âncora');
+    assert.equal(glossary.appVersion, null);
+    assert.equal(glossary.chapterStatus, 'sample');
+    assert.equal(glossary.historical, false);
+
+    const consolo = await searchEditions['consolostruct/edicao-1']();
+    assert.ok(
+      consolo.every(
+        ({ systemId, appVersion }) => systemId === 'consolostruct' && appVersion === '0.7.1',
+      ),
+    );
+    const chapter = await content['modelo-editorial.md']();
+    assert.ok(chapter.headings.some(({ id }) => glossary.href.endsWith('#' + id)));
+    assert.equal('sections' in chapter, false);
+  } finally {
+    await server.close();
+  }
 });

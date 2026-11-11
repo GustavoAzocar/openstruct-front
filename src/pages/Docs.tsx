@@ -4,6 +4,7 @@ import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
 import { currentAppNames, getCurrentApp } from '../lib/apps';
 import { ProductCatalogMeta } from '../components/CatalogAvailability';
+import { ManualSearch } from '../components/ManualSearch';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import {
   getManualSystem,
@@ -129,6 +130,7 @@ export function Docs() {
           Recursos editoriais <ArrowRight aria-hidden="true" size={16} />
         </Link>
       </section>
+      <ManualSearch />
       <section className="docs-directory" aria-labelledby="docs-directory-title">
         <h2 id="docs-directory-title">Manuais por sistema</h2>
         <ul className="docs-directory-list">
@@ -173,10 +175,10 @@ export function Docs() {
         <label className="search-box">
           <Search aria-hidden="true" size={18} />
           <input
-            aria-label="Buscar guias do ecossistema"
+            aria-label="Filtrar guias do ecossistema"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Buscar guias"
+            placeholder="Filtrar guias"
           />
         </label>
       </section>

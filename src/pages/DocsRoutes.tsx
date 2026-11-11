@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useParams } from 'react-router-dom';
 import chapterLoaders from 'virtual:manual-content';
 import { ManualLanding } from '../components/ManualLanding';
 import { ManualReading } from '../components/ManualReading';
+import { ManualSearch } from '../components/ManualSearch';
 import {
   getManualSystem,
   manualChapterPath,
@@ -60,7 +61,7 @@ function DocumentationView({
   reading?: boolean;
   children: ReactNode;
 }) {
-  const { hash, key } = useLocation();
+  const { hash, pathname } = useLocation();
   useEffect(() => {
     document.title = `${title} — OpenStruct`;
     if (reading) return;
@@ -81,7 +82,7 @@ function DocumentationView({
     }
     if (fragment) fragment.scrollIntoView({ behavior: 'instant' });
     else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [title, hash, key, reading]);
+  }, [title, hash, pathname, reading]);
 
   return children;
 }
@@ -122,6 +123,7 @@ function ManualPage() {
         <ManualLanding
           title={system.name}
           summary={system.summary}
+          search={<ManualSearch scope={{ systemId: system.id }} />}
           status={editions.length ? 'Edições disponíveis' : 'Manual em elaboração'}
           official={official}
           notice={
@@ -150,6 +152,7 @@ function ManualPage() {
   const sampleLabel = system.kind === 'editorial' ? 'Amostra didática' : 'Amostra do manual';
   const editionReview = edition.status === 'sample' ? sampleLabel : 'Manual revisado';
   const coverageSource = edition.coverage?.sources[0];
+  const manualSearch = <ManualSearch scope={{ systemId: system.id, editionId: edition.id }} />;
 
   if (!chapterSlug) {
     return (
@@ -157,6 +160,7 @@ function ManualPage() {
         <ManualLanding
           title={edition.title}
           summary={system.summary}
+          search={manualSearch}
           status={`${editionReview} · ${editionAge}`}
           breadcrumbs={[systemLink]}
           notice={
@@ -211,6 +215,7 @@ function ManualPage() {
           }}
           breadcrumbs={[systemLink, editionLink]}
           status={`${chapterReview} · ${editionAge}`}
+          search={manualSearch}
           adjacent={{
             previous: chapterLink(chapters[chapterIndex - 1]),
             next: chapterLink(chapters[chapterIndex + 1]),
