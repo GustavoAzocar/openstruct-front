@@ -1,6 +1,6 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import type { ComponentProps, ReactNode } from 'react';
-import { Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { Route, Routes, useLocation, useNavigationType, useParams } from 'react-router-dom';
 import chapterLoaders from 'virtual:manual-content';
 import { ManualLanding } from '../components/ManualLanding';
 import { ManualReading } from '../components/ManualReading';
@@ -234,6 +234,20 @@ function ManualPage() {
 }
 
 export function DocsRoutes() {
+  const { key, state } = useLocation();
+  const navigationType = useNavigationType();
+  const searchOrigin = useRef<string | undefined>(undefined);
+  useEffect(() => {
+    const previousOrigin = searchOrigin.current;
+    searchOrigin.current = state?.manualSearchOrigin;
+    if (navigationType !== 'POP' || previousOrigin !== key) return;
+
+    const frame = requestAnimationFrame(() => {
+      document.querySelector<HTMLInputElement>('.manual-search input[type="search"]')?.focus();
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [key, state, navigationType]);
+
   return (
     <Routes>
       <Route

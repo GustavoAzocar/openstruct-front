@@ -385,99 +385,119 @@ const geoSptGuide = githubSource(
   'README.md',
 );
 
-type AppSample = {
-  coverage: NonNullable<ManualEdition['coverage']>;
-  chapters: Pick<ManualChapter, 'slug' | 'title' | 'summary' | 'keywords' | 'sources'>[];
-};
+type InitialSampleChapter = Pick<
+  ManualChapter,
+  'slug' | 'title' | 'summary' | 'keywords' | 'sources'
+>;
 
-const appSamples: Partial<Record<string, AppSample>> = {
-  consolostruct: {
-    coverage: { version: '0.7.1', sources: [consoloGuide, consoloReadme] },
-    chapters: [
-      {
-        slug: 'apresentacao',
-        title: 'Apresentação do ConsoloStruct',
-        summary: 'Escopo do cálculo local, organização do projeto e limites da versão 0.7.1.',
-        keywords: ['consolo', 'ELU', 'memória', 'detalhamento', 'escopo'],
-        sources: [consoloGuide, consoloReadme],
-      },
-      {
-        slug: 'c01-modelo-memoria',
-        title: 'C01: do modelo à memória de cálculo',
-        summary: 'Abra o exemplo público, confira as entradas e acompanhe o resultado da peça C01.',
-        keywords: ['C01', 'primeiros passos', 'unidades', 'modelo', 'memória', 'captura'],
-        sources: [consoloGuide, consoloReadme, consoloExample],
-      },
-    ],
-  },
-  molastruct: {
-    coverage: { version: '0.5.1', sources: [molaGuide] },
-    chapters: [
-      {
-        slug: 'apresentacao',
-        title: 'Apresentação do MolaStruct',
-        summary: 'Escopo, entradas e saídas da estimativa de rigidez na versão 0.5.1.',
-        keywords: ['rigidez', 'fundação', 'sapata', 'estaca', 'SPT'],
-        sources: [molaGuide],
-      },
-    ],
-  },
-  armadurastruct: {
-    coverage: { version: '0.2.0', sources: [armaduraGuide] },
-    chapters: [
-      {
-        slug: 'apresentacao',
-        title: 'Apresentação do ArmaduraStruct',
-        summary:
-          'Detalhamento, arquivos do projeto e limites de importação e exportação da versão 0.2.0.',
-        keywords: ['armadura', 'CAD', 'DXF', 'DWG', 'quadro de aço'],
-        sources: [armaduraGuide],
-      },
-    ],
-  },
-  geosptstruct: {
-    coverage: { version: '2.0.7', sources: [geoSptGuide] },
-    chapters: [
-      {
-        slug: 'apresentacao',
-        title: 'Apresentação do GeoSPT',
-        summary: 'Sondagens, interpretação geotécnica e saídas da versão 2.0.7.',
-        keywords: ['GeoSPT', 'sondagem', 'cotas', 'estaca', 'capacidade de carga'],
-        sources: [geoSptGuide],
-      },
-    ],
-  },
-};
-
-function appManual(app: CurrentApp): ManualSystem {
-  const sample = appSamples[app.id];
-  const edition: ManualEdition | undefined = sample && {
+function initialSampleEdition(
+  appId: string,
+  coverage: ManualCoverage,
+  chapters: InitialSampleChapter[],
+): ManualEdition {
+  return {
     id: 'edicao-1',
     title: 'Edição 1',
     status: 'sample',
     reviewedAt: initialReviewDate,
-    coverage: sample.coverage,
-    chapters: sample.chapters.map((chapter, index) => ({
+    coverage,
+    chapters: chapters.map((chapter, index) => ({
       ...chapter,
       order: index + 1,
-      source: `${app.id}/${chapter.slug}.md`,
+      source: `${appId}/${chapter.slug}.md`,
       status: 'sample',
       reviewedAt: initialReviewDate,
     })),
   };
-
-  return {
-    id: app.id,
-    kind: 'app',
-    name: app.name,
-    summary: app.description,
-    app,
-    currentEditionId: edition?.id ?? null,
-    editions: edition ? [edition] : [],
-  };
 }
 
-export const manualSystems: ManualSystem[] = [...currentApps.map(appManual), editorialSystem];
+const appManuals: Partial<Record<string, Pick<ManualSystem, 'currentEditionId' | 'editions'>>> = {
+  consolostruct: {
+    currentEditionId: 'edicao-1',
+    editions: [
+      initialSampleEdition(
+        'consolostruct',
+        { version: '0.7.1', sources: [consoloGuide, consoloReadme] },
+        [
+          {
+            slug: 'apresentacao',
+            title: 'Apresentação do ConsoloStruct',
+            summary: 'Escopo do cálculo local, organização do projeto e limites da versão 0.7.1.',
+            keywords: ['consolo', 'ELU', 'memória', 'detalhamento', 'escopo'],
+            sources: [consoloGuide, consoloReadme],
+          },
+          {
+            slug: 'c01-modelo-memoria',
+            title: 'C01: do modelo à memória de cálculo',
+            summary:
+              'Abra o exemplo público, confira as entradas e acompanhe o resultado da peça C01.',
+            keywords: ['C01', 'primeiros passos', 'unidades', 'modelo', 'memória', 'captura'],
+            sources: [consoloGuide, consoloReadme, consoloExample],
+          },
+        ],
+      ),
+    ],
+  },
+  molastruct: {
+    currentEditionId: 'edicao-1',
+    editions: [
+      initialSampleEdition('molastruct', { version: '0.5.1', sources: [molaGuide] }, [
+        {
+          slug: 'apresentacao',
+          title: 'Apresentação do MolaStruct',
+          summary: 'Escopo, entradas e saídas da estimativa de rigidez na versão 0.5.1.',
+          keywords: ['rigidez', 'fundação', 'sapata', 'estaca', 'SPT'],
+          sources: [molaGuide],
+        },
+      ]),
+    ],
+  },
+  armadurastruct: {
+    currentEditionId: 'edicao-1',
+    editions: [
+      initialSampleEdition('armadurastruct', { version: '0.2.0', sources: [armaduraGuide] }, [
+        {
+          slug: 'apresentacao',
+          title: 'Apresentação do ArmaduraStruct',
+          summary:
+            'Detalhamento, arquivos do projeto e limites de importação e exportação da versão 0.2.0.',
+          keywords: ['armadura', 'CAD', 'DXF', 'DWG', 'quadro de aço'],
+          sources: [armaduraGuide],
+        },
+      ]),
+    ],
+  },
+  geosptstruct: {
+    currentEditionId: 'edicao-1',
+    editions: [
+      initialSampleEdition('geosptstruct', { version: '2.0.7', sources: [geoSptGuide] }, [
+        {
+          slug: 'apresentacao',
+          title: 'Apresentação do GeoSPT',
+          summary: 'Sondagens, interpretação geotécnica e saídas da versão 2.0.7.',
+          keywords: ['GeoSPT', 'sondagem', 'cotas', 'estaca', 'capacidade de carga'],
+          sources: [geoSptGuide],
+        },
+      ]),
+    ],
+  },
+};
+
+export const manualSystems: ManualSystem[] = [
+  ...currentApps.map((app): ManualSystem => {
+    const manual = appManuals[app.id];
+    return {
+      id: app.id,
+      kind: 'app',
+      name: app.name,
+      summary: app.description,
+      app,
+      currentEditionId: manual?.currentEditionId ?? null,
+      editions: manual?.editions ?? [],
+    };
+  }),
+  editorialSystem,
+];
 
 export function getManualSystem(id: string): ManualSystem | undefined {
   return manualSystems.find((system) => system.id === id);

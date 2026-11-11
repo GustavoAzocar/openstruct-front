@@ -146,7 +146,7 @@ for (const [file, source] of files) {
 // Derive routes and component imports from the real router; unsupported new syntax fails loudly.
 const server = await createServer({
   configFile: resolve('vite.config.ts'),
-  server: { middlewareMode: true, hmr: false, host: '127.0.0.1' },
+  server: { middlewareMode: true, hmr: false, ws: false, host: '127.0.0.1' },
   appType: 'custom',
 });
 const { site } = await server.ssrLoadModule('/src/lib/config.ts');
@@ -199,18 +199,94 @@ for (const ref of staticAttributes) {
   const route = routes.find((r) => r.file + '.tsx' === ref.file);
   refs.push({ ...ref, ...(route ? { page: route.path } : {}) });
 }
+async function auditManualSearch({
+  manualSystems,
+  manualChapterPath,
+  publicManualEditions,
+  publicManualChapters,
+}) {
+  const { default: loaders } = await server.ssrLoadModule('virtual:manual-search');
+  const indexSource = { file: 'vite.config.ts', line: 1, computed: true };
+  const editions = new Map(
+    manualSystems.flatMap((system) =>
+      publicManualEditions(system).map((edition) => [
+        `${system.id}/${edition.id}`,
+        new Map(
+          publicManualChapters(edition).map((chapter) => [
+            manualChapterPath(system.id, edition.id, chapter.slug),
+            `src/content/manuals/${chapter.source}`,
+          ]),
+        ),
+      ]),
+    ),
+  );
+
+  for (const key of editions.keys()) {
+    if (!Object.hasOwn(loaders, key))
+      findings.push(
+        issue(
+          { ...indexSource, url: key },
+          'missing-search-edition',
+          'Edição pública ausente no índice da documentação',
+          'Gerar o índice da edição a partir dos capítulos públicos.',
+        ),
+      );
+  }
+
+  for (const [key, load] of Object.entries(loaders)) {
+    const chapters = editions.get(key);
+    if (!chapters)
+      findings.push(
+        issue(
+          { ...indexSource, url: key },
+          'unexpected-search-edition',
+          'O índice contém uma edição inexistente ou em rascunho',
+          'Indexar somente edições públicas.',
+        ),
+      );
+
+    const targets = new Set();
+    for (const { href, systemId, editionId } of await load()) {
+      const pathname = href.split('#', 1)[0];
+      const source = chapters?.get(pathname);
+      const ref = source
+        ? { file: source, line: 1, computed: true, url: href, page: pathname }
+        : { ...indexSource, url: href };
+      refs.push(ref);
+      if (chapters && (!source || `${systemId}/${editionId}` !== key))
+        findings.push(
+          issue(
+            ref,
+            'wrong-search-edition',
+            'Resultado de busca fora dos capítulos públicos da edição',
+            'Gerar o destino e os metadados a partir do capítulo da edição indexada.',
+          ),
+        );
+      if (targets.has(href))
+        findings.push(
+          issue(
+            ref,
+            'duplicate-search-target',
+            'Destino repetido no índice da documentação',
+            'Indexar cada seção uma única vez na edição.',
+          ),
+        );
+      targets.add(href);
+    }
+  }
+}
+
 const pages = new Map();
 try {
   const { Layout } = await server.ssrLoadModule('/src/components/Layout.tsx');
   const { ExperienceProvider } = await server.ssrLoadModule('/src/components/Experience.tsx');
   const { CatalogProvider } = await server.ssrLoadModule('/src/components/CatalogProvider.tsx');
+  const manuals = await server.ssrLoadModule('/src/lib/manual-chapters.ts');
   for (const route of routes) {
     const module = await server.ssrLoadModule('/' + route.file + '.tsx');
     const Component = module[route.name];
     const documentation = route.path === '/docs/*';
-    const paths = documentation
-      ? (await server.ssrLoadModule('/src/lib/manual-chapters.ts')).publicManualPaths()
-      : [route.path];
+    const paths = documentation ? manuals.publicManualPaths() : [route.path];
 
     for (const page of paths) {
       const element = React.createElement(
@@ -279,6 +355,7 @@ try {
       }
     }
   }
+  await auditManualSearch(manuals);
 } finally {
   await server.close();
 }
@@ -424,7 +501,7 @@ const report = {
     externalRequests: requests,
     externalLimit: 120,
     scope:
-      'Rotas reais renderizadas no estado inicial, strings públicas de registros, Markdown e mídia; dados remotos/diálogos após interação e âncoras externas não são cobertos.',
+      'Rotas reais renderizadas no estado inicial, strings públicas de registros, Markdown, mídia e destinos da busca dos manuais; dados remotos/diálogos após interação e âncoras externas não são cobertos.',
   },
   feed,
   findings: unique,

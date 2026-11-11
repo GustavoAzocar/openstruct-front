@@ -76,7 +76,8 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
   useEffect(() => {
     // A navegação atualiza a URL em transição. Digitação em andamento continua síncrona.
     const pending = pendingSearch.current;
-    if (navigationType === 'REPLACE' && pending !== null && pending !== location.search.slice(1)) return;
+    if (navigationType === 'REPLACE' && pending !== null && pending !== location.search.slice(1))
+      return;
     pendingSearch.current = null;
     setDraft(query);
   }, [location.search, location.key, navigationType, query]);
@@ -263,6 +264,7 @@ export function ManualSearch({ scope }: { scope?: { systemId: string; editionId?
               <Link
                 className="manual-search-result-link"
                 to={section.href}
+                state={{ manualSearchOrigin: location.key }}
                 onClick={focusCurrentAnchor}
               >
                 <span>

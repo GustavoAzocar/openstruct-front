@@ -70,7 +70,7 @@ export function ManualReading({
   search?: ReactNode;
   versionNotice?: ReactNode;
 }) {
-  const { hash, pathname } = useLocation();
+  const { hash, pathname, search: queryString } = useLocation();
   const title = useRef<HTMLHeadingElement>(null);
   const body = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState('');
@@ -146,7 +146,7 @@ export function ManualReading({
                 {chapter.headings.map(({ id, title, depth }) => (
                   <li key={id} data-depth={depth}>
                     <Link
-                      to={{ hash: `#${id}` }}
+                      to={{ search: queryString, hash: `#${id}` }}
                       aria-current={active === id ? 'location' : undefined}
                     >
                       {title}

@@ -102,6 +102,26 @@ test('publishes the four versioned presentations and the two sample flows', () =
   assert.ok(paths.includes('/docs/recursos-editoriais/edicao-1/modelo-editorial'));
 });
 
+test('registers a second app edition while preserving the original chapter paths', () => {
+  const system = structuredClone(getManualSystem('consolostruct'));
+  const firstEdition = system.editions.find(({ id }) => id === 'edicao-1');
+  const intro = firstEdition.chapters.find(({ slug }) => slug === 'apresentacao');
+  const secondEdition = {
+    ...firstEdition,
+    id: 'edicao-2',
+    title: 'Edição 2',
+    chapters: [{ ...intro, source: 'consolostruct/edicao-2/apresentacao.md' }],
+  };
+  system.editions.push(secondEdition);
+  system.currentEditionId = secondEdition.id;
+
+  validateManualSystems([system]);
+  const paths = publicManualPaths([system]);
+  assert.ok(paths.includes('/docs/consolostruct/edicao-1/apresentacao'));
+  assert.ok(paths.includes('/docs/consolostruct/edicao-1/c01-modelo-memoria'));
+  assert.ok(paths.includes('/docs/consolostruct/edicao-2/apresentacao'));
+});
+
 test('retains historical paths while leaving draft editions and chapters unpublished', () => {
   const system = fixtureEditorial();
   const original = system.editions[0];
