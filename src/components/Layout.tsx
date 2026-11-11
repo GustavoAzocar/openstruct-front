@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import { ArrowUpRight, GitFork, Menu, Moon, Sun, X, ArrowRight, Download } from 'lucide-react';
 import { Brand, Mark } from './Brand';
@@ -8,6 +8,27 @@ import { currentApps } from '../lib/apps';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 
+function ScrollToRoute() {
+  const { pathname, hash } = useLocation();
+  useEffect(() => {
+    if (!hash) {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+      return;
+    }
+    let id: string;
+    try {
+      id = decodeURIComponent(hash.slice(1));
+    } catch {
+      return;
+    }
+    const frame = requestAnimationFrame(() =>
+      document.getElementById(id)?.scrollIntoView({ behavior: 'instant' }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [pathname, hash]);
+  return null;
+}
+
 export function Layout() {
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(
@@ -16,17 +37,6 @@ export function Layout() {
   const { launch, community } = useExperience();
   const location = useLocation();
   useEffect(() => {
-    if (location.hash) {
-      let id = '';
-      try {
-        id = decodeURIComponent(location.hash.slice(1));
-      } catch {
-        /* Ignore malformed public fragments. */
-      }
-      requestAnimationFrame(() =>
-        document.getElementById(id)?.scrollIntoView({ behavior: 'instant' }),
-      );
-    } else window.scrollTo({ top: 0, behavior: 'instant' });
     const page =
       location.pathname === '/'
         ? 'Engenharia aberta.'
@@ -49,7 +59,7 @@ export function Layout() {
                           ? 'Central de desenvolvimento'
                           : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
-  }, [location.pathname, location.hash]);
+  }, [location.pathname]);
   function changeTheme() {
     const next = !dark;
     setDark(next);
@@ -121,7 +131,16 @@ export function Layout() {
         </div>
       </header>
       <main id="conteudo">
-        <Outlet />
+        <Suspense
+          fallback={
+            <div className="container page-hero" role="status">
+              Carregando…
+            </div>
+          }
+        >
+          <Outlet />
+          <ScrollToRoute />
+        </Suspense>
       </main>
       <footer className="site-footer">
         <div className="container">
