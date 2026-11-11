@@ -48,6 +48,11 @@ export function FirstContributions() {
               : 'Nova consulta após o intervalo'}
         </button>
       </div>
+      <p className="first-contributions-note">
+        Atualizar resumo relê os dados já publicados; não inicia uma coleta no GitHub. A consulta é
+        compartilhada com os demais blocos e refeita a cada cinco minutos em aba visível, com
+        intervalo maior após falhas.
+      </p>
       {!loading && view.coverage.some((row) => row.state !== 'fresh') && (
         <p className="first-contributions-note">
           Fontes antigas, em cache ou indisponíveis não geram cards de oportunidade. Os links e

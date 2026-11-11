@@ -336,16 +336,17 @@ labels configuradas em cada repositório e caminhos reais de documentação, exe
 e revisão visual quando não há oportunidades. Veja [critérios, fontes e manutenção](docs/PRIMEIRAS-CONTRIBUICOES.md).
 
 A página de comunidade lê um snapshot público de atividade, sem token no navegador.
-A coleta por Actions confirma a visibilidade dos cinco repositórios autorizados, normaliza os dados,
+A coleta por Actions confirma a visibilidade dos seis repositórios autorizados, normaliza os dados,
 usa ETag e limites de paginação, e publica JSON validado na branch `github-data`,
 acompanhado de uma configuração fixa que impede deploys dessa branch na Vercel.
 Leitura e escrita usam jobs com permissões separadas. O catálogo assinado de downloads permanece independente.
 
-Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md).
+Consulte [contrato, limites, cache e manutenção](docs/GITHUB-PUBLICO.md) e o
+[diagnóstico de atualização da issue #2](docs/DIAGNOSTICO-ATUALIZACAO-GITHUB.md).
 
 ## Central de desenvolvimento
 
-A rota `/development` reúne os cinco repositórios públicos, com seleção por repositório na URL, contagens de itens únicos no recorte de issues/PRs, releases estáveis e datas por fonte. Falhas e dados antigos são identificados sem esconder a navegação. As versões de instalação continuam vindo do catálogo assinado, separadas das publicações do código.
+A rota `/development` reúne os seis repositórios públicos, com seleção por repositório na URL, contagens de itens únicos no recorte de issues/PRs, releases estáveis e datas por fonte. Falhas e dados antigos são identificados sem esconder a navegação. As versões de instalação continuam vindo do catálogo assinado, separadas das publicações do código.
 
 Veja [cobertura, contrato v2 e validação](docs/CENTRAL-DESENVOLVIMENTO.md).
 
