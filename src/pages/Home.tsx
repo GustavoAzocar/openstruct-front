@@ -23,6 +23,7 @@ import { AppStatus } from '../components/AppStatus';
 import { CatalogSyncStatus, ProductCatalogMeta } from '../components/CatalogAvailability';
 import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 import { armaduraScreenshot } from '../lib/product-media';
+import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 
 const armadura = getCurrentApp('armadurastruct');
 const mola = getCurrentApp('molastruct');
@@ -77,6 +78,17 @@ export function Home() {
           </Link>
         </div>
       </div>
+      <section className="container home-ai-guide" aria-labelledby="home-ai-guide-title">
+        <Sparkles size={27} strokeWidth={1.5} aria-hidden="true" />
+        <div>
+          <span className="eyebrow">CONSTRUA COM A COMUNIDADE</span>
+          <h2 id="home-ai-guide-title">Sua primeira contribuição com IA.</h2>
+          <p>Do GitHub conectado ao primeiro PR: um roteiro simples para ChatGPT e Codex.</p>
+        </div>
+        <Link className="button button-outline" to={AI_CONTRIBUTION_PATH}>
+          Abrir passo a passo <ArrowRight size={16} />
+        </Link>
+      </section>
       <section className="section container" id="aplicativos">
         <div className="section-kicker">
           <span>01 / O ECOSSISTEMA</span>
@@ -344,7 +356,8 @@ export function Home() {
             </summary>
             <p>
               Compartilhe sugestões, relate problemas, proponha melhorias na documentação ou
-              contribua com código. <Link to="/community">Veja como participar.</Link>
+              contribua com código.{' '}
+              <Link to={AI_CONTRIBUTION_PATH}>Siga o passo a passo para contribuir com IA.</Link>
             </p>
           </details>
         </div>

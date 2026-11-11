@@ -3,7 +3,15 @@ import { commitSectionLink } from '../lib/recent-commits';
 import { CodeRelations } from '../components/CodeRelations';
 import { PRODUCT_POLICIES } from '../lib/catalog-trust';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { ArrowUpRight, CircleDot, GitPullRequest, GitBranch, RefreshCw, Tag } from 'lucide-react';
+import {
+  ArrowUpRight,
+  CircleDot,
+  GitPullRequest,
+  GitBranch,
+  RefreshCw,
+  Tag,
+  Sparkles,
+} from 'lucide-react';
 import { usePublicCatalog } from '../components/CatalogProvider';
 import { useGithubActivity } from '../components/useGithubActivity';
 import { PullRequestsList } from '../components/PullRequestsList';
@@ -18,6 +26,7 @@ import {
   selectDevelopmentSources,
 } from '../lib/development';
 import { site } from '../lib/config';
+import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 import type { CatalogProductId } from '../lib/catalog-trust';
 import type { ProductAvailability } from '../lib/catalog-store';
 import type { ActivityList } from '../lib/github-snapshot';
@@ -206,8 +215,8 @@ export function Development() {
           <a className="button button-primary" href="#repositories">
             <GitBranch size={17} /> Explorar repositórios
           </a>
-          <Link className="button button-outline" to="/community">
-            Como contribuir
+          <Link className="button button-outline" to={AI_CONTRIBUTION_PATH}>
+            <Sparkles size={17} /> Contribuir com IA
           </Link>
           <a className="button button-outline" href="#roadmap">
             Roadmap público

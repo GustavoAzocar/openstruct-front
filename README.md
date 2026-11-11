@@ -36,6 +36,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/docs`                     | Guia inicial com busca, unidades, limitações da prévia e participação               |
 | `/community`                | Formas de contribuir e acompanhar o projeto                                         |
 | `/community/como-colaborar` | Manual público passo a passo, com percursos sem código e de código no frontend      |
+| `/development/contribuir-com-ia` | Guia para contribuir com ChatGPT ou Codex: conexão, fork, issue, prompt e PR manual |
 | Outros endereços            | Página 404 com navegação de retorno                                                 |
 
 ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
@@ -292,6 +293,12 @@ alteração no frontend e acompanhar sua revisão. Os aplicativos mantêm seus p
 O ambiente do site está em [Desenvolvimento](#desenvolvimento); o percurso completo,
 comandos e checklists são mantidos no manual, evitando cópias divergentes.
 Veja [fontes, dependências e manutenção do manual](docs/MANUAL-COLABORACAO.md).
+
+Para trabalhar com uma IA, siga o **[roteiro de contribuição com ChatGPT ou Codex](https://www.openstruct.com.br/development/contribuir-com-ia)**.
+O guia tem seis passos e um prompt copiável, personalizado com o projeto, o fork e a issue.
+O fluxo sincroniza o fork antes da implementação, pede testes e envia a alteração para uma
+branch do colaborador; a abertura do PR é manual. Há atalhos na home, em Desenvolvimento,
+no manual geral e no rodapé. [Manutenção e fontes do guia](docs/CONTRIBUICAO-IA.md).
 
 Licença MIT. As fontes mantêm suas próprias licenças OFL.
 

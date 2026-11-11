@@ -30,6 +30,9 @@ const Releases = React.lazy(() =>
 const ContributionManual = React.lazy(() =>
   import('./pages/ContributionManual').then((module) => ({ default: module.ContributionManual })),
 );
+const AiContribution = React.lazy(() =>
+  import('./pages/AiContribution').then((module) => ({ default: module.AiContribution })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -76,6 +79,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
                 }
               />
               <Route path={site.developmentPath} element={<Development />} />
+              <Route
+                path="development/contribuir-com-ia"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="container page-hero" role="status">
+                        Carregando guia…
+                      </div>
+                    }
+                  >
+                    <AiContribution />
+                  </React.Suspense>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Route>
           </Routes>
