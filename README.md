@@ -270,6 +270,8 @@ location / {
 
 A publicação e a configuração do domínio `openstruct.com.br` são independentes do envio do código ao GitHub.
 
+Os cabeçalhos HTTP de segurança são definidos em `vercel.json` (Vercel) e `netlify.toml` (Netlify).
+
 ## Estrutura
 
 ```text
