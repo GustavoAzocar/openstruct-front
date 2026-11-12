@@ -287,6 +287,8 @@ sem liberar `unsafe-inline` ou `unsafe-eval`. O servidor de desenvolvimento e
 `vite preview` não aplicam automaticamente os cabeçalhos de hospedagem. Veja o
 [registro de validação e as verificações após o deploy](docs/CSP.md).
 
+Os demais cabeçalhos HTTP de segurança são definidos em `vercel.json` (Vercel) e `netlify.toml` (Netlify).
+
 ## Estrutura
 
 ```text
