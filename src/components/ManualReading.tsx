@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { ArrowLeft, ChevronRight } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ManualChapterContent } from './ManualChapterContent';
+import { refocusManualSection } from '../lib/manual-navigation';
 import './manual-reading.css';
 
 type ReadingMetadata = {
@@ -148,6 +149,17 @@ export function ManualReading({
                     <Link
                       to={{ search: queryString, hash: `#${id}` }}
                       aria-current={active === id ? 'location' : undefined}
+                      onClick={(event) => {
+                        if (
+                          refocusManualSection(
+                            event,
+                            hash,
+                            document.getElementById(id),
+                            body.current,
+                          )
+                        )
+                          setActive(id);
+                      }}
                     >
                       {title}
                     </Link>
