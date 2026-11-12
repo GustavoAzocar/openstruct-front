@@ -618,6 +618,18 @@ body {
 .app-card {
   min-width: 0;
 }
+.app-card-not-started .app-art {
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+}
+.app-card-not-started .art-action {
+  background: var(--surface);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+.app-card-not-started .planned-label {
+  margin-top: 10px;
+}
 .app-art {
   position: relative;
   aspect-ratio: 1.2;

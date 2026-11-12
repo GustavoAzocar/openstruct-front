@@ -4,7 +4,8 @@ import { ArrowUpRight, GitFork, Menu, Moon, Sun, X, ArrowRight, Download } from 
 import { Brand, Mark } from './Brand';
 import { useExperience } from './Experience';
 import { site } from '../lib/config';
-import { currentApps } from '../lib/apps';
+import { apps, currentApps } from '../lib/apps';
+import { getAppPage } from '../lib/app-registry';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { AI_CONTRIBUTION_PATH } from '../lib/ai-contribution';
 
@@ -44,7 +45,7 @@ export function Layout() {
     const page =
       location.pathname === '/'
         ? 'Engenharia aberta.'
-        : (currentApps.find((app) => app.route === location.pathname)?.name ??
+        : (apps.find((app) => getAppPage(app)?.route === location.pathname)?.name ??
           (location.pathname === '/apps'
             ? 'Aplicativos'
             : location.pathname === '/launcher'

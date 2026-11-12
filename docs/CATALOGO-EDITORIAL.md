@@ -1,9 +1,11 @@
 # Registro editorial dos aplicativos
 
-`src/lib/apps.ts` é a fonte única dos sete produtos apresentados no site. Não é um
+`src/lib/apps.ts` é a fonte única dos dez produtos apresentados no site. Não é um
 feed de atualização. Seus dados foram revisados em **07/11/2026** a partir dos
 repositórios **públicos**, tags e catálogo de distribuição indicados em cada entrada.
 O registro não contém conteúdo do repositório privado do Launcher.
+Em 12/11/2026, foram incluídas as propostas AnchorStruct e SlopeStruct: são quatro
+produtos atuais e seis planejados. A data é de revisão editorial, sem previsão de lançamento.
 
 `src/lib/config.ts` guarda somente configuração do site e integrações opcionais de
 implantação. Os tipos, a validação e os rótulos derivados ficam em
@@ -19,6 +21,8 @@ versões de instalação e disponibilidade; ela não reescreve o conteúdo técn
 | `id`, `name`, `category`, `description`       | Identidade e resumo editorial do produto. O `id` é único e preserva a URL pública.                                                                                         |
 | `stage`                                       | `current` para um produto com fonte pública identificada; `planned` para uma ideia do catálogo.                                                                            |
 | `maturity`                                    | Estado do desenvolvimento/engenharia: `development`, `experimental`, `stable` ou `planned`. Não é derivado do canal de publicação.                                         |
+| `planningStatus`                              | Opcional e exclusivo de planejamento: `not-started` produz o rótulo “A iniciar”. Sem esse campo, permanece “Em planejamento”. |
+| `page`                                        | Página informativa opcional de uma proposta com desenvolvimento não iniciado: `route`, `image` e `imageAlt`. Não cria repositório ou distribuição. |
 | `route`, `previewAnchor`, `image`, `imageAlt` | Endereço público e apresentação já existentes no frontend.                                                                                                                 |
 | `repository`                                  | URL oficial pública, branch padrão e visibilidade conferida durante a revisão.                                                                                             |
 | `code`                                        | Versão de `package.json`, **commit exato** e URL desse arquivo na revisão consultada. Não determina a versão disponível para instalar.                                     |
@@ -44,6 +48,14 @@ O commit do código do ArmaduraStruct é posterior ao commit da tag, mesmo com a
 versão em `package.json`. Por isso o registro mantém os dois commits. VigasStruct,
 PilarStruct, SapataStruct e 3DStruct permanecem em planejamento: não têm versão,
 repositório, rota de produto ou download inventados.
+
+AnchorStruct (chumbadores) e SlopeStruct (taludes e contenções) usam
+`planningStatus: 'not-started'`. Sua apresentação mínima vem de `page`, separada
+dos campos de produto atual. `getAppPage` resolve a apresentação dos dois tipos
+para os cards e títulos; `getPlannedApp` resolve apenas propostas com página.
+Os cards usam a arte local neutra “Em breve”, mantendo contraste de texto e ações
+nos dois temas. As propostas continuam fora do diálogo de aplicativos e de qualquer
+oferta de instalação. [Decisões e atualização das artes](PRODUTOS-PLANEJADOS.md).
 
 O campo opcional `engine` registra versão, política e documento de critérios do motor
 na ref da distribuição. Ele é independente de `code.version` e `distribution.version`.
@@ -80,7 +92,8 @@ guias e fontes técnicas continua sendo uma etapa editorial explícita.
 
 `validateAppRegistry` roda ao importar o registro, inclusive nos testes da CI. Rejeita:
 
-- IDs duplicados, campos obrigatórios ausentes e campos de produto em planejamento;
+- IDs duplicados, campos obrigatórios ausentes e campos de produto atual em planejamento;
+- estados de planejamento desconhecidos e páginas informativas com rota, arte ou texto alternativo inválidos;
 - fontes sem ref fixa, URL/ref divergentes e datas de revisão inválidas;
 - repositórios não declarados públicos e fontes fora do repositório do produto;
 - descrição/documentação de outra revisão que a da versão distribuída;

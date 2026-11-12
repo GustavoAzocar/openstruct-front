@@ -1,6 +1,6 @@
 # OpenStruct
 
-Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct, MolaStruct e ArmaduraStruct.
+Frontend do ecossistema OpenStruct: ferramentas abertas para engenharia estrutural. O site apresenta o projeto, o catálogo e as páginas do ConsoloStruct, MolaStruct, ArmaduraStruct e GeoSPT, além das propostas de aplicativos futuros.
 
 Os acessos institucionais levam à central `/development`, onde cada produto tem
 seu próprio repositório público. O frontend continua público e aparece explicitamente
@@ -32,6 +32,9 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/apps/consolostruct`       | Versão publicada, recursos, escopo do motor, FAQ, prévia SVG e documentação oficial |
 | `/apps/molastruct`          | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
 | `/apps/armadurastruct`      | ArmaduraStruct 0.2.0: fluxo CAD, formatos, saídas, licença e limites                |
+| `/apps/geosptstruct`       | GeoSPT: sondagens, capacidade de carga de estacas e memoriais                       |
+| `/apps/anchorstruct`       | Proposta para chumbadores, com desenvolvimento não iniciado e arte “Em breve”       |
+| `/apps/slopestruct`        | Proposta para taludes e contenções, com desenvolvimento não iniciado e arte “Em breve” |
 | `/launcher`                 | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
 | `/docs`                     | Central de manuais por sistema, com busca e [guia de manutenção](docs/MANUAIS.md)   |
 | `/community`                | Formas de contribuir e acompanhar o projeto                                         |
@@ -39,7 +42,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/development/contribuir-com-ia` | Guia com ChatGPT/Codex, Claude e Gemini: ambiente, modelo, fork, issue, prompt e PR |
 | Outros endereços            | Página 404 com navegação de retorno                                                 |
 
-ConsoloStruct, MolaStruct e ArmaduraStruct possuem páginas de produto e aparecem na central de aplicativos. Os demais nomes no catálogo representam o planejamento do ecossistema.
+ConsoloStruct, MolaStruct, ArmaduraStruct e GeoSPT possuem páginas de produto e aparecem na central de aplicativos. Os seis nomes futuros representam o planejamento do ecossistema. AnchorStruct e SlopeStruct também possuem páginas informativas, com estado “A iniciar” e desenvolvimento não iniciado. Seus cards aparecem somente ao incluir o horizonte futuro; não há repositório, versão, plataforma, download ou data de lançamento. Veja as [decisões de apresentação das propostas](docs/PRODUTOS-PLANEJADOS.md).
 
 ## Struct Launcher e downloads
 
@@ -159,7 +162,7 @@ ser usadas: os pacotes oficiais devem passar pelo catálogo assinado.
 
 ## Registro editorial dos produtos
 
-Os sete itens do catálogo usam uma fonte tipada e validada, incluindo os quatro
+Os dez itens do catálogo usam uma fonte tipada e validada, incluindo os seis
 produtos em planejamento. Versão de código, versão distribuída, maturidade,
 plataformas e proveniência são campos independentes. Home, catálogo, diálogo e
 páginas de produto compartilham identidade e rótulo de disponibilidade.

@@ -5,7 +5,7 @@ import { ExperienceProvider } from './components/Experience';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
 import { site } from './lib/config';
-import { getCurrentApp } from './lib/apps';
+import { getCurrentApp, getPlannedApp } from './lib/apps';
 import { CatalogProvider } from './components/CatalogProvider';
 import './styles.css';
 import './molastruct.css';
@@ -51,6 +51,12 @@ const AiContribution = React.lazy(() =>
 const DocsRoutes = React.lazy(() =>
   import('./pages/DocsRoutes').then((module) => ({ default: module.DocsRoutes })),
 );
+const Anchor = React.lazy(() =>
+  import('./pages/Planned').then((module) => ({ default: module.Anchor })),
+);
+const Slope = React.lazy(() =>
+  import('./pages/Planned').then((module) => ({ default: module.Slope })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -65,6 +71,8 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path={getCurrentApp('molastruct').route} element={<Mola />} />
               <Route path={getCurrentApp('armadurastruct').route} element={<Armadura />} />
               <Route path={getCurrentApp('geosptstruct').route} element={<GeoSPT />} />
+              <Route path={getPlannedApp('anchorstruct').page.route} element={<Anchor />} />
+              <Route path={getPlannedApp('slopestruct').page.route} element={<Slope />} />
               <Route path="launcher" element={<Launcher />} />
               <Route
                 path="docs/*"

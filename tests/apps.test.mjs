@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { apps, currentApps, getCurrentApp } from '../src/lib/apps.ts';
-import { getAppStatus, validateAppRegistry } from '../src/lib/app-registry.ts';
+import { apps, currentApps, getCurrentApp, getPlannedApp } from '../src/lib/apps.ts';
+import { getAppPage, getAppStatus, validateAppRegistry } from '../src/lib/app-registry.ts';
 
 const copy = () => structuredClone(apps);
 
-test('preserva os oito produtos, suas rotas e os quatro itens em planejamento', () => {
+test('preserva os quatro produtos atuais e inclui seis itens em planejamento', () => {
   assert.doesNotThrow(() => validateAppRegistry(apps));
   assert.deepEqual(
     currentApps.map((app) => [app.name, app.route]),
@@ -19,14 +19,84 @@ test('preserva os oito produtos, suas rotas e os quatro itens em planejamento', 
   const planned = apps.filter((app) => app.stage === 'planned');
   assert.deepEqual(
     planned.map((app) => app.name),
-    ['VigasStruct', 'PilarStruct', 'SapataStruct', '3DStruct'],
+    ['VigasStruct', 'PilarStruct', 'SapataStruct', '3DStruct', 'AnchorStruct', 'SlopeStruct'],
   );
-  assert.equal(apps.length, 8);
+  assert.equal(apps.length, 10);
+  assert.deepEqual(planned.map(getAppStatus), [
+    'Em planejamento',
+    'Em planejamento',
+    'Em planejamento',
+    'Em planejamento',
+    'A iniciar',
+    'A iniciar',
+  ]);
   for (const app of planned) {
-    assert.equal(getAppStatus(app), 'Em planejamento');
     assert.equal(app.distribution, undefined);
     assert.equal(app.code, undefined);
     assert.equal(app.repository, undefined);
+  }
+});
+
+test('páginas informativas de propostas não criam um produto atual ou instalável', () => {
+  for (const [id, description] of [
+    ['anchorstruct', 'Cálculo de chumbadores.'],
+    ['slopestruct', 'Estabilidade de taludes e contenções.'],
+  ]) {
+    const app = getPlannedApp(id);
+    assert.equal(app.planningStatus, 'not-started');
+    assert.equal(app.description, description);
+    assert.equal(getAppPage(app).route, `/apps/${id}`);
+    assert.equal(getAppPage(app).image, '/assets/app-em-breve.svg');
+    assert.equal(getAppPage(app).imageAlt, 'Em breve — desenvolvimento não iniciado');
+    assert.equal(app.route, undefined);
+    assert.throws(() => getCurrentApp(id), /não cadastrado/);
+  }
+  assert.equal(getAppPage(apps.find((app) => app.id === 'vigasstruct')), undefined);
+  assert.equal(getAppPage(currentApps[0]), currentApps[0]);
+  assert.throws(() => getPlannedApp('consolostruct'), /sem página/);
+  assert.throws(() => getPlannedApp('vigasstruct'), /sem página/);
+  assert.throws(() => getPlannedApp('inexistente'), /sem página/);
+  // O estado pertence ao planejamento, sem depender do nome ou de uma página.
+  const renamed = { ...getPlannedApp('anchorstruct'), name: 'Outra proposta' };
+  assert.equal(getAppStatus(renamed), 'A iniciar');
+});
+
+test('páginas planejadas validam estado, rota e arte, sem aceitar dados de distribuição', () => {
+  for (const modify of [
+    (app) => {
+      app.planningStatus = '2027';
+    },
+    (app) => {
+      delete app.planningStatus;
+    },
+    (app) => {
+      app.page.route = '/apps/outro';
+    },
+    (app) => {
+      app.page.image = 'https://example.com/art.svg';
+    },
+    (app) => {
+      app.page.imageAlt = '';
+    },
+    (app) => {
+      app.page.repository = { url: 'https://example.com' };
+    },
+    (app) => {
+      app.page.download = 'https://example.com/app.exe';
+    },
+    (app) => {
+      app.distribution = structuredClone(currentApps[0].distribution);
+    },
+    (app) => {
+      app.code = structuredClone(currentApps[0].code);
+    },
+    (app) => {
+      app.repository = structuredClone(currentApps[0].repository);
+    },
+  ]) {
+    const data = copy();
+    modify(data.find((app) => app.id === 'anchorstruct'));
+    assert.throws(() => validateAppRegistry(data));
   }
 });
 
