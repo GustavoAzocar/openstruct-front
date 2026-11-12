@@ -1,22 +1,11 @@
-import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { loadGithubActivity } from '../lib/github-client';
-import type { GithubLoadResult } from '../lib/github-client';
+import { useGithubActivity } from './useGithubActivity';
 import { GITHUB_REPOSITORIES, SNAPSHOT_STALE_MS } from '../lib/github-snapshot';
 import { site } from '../lib/config';
 import './public-github-status.css';
 
 export function PublicGithubStatus() {
-  const [result, setResult] = useState<GithubLoadResult>();
-  useEffect(() => {
-    let active = true;
-    void loadGithubActivity().then((value) => {
-      if (active) setResult(value);
-    });
-    return () => {
-      active = false;
-    };
-  }, []);
+  const { result, loading, now } = useGithubActivity();
   return (
     <section className="public-github" aria-labelledby="github-public-title">
       <span className="eyebrow">FONTES PÚBLICAS DO ECOSSISTEMA</span>
@@ -27,21 +16,24 @@ export function PublicGithubStatus() {
         </Link>
       </div>
       <p role="status">
-        {!result
+        {loading || !result
           ? 'Carregando o resumo público…'
           : !result.snapshot?.generatedAt
             ? 'Resumo temporariamente indisponível. Os repositórios continuam acessíveis.'
             : (result.stale
-                ? 'Último resumo em cache; há dados desatualizados ou indisponíveis. '
+                ? result.source !== 'public'
+                  ? 'Último resumo em cache; origem pública indisponível. '
+                  : 'Resumo público com dados desatualizados ou parciais. '
                 : 'Resumo público sincronizado. ') +
-              'Coleta: ' +
+              'Snapshot gerado em: ' +
               new Date(result.snapshot.generatedAt).toLocaleString('pt-BR') +
               '.'}
       </p>
       <p>
-        Atualização aproximadamente horária. Issues, PRs e milestones abertos e contribuidores são
-        recortes de até 60 itens por lista. O total de pendências do GitHub inclui issues e PRs; não
-        representa uma contagem separada de cada tipo.
+        Coleta agendada aproximadamente a cada hora, sujeita a atrasos do GitHub. Issues abertas,
+        PRs e milestones de todos os estados e contribuidores são recortes de até 60 itens por
+        lista. O total de pendências do GitHub inclui issues e PRs; não representa uma contagem
+        separada de cada tipo.
       </p>
       <ul>
         {GITHUB_REPOSITORIES.map((repository) => {
@@ -62,7 +54,7 @@ export function PublicGithubStatus() {
                     (entry.status !== 'ready' ||
                     result?.source !== 'public' ||
                     !entry.verifiedPublicAt ||
-                    Date.now() - Date.parse(entry.verifiedPublicAt) > SNAPSHOT_STALE_MS
+                    now - Date.parse(entry.verifiedPublicAt) > SNAPSHOT_STALE_MS
                       ? ' · dados parciais ou desatualizados'
                       : '')
                   : 'Dados não confirmados nesta coleta'}

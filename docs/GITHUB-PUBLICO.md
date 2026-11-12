@@ -1,5 +1,9 @@
 # Sincronização pública do GitHub (OSF-17)
 
+Revisão de frescor em 11/11/2026: veja o [diagnóstico da issue #2](DIAGNOSTICO-ATUALIZACAO-GITHUB.md),
+com cadência real, medições por coleção, orçamento atual de seis fontes e limites de validação.
+As seções de evolução abaixo registram os contratos e orçamentos de cada época.
+
 Base revisada: openstruct-front 0c1f1e18b14fb76d566e7aa15c6d6c4e27bdd175, em 07/11/2026.
 Esta camada de atividade reutiliza as fontes públicas da OSF-01. Ela não substitui o catálogo assinado de instalações da OSF-05.
 
@@ -47,7 +51,7 @@ ETags persistem via Actions cache em `.cache/github/pages.json`, com apenas pág
 403/429 suspendem novos pedidos, respeitando Retry-After (segundos/data), reset quando esgotado e mínimo de um minuto. Não há retentativa imediata nem runner dormindo: `retryAt` atravessa execuções e impede chamadas antes do prazo.
 Sem token a API pública também funciona, sob limite de IP. O workflow usa o GITHUB_TOKEN efêmero do job de leitura, sem PAT e sem acesso adicional ao Launcher.
 
-O navegador compartilha uma promessa por janela de cinco minutos, com timeout de 8 s, limite de corpo e validação. Usa último dado válido da sessão se a origem falhar, sempre marcado como desatualizado. Na primeira visita, o fallback local `public/data/github-snapshot.json` informa ausência de coleta. Sem ambas as fontes o conteúdo editorial e os links continuam funcionais. A partir de duas horas ou com falha parcial, o resumo é marcado como desatualizado.
+O navegador compartilha estado e uma consulta por janela de cinco minutos entre todos os blocos de atividade. A aba visível revalida após expiração; foco/retorno também consulta se o intervalo venceu. O botão relê o snapshot publicado, sem disparar coleta, e permite invalidar uma resposta bem-sucedida após um minuto. Falhas recuam em 5/10/20/30 minutos e respeitam Retry-After/reset quando disponíveis. Timeout de 8 s, limite de corpo, validação e proteção contra rollback permanecem. Sem consumidores, timers e consulta pendente são cancelados. Usa último dado válido da sessão se a origem falhar, sempre marcado como desatualizado. Na primeira visita, o fallback local `public/data/github-snapshot.json` informa ausência de coleta. Sem ambas as fontes o conteúdo editorial e os links continuam funcionais. O relógio reavalia geração e horários das coleções: duas horas, falha parcial ou fallback sinalizam dados antigos, sem confundir geração com atividade.
 
 ## Manutenção e verificação
 
@@ -57,7 +61,7 @@ O navegador compartilha uma promessa por janela de cinco minutos, com timeout de
 - Mantenha a branch github-data fora da origem do deploy do site. Não altere a branch de produção da Vercel para github-data. O publicador precisa manter o `vercel.json` próprio da branch em toda atualização; ajustar apenas a master não protege uma árvore de dados recriada do zero.
 - Alterar schema exige novo versionamento, migração dos consumidores e invalidação do cache.
 - Testes simulam privacidade, paginação/limite, 304, timeout, origem inválida, falha parcial, 403/429 e fallback do frontend.
-- Nesta execução, testes e build foram verificados em Actions; o ambiente local e o navegador estão indisponíveis. Não houve inspeção visual desktop/mobile ou dos temas.
+- A validação inicial da OSF-17 ocorreu em Actions, sem navegador local. A revisão da issue #2 registra separadamente os testes locais e as observações posteriores em produção.
 
 Referências: [boas práticas REST](https://docs.github.com/en/rest/using-the-rest-api/best-practices-for-using-the-rest-api), [limites REST](https://docs.github.com/en/rest/using-the-rest-api/rate-limits-for-the-rest-api) e [agendamentos Actions](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 
@@ -222,8 +226,7 @@ itens por vez e “Mostrar mais” apenas revela o restante já coletado, sem RE
 visitante. O número exibido é o tamanho do recorte, nunca o total do repositório.
 “Ver histórico completo” aponta à branch correta, codificada inclusive com barra.
 
-O cache ETag contém somente metadados normalizados e é revalidado em respostas
-304. Históricos de HEADs anteriores são retirados do cache após uma coleta válida;
+O cache ETag contém somente metadados normalizados e é revalidado em respostas 304. Históricos de HEADs anteriores são retirados do cache após uma coleta válida;
 branches renomeadas e force-push não misturam revisões. Falha mantém o último
 recorte conhecido com state=stale e checkedAt original, somente se a visibilidade
 continuar confirmada. Ausência de cache gera unavailable, não “nenhum commit”.

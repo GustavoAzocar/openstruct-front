@@ -184,9 +184,10 @@ export function Contributors({ repository }: { repository?: PublicRepository }) 
         </ul>
       </details>
       <p className="contributors-note">
-        Lista sincronizada pelo snapshot público, aproximadamente a cada hora. As fotos seguem a
-        disponibilidade e o cache do GitHub. Créditos editoriais de documentação, testes ou design
-        exigem atribuição pública ou autorização documentada e revisão.{' '}
+        Lista sincronizada pelo snapshot público, com coleta agendada aproximadamente a cada hora,
+        sujeita a atrasos do GitHub. As fotos seguem a disponibilidade e o cache do GitHub. Créditos
+        editoriais de documentação, testes ou design exigem atribuição pública ou autorização
+        documentada e revisão.{' '}
         {people.every((person) => !person.credits.length)
           ? 'Ainda não há créditos editoriais adicionais registrados.'
           : 'As atribuições editoriais são identificadas separadamente acima.'}
