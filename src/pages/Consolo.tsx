@@ -23,6 +23,7 @@ import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 import { appIntegrations } from '../lib/config';
 import { getCurrentApp } from '../lib/apps';
 import { getMaturityLabel } from '../lib/app-registry';
+import '../consolostruct.css';
 
 const app = getCurrentApp('consolostruct');
 const release = app.distribution;

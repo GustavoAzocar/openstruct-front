@@ -4,25 +4,41 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ExperienceProvider } from './components/Experience';
 import { Layout } from './components/Layout';
 import { Home } from './pages/Home';
-import { Consolo } from './pages/Consolo';
-import { Armadura } from './pages/Armadura';
-import { Mola } from './pages/Mola';
-import { GeoSPT } from './pages/GeoSPT';
-import { Launcher } from './pages/Launcher';
-import { Catalog } from './pages/Catalog';
-import { Community, NotFound } from './pages/Community';
-import { Development } from './pages/Development';
 import { site } from './lib/config';
 import { getCurrentApp } from './lib/apps';
 import { CatalogProvider } from './components/CatalogProvider';
 import './styles.css';
-import './consolostruct.css';
 import './molastruct.css';
 import './geosptstruct.css';
-import './armadurastruct.css';
 import './launcher.css';
 import './catalog.css';
 import './home.css';
+
+const Armadura = React.lazy(() =>
+  import('./pages/Armadura').then((module) => ({ default: module.Armadura })),
+);
+const Catalog = React.lazy(() =>
+  import('./pages/Catalog').then((module) => ({ default: module.Catalog })),
+);
+const Community = React.lazy(() =>
+  import('./pages/Community').then((module) => ({ default: module.Community })),
+);
+const Consolo = React.lazy(() =>
+  import('./pages/Consolo').then((module) => ({ default: module.Consolo })),
+);
+const Development = React.lazy(() =>
+  import('./pages/Development').then((module) => ({ default: module.Development })),
+);
+const GeoSPT = React.lazy(() =>
+  import('./pages/GeoSPT').then((module) => ({ default: module.GeoSPT })),
+);
+const Launcher = React.lazy(() =>
+  import('./pages/Launcher').then((module) => ({ default: module.Launcher })),
+);
+const Mola = React.lazy(() => import('./pages/Mola').then((module) => ({ default: module.Mola })));
+const NotFound = React.lazy(() =>
+  import('./pages/Community').then((module) => ({ default: module.NotFound })),
+);
 const Releases = React.lazy(() =>
   import('./pages/Releases').then((module) => ({ default: module.Releases })),
 );

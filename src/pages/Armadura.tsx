@@ -24,6 +24,7 @@ import { ProductAvailability } from '../components/CatalogAvailability';
 import { ProductInstallation } from '../components/ProductInstallation';
 import { LAUNCHER_INSTALL_LABEL } from '../lib/installation';
 import { armaduraScreenshot } from '../lib/product-media';
+import '../armadurastruct.css';
 
 const app = getCurrentApp('armadurastruct');
 const release = app.distribution;
