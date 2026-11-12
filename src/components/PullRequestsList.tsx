@@ -115,7 +115,7 @@ export function PullRequestsList({
                 {stale && <span>Recorte desatualizado</span>}
               </div>
               {item.pull && (item.pull.head || item.pull.base) && (
-                <p className="issue-filter-note" style={{ overflowWrap: 'anywhere' }}>
+                <p className="issue-filter-note issue-branch-note">
                   Branch de origem: {item.pull.head ?? 'não informada'} → destino:{' '}
                   {item.pull.base ?? 'não informado'}
                 </p>
