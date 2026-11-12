@@ -34,6 +34,9 @@
 .issue-filters input {
   width: 100%;
 }
+.issue-branch-note {
+  overflow-wrap: anywhere;
+}
 .issue-filter-note {
   font-size: 12px;
 }

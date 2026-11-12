@@ -270,6 +270,23 @@ location / {
 
 A publicação e a configuração do domínio `openstruct.com.br` são independentes do envio do código ao GitHub.
 
+## Política de segurança de conteúdo (CSP)
+
+A CSP é enviada como cabeçalho HTTP em todas as rotas e arquivos estáticos pelo
+`vercel.json`, com configuração equivalente no `netlify.toml`. Permite scripts,
+estilos e fontes locais, os avatares públicos do GitHub e conexões de dados para
+`raw.githubusercontent.com`; `frame-ancestors 'self'` restringe a incorporação do
+site a páginas da mesma origem. O tema é inicializado por `public/theme-init.js`,
+síncrono no `<head>`, sem scripts ou estilos inline.
+
+Ao acrescentar uma origem externa (inclusive trocar o host do catálogo, snapshot
+ou feed do Launcher), revise a diretiva correspondente nas duas configurações.
+Teste primeiro com `Content-Security-Policy-Report-Only`, verifique todas as rotas
+e interações no navegador e só depois promova para `Content-Security-Policy`,
+sem liberar `unsafe-inline` ou `unsafe-eval`. O servidor de desenvolvimento e
+`vite preview` não aplicam automaticamente os cabeçalhos de hospedagem. Veja o
+[registro de validação e as verificações após o deploy](docs/CSP.md).
+
 ## Estrutura
 
 ```text
