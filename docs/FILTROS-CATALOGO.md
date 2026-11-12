@@ -26,7 +26,7 @@ original do registro. Não há nomes alterados nem classificação alfabética l
 As contagens distinguem aplicativos atuais e planejamento. A combinação de
 planejamento com plataforma é vazia, com explicação e limpeza dos filtros.
 
-O registro contém dez entradas: quatro atuais e seis planejadas. AnchorStruct e
+O registro contém seis entradas: quatro atuais e duas planejadas. AnchorStruct e
 SlopeStruct exibem “A iniciar”, continuam sujeitos a `future=1` ou
 `availability=planned` e não recebem plataforma. Suas páginas informativas não
 alteram disponibilidade, ordenação ou contagem dos produtos atuais.

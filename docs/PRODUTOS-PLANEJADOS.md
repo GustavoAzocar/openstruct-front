@@ -23,7 +23,9 @@ substitui a restrição original da issue que excluía páginas e rotas.
 - Ambos permanecem `stage: 'planned'`, com `planningStatus: 'not-started'`.
 - No catálogo, aparecem somente ao incluir o horizonte futuro ou selecionar
   disponibilidade “Em planejamento”. Os demais filtros mantêm seus contratos.
-- Os quatro produtos atuais e os quatro planejamentos anteriores são preservados.
+- Os quatro produtos atuais são preservados. O horizonte futuro contém somente
+  AnchorStruct e SlopeStruct. VigasStruct, PilarStruct, SapataStruct e 3DStruct
+  foram retirados do registro por solicitação do mantenedor após a entrega inicial.
 
 ## Artes e manutenção
 

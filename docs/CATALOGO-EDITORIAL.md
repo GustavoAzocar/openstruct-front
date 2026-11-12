@@ -1,11 +1,12 @@
 # Registro editorial dos aplicativos
 
-`src/lib/apps.ts` é a fonte única dos dez produtos apresentados no site. Não é um
+`src/lib/apps.ts` é a fonte única dos seis produtos apresentados no site. Não é um
 feed de atualização. Seus dados foram revisados em **07/11/2026** a partir dos
 repositórios **públicos**, tags e catálogo de distribuição indicados em cada entrada.
 O registro não contém conteúdo do repositório privado do Launcher.
-Em 12/11/2026, foram incluídas as propostas AnchorStruct e SlopeStruct: são quatro
-produtos atuais e seis planejados. A data é de revisão editorial, sem previsão de lançamento.
+Em 12/11/2026, foram incluídas as propostas AnchorStruct e SlopeStruct. Após a
+revisão do horizonte pelo mantenedor, o catálogo contém quatro produtos atuais e
+duas propostas planejadas. A data é de revisão editorial, sem previsão de lançamento.
 
 `src/lib/config.ts` guarda somente configuração do site e integrações opcionais de
 implantação. Os tipos, a validação e os rótulos derivados ficam em
@@ -46,8 +47,8 @@ Na revisão inicial:
 
 O commit do código do ArmaduraStruct é posterior ao commit da tag, mesmo com a mesma
 versão em `package.json`. Por isso o registro mantém os dois commits. VigasStruct,
-PilarStruct, SapataStruct e 3DStruct permanecem em planejamento: não têm versão,
-repositório, rota de produto ou download inventados.
+PilarStruct, SapataStruct e 3DStruct foram retirados do registro por decisão do
+mantenedor e não são apresentados no horizonte futuro.
 
 AnchorStruct (chumbadores) e SlopeStruct (taludes e contenções) usam
 `planningStatus: 'not-started'`. Sua apresentação mínima vem de `page`, separada
