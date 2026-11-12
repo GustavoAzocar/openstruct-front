@@ -171,7 +171,7 @@ function RepositoryCard({
 export function Development() {
   const [params] = useSearchParams();
   const navigate = useNavigate();
-  const { result, loading, now, retryAt, canRefresh, refresh } = useGithubActivity();
+  const { result, loading, now, retryAt, attemptedAt, canRefresh, refresh } = useGithubActivity();
   const { products } = usePublicCatalog();
   const sources = selectDevelopmentSources(params.get('repo'));
   const selected = sources.length === 1 ? sources[0].slug : '';
@@ -183,13 +183,15 @@ export function Development() {
   );
   const generatedAt = result?.snapshot?.generatedAt;
   const old = Boolean(generatedAt && now - Date.parse(generatedAt) > SNAPSHOT_STALE_MS);
-  const hasProblems = view.repositories.some(
-    (repo) =>
-      repo.entry?.status !== 'ready' ||
-      repo.issues.state !== 'fresh' ||
-      repo.pulls.state !== 'fresh' ||
-      repo.release.state !== 'fresh',
-  );
+  const hasProblems =
+    Boolean(result?.stale) ||
+    view.repositories.some(
+      (repo) =>
+        repo.entry?.status !== 'ready' ||
+        repo.issues.state !== 'fresh' ||
+        repo.pulls.state !== 'fresh' ||
+        repo.release.state !== 'fresh',
+    );
   function changeRepository(slug: string) {
     const next = issueRepositoryParams(new URLSearchParams(window.location.search), slug);
     const search = next.toString();
@@ -244,7 +246,16 @@ export function Development() {
                       ? 'Resumo disponível · há fontes parciais ou indisponíveis.'
                       : 'Resumo público atualizado.'}
           </p>
-          <p>Coleta: {githubDate(generatedAt)}. Atualização aproximadamente horária.</p>
+          <p>Snapshot gerado em: {githubDate(generatedAt)}.</p>
+          <p>
+            Coleta agendada aproximadamente a cada hora, sujeita a atrasos do GitHub. Consultar
+            novamente relê o snapshot publicado; não inicia uma coleta. A aba visível consulta a
+            cada cinco minutos, com intervalo maior após falhas.
+          </p>
+          <p>
+            Última tentativa nesta aba:{' '}
+            {githubDate(attemptedAt ? new Date(attemptedAt).toISOString() : null)}.
+          </p>
           {result?.snapshot?.retryAt && Date.parse(result.snapshot.retryAt) > now && (
             <p>Coletor aguardando o limite do GitHub até {githubDate(result.snapshot.retryAt)}.</p>
           )}
