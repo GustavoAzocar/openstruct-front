@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { issueSkill } from '../lib/issue-skill';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
@@ -92,6 +93,14 @@ const articles = [
     body: 'Escolha o projeto certo e sua forma de ajudar. O manual conduz uma primeira colaboração sem código e uma alteração no frontend até a revisão, com exemplos, comandos, resultados esperados e cuidados antes de compartilhar. Também apresenta os guias próprios dos aplicativos.',
     action: 'Como colaborar',
     to: CONTRIBUTION_MANUAL_PATH,
+  },
+  {
+    id: 'openstruct-issue',
+    n: '11',
+    title: 'OpenStruct Issue: prepare issues com IA',
+    body: 'Transforme planos, melhorias e bugs em issues técnicas com contexto do projeto e critérios de aceite verificáveis. Baixe a skill e consulte a instalação para Claude Code e Codex, exemplos de prompts e dicas de uso na Central de Desenvolvimento.',
+    action: 'Baixar a skill e aprender a usar',
+    to: issueSkill.section,
   },
 ];
 

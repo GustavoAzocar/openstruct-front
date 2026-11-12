@@ -349,6 +349,8 @@ A rota `/development` reúne os cinco repositórios públicos, com seleção por
 
 Veja [cobertura, contrato v2 e validação](docs/CENTRAL-DESENVOLVIMENTO.md).
 
+A seção `/development#openstruct-issue` disponibiliza a OpenStruct Issue v2.0.0, com download local do ZIP, instalação por agente, prompts copiáveis e dicas para preparar issues. Veja [diagnóstico, conteúdo final, implementação e validação](docs/OPENSTRUCT-ISSUE.md).
+
 ## Issues com filtros e paginação
 
 A central `/development#issues` permite filtrar issues por repositório, estado e labels reais, buscar no recorte carregado e navegar em páginas de dez itens. A URL preserva a seleção, com histórico voltar/avançar. As contagens distinguem o recorte do total do repositório e excluem PRs; o snapshot v3 conserva abertas/fechadas e sua cobertura separadamente.
