@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { issueSkill } from '../lib/issue-skill';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Search, BookOpen } from 'lucide-react';
 import { site } from '../lib/config';
@@ -105,6 +106,13 @@ const articles = [
     body: 'Veja uma amostra didática de como os manuais apresentam fórmulas, símbolos, unidades e exemplos numéricos.',
     action: 'Ver recursos editoriais',
     to: manualSystemPath(editorialId),
+  },
+  {
+    id: 'openstruct-issue',
+    title: 'OpenStruct Issue: prepare issues com IA',
+    body: 'Transforme planos, melhorias e bugs em issues técnicas com contexto do projeto e critérios de aceite verificáveis. Baixe a skill e consulte a instalação para Claude Code e Codex, exemplos de prompts e dicas de uso na Central de Desenvolvimento.',
+    action: 'Baixar a skill e aprender a usar',
+    to: issueSkill.section,
   },
 ];
 
