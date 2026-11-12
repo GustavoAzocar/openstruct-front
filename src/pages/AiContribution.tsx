@@ -13,6 +13,7 @@ import type { AiGuideTool } from '../lib/ai-contribution';
 import { developmentSources } from '../lib/development';
 import { CONTRIBUTION_MANUAL_PATH } from '../lib/contribution-manual';
 import { site } from '../lib/config';
+import { issueSkill } from '../lib/issue-skill';
 import '../ai-contribution.css';
 
 export function AiContribution() {
@@ -258,6 +259,12 @@ export function AiContribution() {
           </span>
           <div>
             <h2 id="ai-issue-title">Escolha uma issue aberta</h2>
+            <p>
+              Sua demanda ainda não tem uma issue?{' '}
+              <Link className="text-link" to={issueSkill.section}>
+                Prepare o texto com a skill OpenStruct Issue <ArrowRight size={15} />
+              </Link>
+            </p>
             <p>
               <strong>Issue é a página da tarefa.</strong> Nela estão o pedido, o prompt e os
               critérios que a entrega deve atender.

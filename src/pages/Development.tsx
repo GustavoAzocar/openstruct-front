@@ -1,4 +1,5 @@
 import { RecentCommits } from '../components/RecentCommits';
+import { IssueSkill } from '../components/IssueSkill';
 import { commitSectionLink } from '../lib/recent-commits';
 import { CodeRelations } from '../components/CodeRelations';
 import { PRODUCT_POLICIES } from '../lib/catalog-trust';
@@ -220,6 +221,9 @@ export function Development() {
           <Link className="button button-outline" to={AI_CONTRIBUTION_PATH}>
             <Sparkles size={17} /> Contribuir com IA
           </Link>
+          <a className="button button-outline" href="#openstruct-issue">
+            Preparar issues com IA
+          </a>
           <a className="button button-outline" href="#roadmap">
             Roadmap público
           </a>
@@ -231,6 +235,7 @@ export function Development() {
           </Link>
         </div>
       </section>
+      <IssueSkill />
       <section className="development-sync" aria-label="Atualização dos dados">
         <div>
           <p role="status">
