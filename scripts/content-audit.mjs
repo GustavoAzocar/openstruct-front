@@ -17,7 +17,7 @@ import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { prerenderToNodeStream } from 'react-dom/static';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
-import { apps, getCurrentApp } from '../src/lib/apps.ts';
+import { apps, getCurrentApp, getPlannedApp } from '../src/lib/apps.ts';
 import { verifySignedCatalog, loadPublicCatalog } from '../src/lib/catalog.ts';
 import { CATALOG_IDS, PRODUCT_POLICIES } from '../src/lib/catalog-trust.ts';
 import {
@@ -178,7 +178,9 @@ visitTree(ast, (n) => {
         else {
           const expr = main.slice(p.value.expression.start, p.value.expression.end);
           const match = expr.match(/^getCurrentApp\('([^']+)'\)\.route$/);
+          const planned = expr.match(/^getPlannedApp\('([^']+)'\)\.page\.route$/);
           if (match) path = getCurrentApp(match[1]).route;
+          else if (planned) path = getPlannedApp(planned[1]).page.route;
           else if (expr === 'site.developmentPath') path = site.developmentPath;
           else throw Error('Unsupported route ' + expr);
         }

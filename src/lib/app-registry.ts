@@ -46,6 +46,8 @@ export type CurrentApp = AppIdentity & {
 export type PlannedApp = AppIdentity & {
   stage: 'planned';
   maturity: 'planned';
+  planningStatus?: 'not-started';
+  page?: AppPresentation;
   route?: never;
   previewAnchor?: never;
   image?: never;
@@ -58,6 +60,11 @@ export type PlannedApp = AppIdentity & {
   distribution?: never;
 };
 export type AppEntry = CurrentApp | PlannedApp;
+export type AppPresentation = {
+  route: `/apps/${string}`;
+  image: string;
+  imageAlt: string;
+};
 
 const commitPattern = /^[a-f0-9]{40}$/;
 const versionPattern = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?$/;
@@ -130,7 +137,7 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
       'stage',
       'maturity',
       ...(app.stage === 'planned'
-        ? []
+        ? ['planningStatus', 'page']
         : [
             'route',
             'previewAnchor',
@@ -174,6 +181,31 @@ export function validateAppRegistry(value: unknown): asserts value is AppEntry[]
     }
     if (app.stage === 'planned') {
       requireValue(app.maturity === 'planned' && kinds.has('planning'), `${id}.planejamento`);
+      requireValue(
+        app.planningStatus === undefined || app.planningStatus === 'not-started',
+        `${id}.planningStatus`,
+      );
+      if (app.page !== undefined) {
+        requireValue(
+          app.planningStatus === 'not-started',
+          `${id}.page: desenvolvimento não iniciado`,
+        );
+        const page = record(app.page, `${id}.page`);
+        requireValue(
+          Object.keys(page).every((key) => ['route', 'image', 'imageAlt'].includes(key)),
+          `${id}.page: campo não previsto`,
+        );
+        requireValue(
+          page.route === `/apps/${id}` && !routes.has(String(page.route)),
+          `${id}.page.route`,
+        );
+        routes.add(String(page.route));
+        requireValue(
+          /^\/assets\/[\w.-]+$/.test(text(page.image, `${id}.page.image`)),
+          `${id}.page.image`,
+        );
+        text(page.imageAlt, `${id}.page.imageAlt`);
+      }
       for (const key of [
         'route',
         'previewAnchor',
@@ -299,9 +331,15 @@ export function isCurrentApp(app: AppEntry): app is CurrentApp {
   return app.stage === 'current';
 }
 
+/** An informational page does not make a planned product available. */
+export function getAppPage(app: AppEntry): AppPresentation | undefined {
+  return app.stage === 'current' ? app : app.page;
+}
+
 /** Availability is independent of code version and engineering maturity. */
 export function getAppStatus(app: AppEntry): string {
-  if (app.stage === 'planned') return 'Em planejamento';
+  if (app.stage === 'planned')
+    return app.planningStatus === 'not-started' ? 'A iniciar' : 'Em planejamento';
   return app.distribution?.platforms.length ? 'Disponível para desktop' : 'Em desenvolvimento';
 }
 

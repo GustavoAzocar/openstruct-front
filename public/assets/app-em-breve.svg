@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" fill="#dce0e4"/>
+  <defs>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#bdc5ce" stroke-width=".6"/>
+    </pattern>
+  </defs>
+  <rect width="512" height="512" fill="url(#grid)"/>
+  <g fill="none" stroke="#8b98a8" stroke-width="1">
+    <path d="M40 100V40h60m312 0h60v60M40 412v60h60m312 0h60v-60"/>
+    <path d="M108 188h296M108 324h296"/>
+  </g>
+  <g fill="#344256" text-anchor="middle" font-family="Arial, sans-serif">
+    <text x="256" y="112" font-size="13" letter-spacing="4">OPENSTRUCT</text>
+    <text x="256" y="274" font-size="53" font-weight="700" letter-spacing="1">EM BREVE</text>
+    <text x="256" y="370" font-size="12" letter-spacing="1">DESENVOLVIMENTO NÃO INICIADO</text>
+  </g>
+</svg>

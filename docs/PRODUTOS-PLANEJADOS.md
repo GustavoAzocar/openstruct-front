@@ -44,3 +44,15 @@ Execute `npm test`, `npm run build` e `npm run audit:content`. Confira o catálo
 com/sem horizonte, busca e filtros por categoria, disponibilidade e plataforma;
 abra as duas páginas pelos cards e por acesso direto, em desktop/mobile e nos dois
 temas. Estado e páginas informativas não podem oferecer instalação.
+
+Conferência da implementação: 233 testes aprovados, build TypeScript/Vite aprovado,
+Prettier e `git diff --check` sem pendências. A auditoria renderizou as rotas e
+encontrou zero erros locais; os dois avisos de revisão referem-se às versões
+documentadas do ConsoloStruct e ArmaduraStruct, fora desta entrega.
+
+O build de produção foi navegado no Chromium em 320, 390, 768 e 1440 px nos dois
+temas (24 combinações de rota/tema/largura), sem erros de execução ou rolagem
+horizontal. Foram conferidos os links dos cards, títulos, acesso direto, busca,
+filtro de planejamento, plataforma e limpeza. Para reproduzir a disponibilidade
+dos produtos atuais, a consulta remota usou o catálogo assinado incluído no site.
+Não houve validação em produção nem em aparelho físico.

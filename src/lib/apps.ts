@@ -1,5 +1,5 @@
 import { isCurrentApp, validateAppRegistry } from './app-registry.ts';
-import type { AppEntry, CurrentApp } from './app-registry.ts';
+import type { AppEntry, CurrentApp, PlannedApp, AppPresentation } from './app-registry.ts';
 
 /** Reviewed public evidence, not a live feed. See docs/CATALOGO-EDITORIAL.md. */
 export const apps: AppEntry[] = [
@@ -385,6 +385,60 @@ export const apps: AppEntry[] = [
       ],
     },
   },
+  {
+    id: 'anchorstruct',
+    name: 'AnchorStruct',
+    category: 'Ligações e ancoragens',
+    description: 'Cálculo de chumbadores.',
+    color: 'steel',
+    symbol: 'anchor',
+    number: '09',
+    stage: 'planned',
+    maturity: 'planned',
+    planningStatus: 'not-started',
+    page: {
+      route: '/apps/anchorstruct',
+      image: '/assets/app-em-breve.svg',
+      imageAlt: 'Em breve — desenvolvimento não iniciado',
+    },
+    editorial: {
+      reviewedAt: '2026-11-12',
+      sources: [
+        {
+          kind: 'planning',
+          url: 'https://github.com/ricardocorsini/openstruct-front/blob/0cc70a701fa89caf4478eef89a0a5de552c372b1/docs/PRODUTOS-PLANEJADOS.md',
+          ref: '0cc70a701fa89caf4478eef89a0a5de552c372b1',
+        },
+      ],
+    },
+  },
+  {
+    id: 'slopestruct',
+    name: 'SlopeStruct',
+    category: 'Geotecnia',
+    description: 'Estabilidade de taludes e contenções.',
+    color: 'steel',
+    symbol: 'slope',
+    number: '10',
+    stage: 'planned',
+    maturity: 'planned',
+    planningStatus: 'not-started',
+    page: {
+      route: '/apps/slopestruct',
+      image: '/assets/app-em-breve.svg',
+      imageAlt: 'Em breve — desenvolvimento não iniciado',
+    },
+    editorial: {
+      reviewedAt: '2026-11-12',
+      sources: [
+        {
+          kind: 'planning',
+          url: 'https://github.com/ricardocorsini/openstruct-front/blob/0cc70a701fa89caf4478eef89a0a5de552c372b1/docs/PRODUTOS-PLANEJADOS.md',
+          ref: '0cc70a701fa89caf4478eef89a0a5de552c372b1',
+        },
+      ],
+    },
+  },
 ];
 
 validateAppRegistry(apps);
@@ -398,4 +452,12 @@ export function getCurrentApp(id: string): CurrentApp {
   const app = currentApps.find((entry) => entry.id === id);
   if (!app) throw new Error(`Aplicativo atual não cadastrado: ${id}.`);
   return app;
+}
+
+export function getPlannedApp(id: string): PlannedApp & { page: AppPresentation } {
+  const app = apps.find((entry) => entry.id === id);
+  if (!app || app.stage !== 'planned' || !app.page) {
+    throw new Error(`Aplicativo planejado sem página de apresentação: ${id}.`);
+  }
+  return { ...app, page: app.page };
 }
