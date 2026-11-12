@@ -42,7 +42,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/development/contribuir-com-ia` | Guia com ChatGPT/Codex, Claude e Gemini: ambiente, modelo, fork, issue, prompt e PR |
 | Outros endereços            | Página 404 com navegação de retorno                                                 |
 
-ConsoloStruct, MolaStruct, ArmaduraStruct e GeoSPT possuem páginas de produto e aparecem na central de aplicativos. Os seis nomes futuros representam o planejamento do ecossistema. AnchorStruct e SlopeStruct também possuem páginas informativas, com estado “A iniciar” e desenvolvimento não iniciado. Seus cards aparecem somente ao incluir o horizonte futuro; não há repositório, versão, plataforma, download ou data de lançamento. Veja as [decisões de apresentação das propostas](docs/PRODUTOS-PLANEJADOS.md).
+ConsoloStruct, MolaStruct, ArmaduraStruct e GeoSPT possuem páginas de produto e aparecem na central de aplicativos. O horizonte futuro contém somente AnchorStruct e SlopeStruct, com páginas informativas, estado “A iniciar” e desenvolvimento não iniciado. Seus cards aparecem somente ao incluir o horizonte futuro; não há repositório, versão, plataforma, download ou data de lançamento. Veja as [decisões de apresentação das propostas](docs/PRODUTOS-PLANEJADOS.md).
 
 ## Struct Launcher e downloads
 
@@ -162,7 +162,7 @@ ser usadas: os pacotes oficiais devem passar pelo catálogo assinado.
 
 ## Registro editorial dos produtos
 
-Os dez itens do catálogo usam uma fonte tipada e validada, incluindo os seis
+Os seis itens do catálogo usam uma fonte tipada e validada, incluindo os dois
 produtos em planejamento. Versão de código, versão distribuída, maturidade,
 plataformas e proveniência são campos independentes. Home, catálogo, diálogo e
 páginas de produto compartilham identidade e rótulo de disponibilidade.
