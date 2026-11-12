@@ -33,7 +33,7 @@ O projeto usa React, TypeScript, Vite e React Router. O CSS é próprio. As font
 | `/apps/molastruct`          | MolaStruct publicado: entradas, métodos, matriz 6×6, capacidade e limites           |
 | `/apps/armadurastruct`      | ArmaduraStruct 0.2.0: fluxo CAD, formatos, saídas, licença e limites                |
 | `/launcher`                 | Downloads oficiais Windows/Linux, versão publicada e instruções de instalação       |
-| `/docs`                     | Guia inicial com busca, unidades, limitações da prévia e participação               |
+| `/docs`                     | Central de manuais por sistema, com busca e [guia de manutenção](docs/MANUAIS.md)   |
 | `/community`                | Formas de contribuir e acompanhar o projeto                                         |
 | `/community/como-colaborar` | Manual público passo a passo, com percursos sem código e de código no frontend      |
 | `/development/contribuir-com-ia` | Guia com ChatGPT/Codex, Claude e Gemini: ambiente, modelo, fork, issue, prompt e PR |

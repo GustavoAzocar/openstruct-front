@@ -15,6 +15,7 @@ function visitTree(node, fn) {
 import { createServer } from 'vite';
 import React from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
+import { prerenderToNodeStream } from 'react-dom/static';
 import { MemoryRouter, Routes, Route } from 'react-router-dom';
 import { apps, getCurrentApp } from '../src/lib/apps.ts';
 import { verifySignedCatalog, loadPublicCatalog } from '../src/lib/catalog.ts';
@@ -95,7 +96,9 @@ for (const [file, source] of files) {
           file === 'index.html' && m[1].startsWith('/src/') ? { fileLink: m[1].slice(1) } : {},
         );
     }
-  if (file.endsWith('.md')) {
+  // Published manuals use the web router and the compiler's IDs. Audit their
+  // rendered links and media below, where their actual routes are available.
+  if (file.endsWith('.md') && !file.startsWith('src/content/manuals/')) {
     const clean = source
       .replace(/```[\s\S]*?```/g, (m) => m.replace(/[^\n]/g, ' '))
       .replace(/`[^`\n]+`/g, (m) => m.replace(/[^\n]/g, ' '));
@@ -143,7 +146,7 @@ for (const [file, source] of files) {
 // Derive routes and component imports from the real router; unsupported new syntax fails loudly.
 const server = await createServer({
   configFile: resolve('vite.config.ts'),
-  server: { middlewareMode: true, hmr: false, host: '127.0.0.1' },
+  server: { middlewareMode: true, hmr: false, ws: false, host: '127.0.0.1' },
   appType: 'custom',
 });
 const { site } = await server.ssrLoadModule('/src/lib/config.ts');
@@ -196,18 +199,99 @@ for (const ref of staticAttributes) {
   const route = routes.find((r) => r.file + '.tsx' === ref.file);
   refs.push({ ...ref, ...(route ? { page: route.path } : {}) });
 }
+async function auditManualSearch({
+  manualSystems,
+  manualChapterPath,
+  publicManualEditions,
+  publicManualChapters,
+}) {
+  const { default: loaders } = await server.ssrLoadModule('virtual:manual-search');
+  const indexSource = { file: 'vite.config.ts', line: 1, computed: true };
+  const editions = new Map(
+    manualSystems.flatMap((system) =>
+      publicManualEditions(system).map((edition) => [
+        `${system.id}/${edition.id}`,
+        new Map(
+          publicManualChapters(edition).map((chapter) => [
+            manualChapterPath(system.id, edition.id, chapter.slug),
+            `src/content/manuals/${chapter.source}`,
+          ]),
+        ),
+      ]),
+    ),
+  );
+
+  for (const key of editions.keys()) {
+    if (!Object.hasOwn(loaders, key))
+      findings.push(
+        issue(
+          { ...indexSource, url: key },
+          'missing-search-edition',
+          'Edição pública ausente no índice da documentação',
+          'Gerar o índice da edição a partir dos capítulos públicos.',
+        ),
+      );
+  }
+
+  for (const [key, load] of Object.entries(loaders)) {
+    const chapters = editions.get(key);
+    if (!chapters)
+      findings.push(
+        issue(
+          { ...indexSource, url: key },
+          'unexpected-search-edition',
+          'O índice contém uma edição inexistente ou em rascunho',
+          'Indexar somente edições públicas.',
+        ),
+      );
+
+    const targets = new Set();
+    for (const { href, systemId, editionId } of await load()) {
+      const pathname = href.split('#', 1)[0];
+      const source = chapters?.get(pathname);
+      const ref = source
+        ? { file: source, line: 1, computed: true, url: href, page: pathname }
+        : { ...indexSource, url: href };
+      refs.push(ref);
+      if (chapters && (!source || `${systemId}/${editionId}` !== key))
+        findings.push(
+          issue(
+            ref,
+            'wrong-search-edition',
+            'Resultado de busca fora dos capítulos públicos da edição',
+            'Gerar o destino e os metadados a partir do capítulo da edição indexada.',
+          ),
+        );
+      if (targets.has(href))
+        findings.push(
+          issue(
+            ref,
+            'duplicate-search-target',
+            'Destino repetido no índice da documentação',
+            'Indexar cada seção uma única vez na edição.',
+          ),
+        );
+      targets.add(href);
+    }
+  }
+}
+
 const pages = new Map();
 try {
   const { Layout } = await server.ssrLoadModule('/src/components/Layout.tsx');
   const { ExperienceProvider } = await server.ssrLoadModule('/src/components/Experience.tsx');
   const { CatalogProvider } = await server.ssrLoadModule('/src/components/CatalogProvider.tsx');
+  const manuals = await server.ssrLoadModule('/src/lib/manual-chapters.ts');
   for (const route of routes) {
     const module = await server.ssrLoadModule('/' + route.file + '.tsx');
     const Component = module[route.name];
-    const html = renderToStaticMarkup(
-      React.createElement(
+    const documentation = route.path === '/docs/*';
+    const paths = documentation ? manuals.publicManualPaths() : [route.path];
+
+    for (const page of paths) {
+      const element = React.createElement(
         MemoryRouter,
-        { initialEntries: [route.path] },
+        { initialEntries: [page] },
         React.createElement(
           CatalogProvider,
           null,
@@ -228,19 +312,50 @@ try {
             ),
           ),
         ),
-      ),
-    );
-    const ids = new Set([...html.matchAll(/\bid="([^"]+)"/g)].map((m) => decodeHtml(m[1])));
-    pages.set(route.path, { ids });
-    for (const m of html.matchAll(/\b(?:href|src)="([^"]+)"/g)) {
-      const url = decodeHtml(m[1]);
-      const loc = location(url, route.file + '.tsx');
-      add(url, loc.file, loc.line, {
-        page: route.path,
-        ...(loc.computed ? { computed: true } : {}),
-      });
+      );
+      let html;
+      if (documentation) {
+        // Aguarde os capítulos lazy para auditar o conteúdo, em vez do fallback.
+        const errors = [];
+        const { prelude } = await prerenderToNodeStream(element, {
+          onError(error) {
+            errors.push(error);
+          },
+        });
+        html = Buffer.concat(await Array.fromAsync(prelude)).toString('utf8');
+        if (errors.length) throw new AggregateError(errors, `Falha ao renderizar ${page}`);
+        if (/\sdata-docs-(?:not-found|load-error)(?:=|\s|>)/.test(html))
+          throw Error(`A rota de documentação publicada ${page} não pôde ser renderizada.`);
+      } else {
+        html = renderToStaticMarkup(element);
+      }
+
+      const ids = new Set();
+      for (const match of html.matchAll(/\sid="([^"]+)"/g)) {
+        const id = decodeHtml(match[1]);
+        if (documentation && ids.has(id))
+          findings.push(
+            issue(
+              { file: route.file + '.tsx', line: 1, page, url: '#' + id, computed: true },
+              'duplicate-anchor',
+              'ID duplicado na rota de documentação',
+              'Dar identificadores únicos às seções, equações e outros elementos da página.',
+            ),
+          );
+        ids.add(id);
+      }
+      pages.set(page, { ids });
+      for (const match of html.matchAll(/\s(?:href|src)="([^"]+)"/g)) {
+        const url = decodeHtml(match[1]);
+        const loc = location(url, route.file + '.tsx');
+        add(url, loc.file, loc.line, {
+          page,
+          ...(loc.computed ? { computed: true } : {}),
+        });
+      }
     }
   }
+  await auditManualSearch(manuals);
 } finally {
   await server.close();
 }
@@ -381,12 +496,12 @@ const report = {
   generatedAt: new Date().toISOString(),
   mode: external ? 'external' : 'local',
   coverage: {
-    routes: routes.map((r) => r.path),
+    routes: [...pages.keys()],
     references: refs.length,
     externalRequests: requests,
     externalLimit: 120,
     scope:
-      'Rotas reais renderizadas no estado inicial, strings públicas de registros, Markdown e mídia; dados remotos/diálogos após interação e âncoras externas não são cobertos.',
+      'Rotas reais renderizadas no estado inicial, strings públicas de registros, Markdown, mídia e destinos da busca dos manuais; dados remotos/diálogos após interação e âncoras externas não são cobertos.',
   },
   feed,
   findings: unique,
@@ -402,7 +517,7 @@ const esc = (s) =>
     .replace(/[|\r\n]/g, ' ')
     .replace(/`/g, "'");
 const md =
-  `# Auditoria de conteúdo\n\n${report.generatedAt} · ${report.mode} · ${refs.length} referências · ${routes.length} rotas · ${requests} requisições externas\n\nFeed: ${feed.source}, publicado em ${feed.publishedAt}. Revisões são alertas humanos, sem alteração automática.\n\n| Estado | Arquivo:linha | URL | Diagnóstico | Ação |\n| --- | --- | --- | --- | --- |\n` +
+  `# Auditoria de conteúdo\n\n${report.generatedAt} · ${report.mode} · ${refs.length} referências · ${pages.size} rotas · ${requests} requisições externas\n\nFeed: ${feed.source}, publicado em ${feed.publishedAt}. Revisões são alertas humanos, sem alteração automática.\n\n| Estado | Arquivo:linha | URL | Diagnóstico | Ação |\n| --- | --- | --- | --- | --- |\n` +
   unique
     .map(
       (f) =>

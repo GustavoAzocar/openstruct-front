@@ -1,0 +1,492 @@
+.manual-reading {
+  padding-block: 32px 80px;
+}
+
+.manual-reading-breadcrumb ol {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 0 0 28px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.manual-reading-breadcrumb li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.manual-reading-breadcrumb svg {
+  flex: none;
+}
+
+.manual-reading-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.manual-reading-layout {
+  display: grid;
+  grid-template-columns: minmax(11rem, 15rem) minmax(0, 71ch);
+  align-items: start;
+  gap: clamp(24px, 5vw, 72px);
+}
+
+.manual-reading-layout-single {
+  grid-template-columns: minmax(0, 71ch);
+}
+
+.manual-reading-toc {
+  position: sticky;
+  top: 112px;
+  max-block-size: calc(100dvh - 136px);
+  overflow-y: auto;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+}
+
+.manual-reading-toc summary {
+  padding: 12px 16px;
+  font-weight: 650;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.manual-reading-toc ul {
+  margin: 0;
+  padding: 8px 0;
+  border-block-start: 1px solid var(--line);
+  list-style: none;
+}
+
+.manual-reading-toc a {
+  display: block;
+  padding: 8px 16px;
+  border-inline-start: 3px solid transparent;
+  font-size: 0.875rem;
+  color: var(--muted);
+}
+
+.manual-reading-toc li[data-depth='3'] a {
+  padding-inline-start: 28px;
+}
+
+.manual-reading-toc li[data-depth='4'] a,
+.manual-reading-toc li[data-depth='5'] a,
+.manual-reading-toc li[data-depth='6'] a {
+  padding-inline-start: 40px;
+}
+
+.manual-reading-toc a:focus-visible,
+.manual-reading-toc summary:focus-visible {
+  outline-offset: -3px;
+}
+
+.manual-reading-toc a:hover,
+.manual-reading-toc a[aria-current='location'] {
+  border-inline-start-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, var(--surface));
+  color: var(--accent);
+}
+
+.manual-reading-toc a[aria-current='location'] {
+  font-weight: 650;
+}
+
+.manual-reading-article {
+  min-inline-size: 0;
+}
+
+.manual-reading-cover {
+  padding: clamp(24px, 4vw, 42px);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, var(--line));
+  border-block-start: 4px solid var(--accent);
+  border-radius: 14px;
+  background: linear-gradient(
+    140deg,
+    color-mix(in srgb, var(--accent) 11%, var(--surface)),
+    var(--surface)
+  );
+}
+
+.manual-reading-cover h1 {
+  margin-block: 8px 12px;
+  color: var(--ink);
+  font-size: clamp(1.95rem, 5vw, 3.3rem);
+  letter-spacing: -0.04em;
+}
+
+.manual-reading-status {
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.manual-reading-edition {
+  margin-block-start: 20px;
+  font-size: 0.825rem;
+}
+
+.manual-reading-app-version {
+  margin-block-start: 3px;
+  font-size: 0.825rem;
+}
+
+.manual-reading-edition span {
+  margin-inline: 0.25rem;
+}
+
+.manual-reading-content {
+  line-height: 1.75;
+  overflow-wrap: anywhere;
+}
+
+.manual-reading-content :where(p, li) {
+  color: var(--ink);
+}
+
+.manual-reading-content :where(p, ul, ol) {
+  margin-block: 0.9em;
+}
+
+.manual-reading-content h2 {
+  margin-block: 1.65em 0.65em;
+  padding-block-end: 0.38em;
+  border-block-end: 1px solid var(--line);
+  font-size: clamp(1.28rem, 3vw, 1.65rem);
+}
+
+.manual-reading-content h3 {
+  margin-block: 1.4em 0.65em;
+  font-size: 1.15rem;
+}
+
+.manual-reading-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.manual-reading-content :is(blockquote, .manual-callout) {
+  margin: 1.2em 0;
+  padding: 12px 18px;
+  border-inline-start: 4px solid var(--callout-accent, var(--orange));
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--callout-accent, var(--orange)) 10%, var(--surface));
+}
+
+.manual-reading-content blockquote p {
+  margin: 0;
+}
+
+.manual-reading-content .manual-callout-note {
+  --callout-accent: var(--accent);
+}
+
+.manual-reading-content .manual-callout-tip {
+  --callout-accent: #279978;
+}
+
+.manual-reading-content .manual-callout-warning {
+  --callout-accent: var(--orange);
+}
+
+.manual-reading-content .manual-callout-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+
+.manual-reading-content .manual-callout p:last-child {
+  margin-block-end: 0;
+}
+
+.manual-reading-content .manual-figure {
+  margin: 1.25em 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.manual-reading-content .manual-figure img {
+  inline-size: 100%;
+  block-size: auto;
+  border-radius: 7px 7px 0 0;
+}
+
+.manual-reading-content .manual-figure img[hidden] {
+  display: none;
+}
+
+.manual-reading-content .manual-figure-unavailable {
+  margin: 0;
+  padding: 14px 16px;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-figure figcaption {
+  padding: 10px 14px;
+  border-block-start: 1px solid var(--line);
+  font-size: 0.875em;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-figure figcaption p {
+  margin-block: 0;
+}
+
+.manual-reading-content :where(.manual-table-scroll, .manual-math-scroll, pre) {
+  max-inline-size: 100%;
+  overflow-x: auto;
+  margin-block: 1em;
+}
+
+.manual-reading-content .manual-code-block {
+  margin-block: 1em;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.manual-reading-content .manual-code-controls {
+  display: flex;
+  flex-wrap: wrap-reverse;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px 12px;
+  padding: 6px 8px;
+  border-block-end: 1px solid var(--line);
+}
+
+.manual-reading-content .manual-code-controls button {
+  min-block-size: 36px;
+  padding-inline: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface-2);
+  font-size: 0.8125rem;
+  font-weight: 650;
+}
+
+.manual-reading-content .manual-code-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.manual-reading-content .manual-copy-status {
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+
+.manual-reading-content .manual-code-block pre {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 0 0 7px 7px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+.manual-reading-content code {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.875em;
+}
+
+.manual-reading-content .manual-table-scroll {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.manual-reading-content table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: var(--surface);
+  text-align: start;
+  font-size: 0.925rem;
+}
+
+.manual-reading-content :where(th, td) {
+  padding: 8px 12px;
+  border-block-end: 1px solid var(--line);
+  text-align: start;
+}
+
+.manual-reading-content th {
+  background: color-mix(in srgb, var(--accent) 10%, var(--surface));
+}
+
+.manual-reading-content .manual-align-left {
+  text-align: left;
+}
+
+.manual-reading-content .manual-align-center {
+  text-align: center;
+}
+
+.manual-reading-content .manual-align-right {
+  text-align: right;
+}
+
+.manual-reading-content tr:last-child td {
+  border-block-end: 0;
+}
+
+.manual-reading-content .manual-math-scroll {
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+}
+
+.manual-reading-content .manual-math-scroll:target {
+  border-color: var(--accent);
+}
+
+.manual-reading-content .manual-math-error {
+  color: var(--muted);
+}
+
+.manual-reading-back {
+  margin-block-start: 20px;
+}
+
+.manual-reading-adjacent {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+  gap: 12px;
+  margin-block-start: 24px;
+}
+
+.manual-reading-adjacent a {
+  display: grid;
+  gap: 4px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--surface);
+  color: var(--accent);
+  font-weight: 650;
+}
+
+.manual-reading-adjacent a:hover {
+  border-color: var(--accent);
+}
+
+.manual-reading-adjacent span {
+  color: var(--muted);
+  font-size: 0.8125rem;
+  font-weight: 500;
+}
+
+@media (max-width: 760px) {
+  .manual-reading-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .manual-reading-toc {
+    position: static;
+    max-block-size: none;
+  }
+}
+
+@page manual-chapter {
+  margin: 13mm 16mm;
+}
+
+@media print {
+  body:has(.manual-reading) {
+    --ink: #111;
+    --muted: #444;
+    --line: #ccc;
+    --accent: #222;
+    --surface: #fff;
+    background: #fff;
+    color: var(--ink);
+    page: manual-chapter;
+  }
+
+  body:has(.manual-reading) :is(.site-header, .site-footer, .skip-link),
+  .manual-reading
+    :is(
+      .manual-reading-toc,
+      .manual-reading-back,
+      .manual-reading-breadcrumb,
+      .manual-reading-adjacent,
+      .manual-code-controls
+    ) {
+    display: none;
+  }
+
+  .manual-reading {
+    inline-size: auto;
+    max-inline-size: none;
+    padding: 0;
+  }
+
+  .manual-reading-layout {
+    display: block;
+  }
+
+  .manual-reading .manual-reading-cover {
+    padding: 0 0 12px;
+    border: 0;
+    border-block-end: 1px solid var(--line);
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .manual-reading .manual-reading-cover h1 {
+    margin-block: 4px 6px;
+    font-size: 23pt;
+  }
+
+  .manual-reading-edition {
+    margin-block-start: 8px;
+  }
+
+  .manual-reading-content {
+    font-size: 10.5pt;
+    line-height: 1.45;
+  }
+
+  .manual-reading-content :where(p, ul, ol) {
+    margin-block: 0.45em;
+  }
+
+  .manual-reading-content :where(h2, h3) {
+    margin-block: 0.9em 0.4em;
+    font-size: 14pt;
+    break-after: avoid;
+  }
+
+  .manual-reading-content :where(th, td) {
+    padding: 4px 8px;
+  }
+
+  .manual-reading-content :where(blockquote, .manual-math-scroll, .manual-table-scroll) {
+    margin-block: 0.65em;
+    overflow: visible;
+    break-inside: avoid;
+  }
+
+  .manual-reading-content :is(.manual-callout, .manual-figure) {
+    margin-block: 0.75em;
+    break-inside: avoid;
+  }
+
+  .manual-reading-content .manual-figure img {
+    max-block-size: 130mm;
+    object-fit: contain;
+  }
+
+  .manual-reading-content .manual-code-block pre {
+    overflow: visible;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .manual-reading-content :where(blockquote, .manual-math-scroll) {
+    padding: 6px 10px;
+  }
+}

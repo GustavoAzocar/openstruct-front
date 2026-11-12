@@ -16,6 +16,8 @@ export function Layout() {
   const { launch, community } = useExperience();
   const location = useLocation();
   useEffect(() => {
+    // A documentação restaura o foco após montar suas páginas e capítulos assíncronos.
+    if (/^\/docs(?:\/|$)/i.test(location.pathname)) return;
     if (location.hash) {
       let id = '';
       try {
@@ -35,19 +37,17 @@ export function Layout() {
             ? 'Aplicativos'
             : location.pathname === '/launcher'
               ? 'Struct Launcher'
-              : location.pathname === '/docs'
-                ? 'Documentação'
-                : location.pathname === '/community'
-                  ? 'Comunidade'
-                  : location.pathname === CONTRIBUTION_MANUAL_PATH
-                    ? 'Como colaborar'
-                    : location.pathname === AI_CONTRIBUTION_PATH
-                      ? 'Contribuir com IA'
-                      : location.pathname === '/releases'
-                        ? 'Releases'
-                        : location.pathname === site.developmentPath
-                          ? 'Central de desenvolvimento'
-                          : 'Página não encontrada'));
+              : location.pathname === '/community'
+                ? 'Comunidade'
+                : location.pathname === CONTRIBUTION_MANUAL_PATH
+                  ? 'Como colaborar'
+                  : location.pathname === AI_CONTRIBUTION_PATH
+                    ? 'Contribuir com IA'
+                    : location.pathname === '/releases'
+                      ? 'Releases'
+                      : location.pathname === site.developmentPath
+                        ? 'Central de desenvolvimento'
+                        : 'Página não encontrada'));
     document.title = `${page} — OpenStruct`;
   }, [location.pathname, location.hash]);
   function changeTheme() {

@@ -10,7 +10,6 @@ import { Mola } from './pages/Mola';
 import { GeoSPT } from './pages/GeoSPT';
 import { Launcher } from './pages/Launcher';
 import { Catalog } from './pages/Catalog';
-import { Docs } from './pages/Docs';
 import { Community, NotFound } from './pages/Community';
 import { Development } from './pages/Development';
 import { site } from './lib/config';
@@ -33,6 +32,9 @@ const ContributionManual = React.lazy(() =>
 const AiContribution = React.lazy(() =>
   import('./pages/AiContribution').then((module) => ({ default: module.AiContribution })),
 );
+const DocsRoutes = React.lazy(() =>
+  import('./pages/DocsRoutes').then((module) => ({ default: module.DocsRoutes })),
+);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -48,7 +50,20 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
               <Route path={getCurrentApp('armadurastruct').route} element={<Armadura />} />
               <Route path={getCurrentApp('geosptstruct').route} element={<GeoSPT />} />
               <Route path="launcher" element={<Launcher />} />
-              <Route path="docs" element={<Docs />} />
+              <Route
+                path="docs/*"
+                element={
+                  <React.Suspense
+                    fallback={
+                      <div className="container page-hero" role="status">
+                        Carregando documentação…
+                      </div>
+                    }
+                  >
+                    <DocsRoutes />
+                  </React.Suspense>
+                }
+              />
               <Route path="community" element={<Community />} />
               <Route
                 path="community/como-colaborar"
