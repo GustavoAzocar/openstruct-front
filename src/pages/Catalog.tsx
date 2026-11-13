@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link, useSearchParams, useLocation, useNavigationType } from 'react-router-dom';
+import { useSearchParams, useLocation, useNavigationType } from 'react-router-dom';
 import { usePublicCatalog } from '../components/CatalogProvider';
 import { defaultFilters, readFilters, writeFilters, selectCatalog } from '../lib/catalog-filters';
 import type { CatalogFilters } from '../lib/catalog-filters';
@@ -172,9 +172,9 @@ export function Catalog() {
           <h2>Sentiu falta de uma ferramenta?</h2>
           <p>O ecossistema está em construção. Conte o que faria diferença no seu trabalho.</p>
         </div>
-        <Link to={`${site.developmentPath}#repositories`} className="button button-ink">
+        <a href={`${site.websiteRepository}/issues`} className="button button-ink">
           Compartilhe uma ideia <ArrowRight size={17} />
-        </Link>
+        </a>
       </section>
     </div>
   );
